@@ -33,7 +33,7 @@
 	integer function crosscheck_for_schedule(logfile)
 	integer result
 	character*20 logfile
-	integer crosscheck_for_schedule 
+
 	integer crosscheck_for_schedule_static
 	integer crosscheck_for_schedule_dynamic
 	integer crosscheck_for_schedule_guided
@@ -72,7 +72,7 @@
 	integer count/0/
 	integer tmp_count/0/
 	integer i
-	integer check_for_schedule_static
+
 	
 	integer,allocatable:: tmp(:)
 	integer result/0/
@@ -154,7 +154,7 @@ c	open (1, FILE = logfile)
 	integer result/0/
 
 	integer omp_get_thread_num
-	integer crosscheck_for_schedule_static
+
 
 	character*20 logfile
 
@@ -225,7 +225,6 @@ c	open (1, FILE = logfile)
 	integer omp_get_thread_num
 
 	character*20 logfile
-	integer          check_for_schedule_dynamic
 
 c	open(1,FILE = logfile)
 
@@ -300,7 +299,6 @@ c	print *, "dynmic=",check_for_schedule_dynamic
 	integer omp_get_thread_num
 
 	character*20 logfile
-	integer          crosscheck_for_schedule_dynamic
 
 c	open(1,FILE = logfile)
 
@@ -379,7 +377,7 @@ c	print *, "dynmic=",crosscheck_for_schedule_dynamic
         integer result/1/
         integer notout/1/ 
         integer maxiter/0/ 
-	integer check_for_schedule_guided
+
 	character*20 logfile
 	integer omp_get_num_threads
 	integer omp_get_thread_num
@@ -529,7 +527,7 @@ c	print *,"check guided=",result
         integer result/1/
         integer notout/1/ 
         integer maxiter/0/ 
-	integer crosscheck_for_schedule_guided
+
 	character*20 logfile
 	integer omp_get_num_threads
 	integer omp_get_thread_num
