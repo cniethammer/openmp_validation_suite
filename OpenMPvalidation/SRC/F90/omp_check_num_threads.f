@@ -40,7 +40,7 @@
         endif
 	end
 
-	integer function omp_crosschk_num_threads()
+	integer function omp_crosscheck_num_threads()
         implicit none
 	integer failed, i, max_threads, threads, nthreads
 	integer omp_get_num_threads
@@ -67,9 +67,9 @@
   	end do
 !Yi Wen at 05062004 modified here: return value should only be 0 or 1
         if(failed .ne. 0) then
-	    omp_crosschk_num_threads = 0
+	    omp_crosscheck_num_threads = 0
         else
-            omp_crosschk_num_threads = 1
+            omp_crosscheck_num_threads = 1
         endif
 	end	
 
@@ -79,12 +79,12 @@
       subroutine check_num_threads(N,failed,num_tests,crosschecked)
       implicit none
       integer, external::omp_check_num_threads
-      integer, external::omp_crosschk_num_threads
+      integer, external::omp_crosscheck_num_threads
       character (len=20)::name
       integer failed
       integer N
       integer num_tests,crosschecked
       name="omp_get_num_threads"
-      call do_test(omp_check_num_threads,omp_crosschk_num_threads,
+      call do_test(omp_check_num_threads,omp_crosscheck_num_threads,
      x  name,N,failed,num_tests,crosschecked)
       end
