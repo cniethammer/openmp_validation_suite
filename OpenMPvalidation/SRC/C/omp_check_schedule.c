@@ -2,6 +2,8 @@
 #include <omp.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <stdlib.h>
+
 
 #define MAX_SIZE 1000000
 
