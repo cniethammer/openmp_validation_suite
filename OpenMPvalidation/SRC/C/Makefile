@@ -7,6 +7,7 @@
 #
 #CC = ecc
 CC = icc
+#CC = omcc
 #CFLAGS = -O3 -ip -openmp
 CFLAGS = -O0 -openmp
 #CFLAGS =  -openmp
@@ -14,7 +15,7 @@ CFLAGS = -O0 -openmp
 # Omni compilers:
 #
 #CC = ompcc
-#CFLAGS = -O3
+#CFLAGS = -O3 
 
 # Assure compilers:
 #
@@ -52,7 +53,7 @@ OBJECTS = check_omp_v1_main.o omp_check_lib.o omp_check_for.o \
           omp_check_section.o omp_check_single.o omp_check_parallel_for.o \
           omp_check_parallel_section.o omp_check_master.o \
           omp_check_critical_atomic.o omp_check_threadprivate.o \
-          omp_check_locks.o     
+          omp_check_locks.o omp_check_reduction.o 
 
 OBJECTS2 = check_omp_v2_main.o omp_check_lib.o omp_check_single_copyprivate.o \
            omp_check_threadprivate.o omp_check_for.o omp_check_num_threads.o \
