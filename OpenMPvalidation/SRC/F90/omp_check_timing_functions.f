@@ -1,24 +1,24 @@
 
-c$$$      subroutine my_sleep(double sleeptime)
-c$$$  struct timeval tv;
-c$$$  struct timezone tzp;
-c$$$  double start;
-c$$$  double real;
-c$$$  if(gettimeofday(&tv,&tzp)!=0) {
-c$$$    perror("get_time: ");
-c$$$    exit(-1);
-c$$$  }
-c$$$  start = (double)tv.tv_sec + ((double)tv.tv_usec/1000000.0);
-c$$$  real=start;
-c$$$  while( (real-start)<sleeptime){
-c$$$    if(gettimeofday(&tv,&tzp)!=0) {
-c$$$      perror("get_time: ");
-c$$$      exit(-1);
-c$$$    }
-c$$$    real = (double)tv.tv_sec + ((double)tv.tv_usec/1000000.0);
-c$$$  }
-c$$$}
-c$$$      end
+c      subroutine my_sleep(double sleeptime)
+c      struct timeval tv;
+c      struct timezone tzp;
+c      double start;
+c      double real;
+c      if(gettimeofday(&tv,&tzp)!=0) {
+c        perror("get_time: ");
+c        exit(-1);
+c      }
+c      start = (double)tv.tv_sec + ((double)tv.tv_usec/1000000.0);
+c      real=start;
+c      while( (real-start)<sleeptime){
+c        if(gettimeofday(&tv,&tzp)!=0) {
+c          perror("get_time: ");
+c          exit(-1);
+c        }
+c        real = (double)tv.tv_sec + ((double)tv.tv_usec/1000000.0);
+c      }
+c      }
+c      end
 
 !********************************************************************
 ! Functions: omp_check_time
