@@ -4,13 +4,13 @@
 #include <stdlib.h>
 
 #include "omp_testsuite.h"
-
+#include "omp_my_sleep.h"
 
 #define NUMBER_OF_THREADS 10
 #define CFSMAX_SIZE 1000
 #define CFDMAX_SIZE 1000000
-#define MAX_TIME 10
-#define SLEEPTIME 1
+#define MAX_TIME 5
+#define SLEEPTIME 0.5
 
 
 int check_for_schedule(FILE * logFile)
@@ -95,7 +95,7 @@ int check_for_schedule_static(FILE * logFile)
 				while(notout && (count < MAX_TIME) && (maxiter==i))
 				{
 #pragma omp flush(maxiter,notout)
-					sleep(SLEEPTIME);
+					my_sleep(SLEEPTIME);
 					count+=SLEEPTIME;
 				}
 				/*printf("thread %d awake",tid);*/
@@ -203,7 +203,7 @@ int crosscheck_for_schedule_static(FILE * logFile)
 				while(notout && (count < MAX_TIME) && (maxiter==i))
 				{
 #pragma omp flush(maxiter,notout)
-					sleep(SLEEPTIME);
+					my_sleep(SLEEPTIME);
 					count+=SLEEPTIME;
 				}
 				/*printf("thread %d awake",tid);*/
@@ -464,7 +464,7 @@ int check_for_schedule_guided(FILE * logFile)
 			{
 			/*printf("Thread Nr. %d sleeping\n",tid);*/
 #pragma omp flush(maxiter,notout)
-				sleep(SLEEPTIME);
+				my_sleep(SLEEPTIME);
 				count+=SLEEPTIME;
 			}
 			/*printf("Thread Nr. %d working once\n",tid);*/
@@ -598,7 +598,7 @@ int crosscheck_for_schedule_guided(FILE * logFile)
 			{
 			/*printf("Thread Nr. %d sleeping\n",tid);*/
 #pragma omp flush(maxiter,notout)
-				sleep(SLEEPTIME);
+				my_sleep(SLEEPTIME);
 				count+=SLEEPTIME;
 			}
 			/*printf("Thread Nr. %d working once\n",tid);*/

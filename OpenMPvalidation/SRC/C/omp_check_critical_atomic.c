@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <omp.h>
 #include "omp_testsuite.h"
+#include "omp_my_sleep.h"
 
 int check_omp_critical(FILE * logFile)
 {
@@ -90,7 +91,7 @@ int check_omp_barrier(FILE * logFile){
     int rank;
     rank=omp_get_thread_num();
     if(rank==1){
-      sleep(2);
+      my_sleep(1.);
       result2=3;
     }
     #pragma omp barrier
@@ -109,7 +110,7 @@ int crosscheck_omp_barrier(FILE * logFile){
     int rank;
     rank=omp_get_thread_num();
     if(rank==1){
-      sleep(2);
+      my_sleep(1.);
       result2=3;
     }
 
@@ -137,7 +138,7 @@ int check_omp_flush(FILE * logFile){
     }
     
     if(rank==0){
-      sleep(2);
+      my_sleep(1.);
 #pragma omp flush(result2)
       result1=result2;
     }
@@ -162,7 +163,7 @@ int crosscheck_omp_flush(FILE * logFile){
     }
     
     if(rank==0){
-      sleep(2);
+      my_sleep(1.);
 #pragma omp flush(result2)
       result1=result2;
     }

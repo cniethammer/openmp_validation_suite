@@ -82,7 +82,7 @@ int crosscheck_parallel_for_ordered(FILE * logFile){
 static void do_some_work2(){
 	int i;
 	double sum=0;
-	for(i=0;i<LOOPCOUNT;i++){
+	for(i=0;i<1000;i++){
 		sum+=sqrt(i);
 	}
 }

@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
 
 #pragma omp parallel shared(tids) 
 	{
-		int count = 0.;
+		int count = 0;
 		int tid;
 		tid = omp_get_thread_num();
 		
