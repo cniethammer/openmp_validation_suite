@@ -1,4 +1,5 @@
 #include <math.h>
+#include <stdio.h>
 #include "omp_testsuite.h"
 
 
@@ -38,7 +39,7 @@ int check_parallel_for_reduction(){
 	if(known_sum!=sum)
 	{
 		result++;
-		/*printf("\nError in Sum with integers\n"); */
+		printf("\nError in Sum with integers: Result=%d, expected result=%d\n",sum,known_sum); 
 	}
 
 	diff = (LOOPCOUNT*(LOOPCOUNT+1))/2;
@@ -51,7 +52,7 @@ int check_parallel_for_reduction(){
 	if(diff != 0)
 	{
 		result++;
-		/*printf("\nError in Difference: Result was %d instead of 0.\n",diff);*/
+		printf("\nError in Difference: Result was %d instead of 0.\n",diff);
 	}
 
 	/* Tests for doubles */
@@ -66,14 +67,16 @@ int check_parallel_for_reduction(){
 #pragma omp parallel for schedule(dynamic,1) reduction(+:dsum)
 	for (i=0;i<DOUBLE_DIGITS;++i)
 	{
+	    dsum += pow(dt,i);
+	    /*
 		dsum += dtmp;
-		dtmp*=dt;
+		dtmp*=dt;*/
 	}
 
-	if(((dsum-dknown_sum) < rounding_error) || ((dsum-dknown_sum) > rounding_error))
+	if( fabs(dsum-dknown_sum) > rounding_error )
 	{
 		result++; 
-		/*printf("\nError in sum with doubles: Calculated: %f Expected: %f (Difference: %E)\n",dsum,dknown_sum, dsum-dknown_sum);*/
+		printf("\nError in sum with doubles: Calculated: %f Expected: %f (Difference: %E)\n",dsum,dknown_sum, dsum-dknown_sum);
 	}
 
 	dpt=1;
@@ -86,13 +89,12 @@ int check_parallel_for_reduction(){
 #pragma omp parallel for schedule(dynamic,1) reduction(-:diff)
 	for (i=0;i<DOUBLE_DIGITS;++i)
 	{
-		ddiff -= dtmp;
-		dtmp*=dt;
+	    ddiff -= pow(dt,i);
 	}
-	if(ddiff > rounding_error || ddiff < (-rounding_error))
+	if( fabs(ddiff) > rounding_error)
 	{
 		result++;
-		/*printf("\nError in Difference with doubles: Difference %E\n",ddiff);*/
+		printf("\nError in Difference with doubles: Difference %E\n",ddiff);
 	}
 
 #pragma omp parallel for schedule(dynamic,1) reduction(*:product)  
@@ -105,7 +107,7 @@ int check_parallel_for_reduction(){
 	if(known_product != product)
 	{
 		result++;
-		/*printf("\nError in Product: Known Product: %d\tcalculated Product: %d\n\n",known_product,product);*/
+		printf("\nError in Product: Known Product: %d\tcalculated Product: %d\n\n",known_product,product);
 	}
 
 	for(i=0;i<LOOPCOUNT;i++)
@@ -135,7 +137,7 @@ int check_parallel_for_reduction(){
 	if(logic_and)
 	{
 		result++;
-		/*printf("Error in AND part 2");*/
+		printf("Error in AND part 2");
 	}
 
 	for(i=0;i<LOOPCOUNT;i++)
@@ -151,7 +153,7 @@ int check_parallel_for_reduction(){
 	if(logic_or)
 	{
 		result++;
-		/*printf("Error in OR part 1");*/
+		printf("Error in OR part 1");
 	}
 	logic_or = 0;
 	logics[LOOPCOUNT/2]=1;
@@ -164,7 +166,7 @@ int check_parallel_for_reduction(){
 	if(!logic_or)
 	{
 		result++;
-		/*printf("Error in OR part 2");*/
+		printf("Error in OR part 2");
 	}
 
 
@@ -181,7 +183,7 @@ int check_parallel_for_reduction(){
 	if(!bit_and)
 	{
 		result++;
-		/*printf("Error in BIT AND part 1\n");*/
+		printf("Error in BIT AND part 1\n");
 	}
 
 	bit_and = 1;
@@ -195,7 +197,7 @@ int check_parallel_for_reduction(){
 	if(bit_and)
 	{
 		result++;
-		/*printf("Error in BIT AND part 2");*/
+		printf("Error in BIT AND part 2");
 	}
 
 	for(i=0;i<LOOPCOUNT;i++)
@@ -211,7 +213,7 @@ int check_parallel_for_reduction(){
 	if(bit_or)
 	{
 		result++;
-		/*printf("Error in BIT OR part 1\n");*/
+		printf("Error in BIT OR part 1\n");
 	}
 	bit_or = 0;
 	logics[LOOPCOUNT/2]=1;
@@ -224,7 +226,7 @@ int check_parallel_for_reduction(){
 	if(!bit_or)
 	{
 		result++;
-		/*printf("Error in BIT OR part 2\n");*/
+		printf("Error in BIT OR part 2\n");
 	}
 
 	for(i=0;i<LOOPCOUNT;i++)
@@ -240,7 +242,7 @@ int check_parallel_for_reduction(){
 	if(exclusiv_bit_or)
 	{
 		result++;
-		/*printf("Error in EXCLUSIV BIT OR part 1\n");*/
+		printf("Error in EXCLUSIV BIT OR part 1\n");
 	}
 
 	exclusiv_bit_or = 0;
@@ -254,7 +256,7 @@ int check_parallel_for_reduction(){
 	if(!exclusiv_bit_or)
 	{
 		result++;
-		/*printf("Error in EXCLUSIV BIT OR part 2\n");*/
+		printf("Error in EXCLUSIV BIT OR part 2\n");
 	}
 
 	/*printf("\nResult:%d\n",result);*/

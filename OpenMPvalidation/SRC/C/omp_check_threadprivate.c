@@ -17,7 +17,7 @@ int check_omp_threadprivate()
   int i;
 
   int iter;
-  int rank;
+
   int *data;
   int size;
   int failed=0;
@@ -62,17 +62,19 @@ int check_omp_threadprivate()
     /* the first parallel region is used to initialiye myvalue and the array with my_random+rank*/
 #pragma omp parallel
     {
-      rank=omp_get_thread_num();
-      myvalue=data[rank]=my_random+rank;
+	int rank;
+	rank=omp_get_thread_num();
+	myvalue=data[rank]=my_random+rank;
     }
 
     /* the second parallel region verifies that the value of "myvalue" is retained */
 #pragma omp parallel reduction(+:failed)
     {
-      rank=omp_get_thread_num();
-      failed = failed + (myvalue != data[rank]);
-      if(myvalue != data[rank]){
-	printf(" myvalue = %d, data[rank]= %d\n",myvalue,data[rank]);
+	int rank;
+	rank=omp_get_thread_num();
+	failed = failed + (myvalue != data[rank]);
+	if(myvalue != data[rank]){
+	    printf(" myvalue = %d, data[rank]= %d\n",myvalue,data[rank]);
       }
     }
   }
@@ -98,7 +100,7 @@ int crosscheck_omp_threadprivate()
   int i;
 
   int iter;
-  int rank;
+
   int *data;
   int size;
   int failed=0;
@@ -135,13 +137,15 @@ int crosscheck_omp_threadprivate()
     my_random=rand();
 #pragma omp parallel
     {
-      rank=omp_get_thread_num();
-      crossmyvalue=data[rank]=my_random+rank;
+	int rank;
+	rank=omp_get_thread_num();
+	crossmyvalue=data[rank]=my_random+rank;
     }
 #pragma omp parallel reduction(+:failed)
     {
-      rank=omp_get_thread_num();
-      failed = failed + (crossmyvalue != data[rank]);
+	int rank;
+	rank=omp_get_thread_num();
+	failed = failed + (crossmyvalue != data[rank]);
     }
   }
   free (data);
@@ -246,7 +250,7 @@ static int myvalue2=0;
 
 int crosscheck_spmd_threadprivate(){
   int iter;
-  int rank;
+
   int *data;
   int size;
   int failed=0;
@@ -266,13 +270,15 @@ int crosscheck_spmd_threadprivate(){
     my_random=rand();
 #pragma omp parallel
     {
-      rank=omp_get_thread_num();
-      myvalue2=data[rank]=my_random+rank;
+	int rank;
+	rank=omp_get_thread_num();
+	myvalue2=data[rank]=my_random+rank;
     }
 #pragma omp parallel reduction(+:failed)
     {
-      rank=omp_get_thread_num();
-      failed = failed + (myvalue2 != data[rank]);
+	int rank;
+	rank=omp_get_thread_num();
+	failed = failed + (myvalue2 != data[rank]);
     }
   }
   free (data);
