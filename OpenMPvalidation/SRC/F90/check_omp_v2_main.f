@@ -73,7 +73,7 @@
 		write (unit,*) "Directiv worked without errors."
 		write (unit,*) "Crosschecks verified this result with", 
      &            100.0*crossfailed/N,"certainty."
-		write (*,"(A40,f5.2,A12)")
+		write (*,*)
      &    "omp_check_num_threads... verified with", 
      &    100.0*crossfailed/N,"% certainty" 
 	else
