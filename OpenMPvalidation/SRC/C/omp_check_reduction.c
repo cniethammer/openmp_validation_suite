@@ -66,7 +66,7 @@ int check_parallel_for_reduction(FILE * logFile){
 #pragma omp parallel for schedule(dynamic,1) reduction(+:dsum)
 	for (i=0;i<DOUBLE_DIGITS;++i)
 	{
-	    dsum += pow(dt,i);
+		dsum += pow(dt,i);
 	}
 
 	if( fabs(dsum-dknown_sum) > rounding_error )
@@ -86,7 +86,7 @@ int check_parallel_for_reduction(FILE * logFile){
 #pragma omp parallel for schedule(dynamic,1) reduction(-:ddiff)
 	for (i=0;i<DOUBLE_DIGITS;++i)
 	{
-	    ddiff -= pow(dt,i);
+		ddiff -= pow(dt,i);
 	}
 	if( fabs(ddiff) > rounding_error)
 	{
@@ -314,7 +314,7 @@ int crosscheck_parallel_for_reduction(FILE * logFile){
 	/* Tests for doubles */
 	dsum=0;
 	dpt=1;
-	
+
 	for (i=0;i<DOUBLE_DIGITS;++i)
 	{
 		dpt*=dt;
@@ -1122,7 +1122,12 @@ int crosscheck_for_reduction(FILE * logFile){
 int check_section_reduction(FILE * logFile){
 	int sum=7;
 	int known_sum;
+	double dpt,dsum=0;
+	double dknown_sum;
+	double dt=0.5;				/* base of geometric row for + and - test*/
+	double rounding_error= 1.E-10;
 	int diff;
+	double ddiff;
 	int product=1;
 	int known_product;
 	int logic_and=1;
@@ -1136,6 +1141,7 @@ int check_section_reduction(FILE * logFile){
 
 	/*  int my_islarger;*/
 	/*int is_larger=1;*/
+	dt = 1./3.;
 	known_sum = (999*1000)/2+7;
 #pragma omp parallel
 	{
@@ -1206,6 +1212,88 @@ int check_section_reduction(FILE * logFile){
 		fprintf(logFile,"Error in Difference with integers: Result was %d instead of 0.\n",diff);
 	}
 
+	for (i=0;i<20;++i)
+	{
+		dpt*=dt;
+	}
+	dknown_sum = (1-dpt)/(1-dt);
+#pragma omp parallel
+	{
+#pragma omp sections private(i) reduction(+:dsum)
+		{
+#pragma omp section
+			{
+				for (i=0;i<6;++i)
+				{
+					dsum += pow(dt,i);
+				}
+			}
+#pragma omp section
+			{
+				for (i=6;i<12;++i)
+				{
+					dsum += pow(dt,i);
+				}
+			}
+#pragma omp section
+			{
+				for (i=12;i<20;++i)
+				{
+					dsum += pow(dt,i);
+				}
+			}
+		}
+	}
+
+	if( fabs(dsum-dknown_sum) > rounding_error )
+	{
+		result++; 
+		fprintf(logFile,"Error in sum with doubles: Result was %f instead of %f (Difference: %E)\n",dsum,dknown_sum, dsum-dknown_sum);
+	}
+
+	dpt=1;
+
+	for (i=0;i<20;++i)
+	{
+		dpt*=dt;
+	}
+	fprintf(logFile,"\n");
+	ddiff = (1-dpt)/(1-dt);
+#pragma omp parallel
+	{
+#pragma omp sections private(i) reduction(-:ddiff)
+		{
+#pragma omp section
+			{
+				for (i=0;i<6;++i)
+				{
+					ddiff -= pow(dt,i);
+				}
+			}
+#pragma omp section
+			{
+				for (i=6;i<12;++i)
+				{
+					ddiff -= pow(dt,i);
+				}
+			}
+#pragma omp section
+			{
+				for (i=12;i<20;++i)
+				{
+					ddiff -= pow(dt,i);
+				}
+			}
+		}
+	}
+
+	if( fabs(ddiff) > rounding_error)
+	{
+		result++;
+		fprintf(logFile,"Error in Difference with doubles: Result was %E instead of 0.0\n",ddiff);
+	}
+
+
 	known_product = 3628800;
 #pragma omp parallel
 	{
@@ -1234,7 +1322,6 @@ int check_section_reduction(FILE * logFile){
 			}
 		}
 	}
-
 
 	if(known_product != product)
 	{
@@ -1620,11 +1707,15 @@ int check_section_reduction(FILE * logFile){
 	return (result==0);
 }
 
-
 int crosscheck_section_reduction(FILE * logFile){
 	int sum=7;
 	int known_sum;
+	double dpt,dsum=0;
+	double dknown_sum;
+	double dt=0.5;				/* base of geometric row for + and - test*/
+	double rounding_error= 1.E-10;
 	int diff;
+	double ddiff;
 	int product=1;
 	int known_product;
 	int logic_and=1;
@@ -1639,6 +1730,8 @@ int crosscheck_section_reduction(FILE * logFile){
 	/*  int my_islarger;*/
 	/*int is_larger=1;*/
 	known_sum = (999*1000)/2+7;
+	dt = 1./3.;
+
 #pragma omp parallel
 	{
 #pragma omp sections private(i)
@@ -1706,6 +1799,87 @@ int crosscheck_section_reduction(FILE * logFile){
 	{
 		result++;
 		/*printf("\nError in Difference: Result was %d instead of 0.\n",diff);*/
+	}
+
+	for (i=0;i<20;++i)
+	{
+		dpt*=dt;
+	}
+	dknown_sum = (1-dpt)/(1-dt);
+#pragma omp parallel
+	{
+#pragma omp sections private(i)
+		{
+#pragma omp section
+			{
+				for (i=0;i<6;++i)
+				{
+					dsum += pow(dt,i);
+				}
+			}
+#pragma omp section
+			{
+				for (i=6;i<12;++i)
+				{
+					dsum += pow(dt,i);
+				}
+			}
+#pragma omp section
+			{
+				for (i=12;i<20;++i)
+				{
+					dsum += pow(dt,i);
+				}
+			}
+		}
+	}
+
+	if( fabs(dsum-dknown_sum) > rounding_error )
+	{
+		result++; 
+		fprintf(logFile,"Error in sum with doubles: Result was %f instead of %f (Difference: %E)\n",dsum,dknown_sum, dsum-dknown_sum);
+	}
+
+	dpt=1;
+
+	for (i=0;i<20;++i)
+	{
+		dpt*=dt;
+	}
+	fprintf(logFile,"\n");
+	ddiff = (1-dpt)/(1-dt);
+#pragma omp parallel
+	{
+#pragma omp sections private(i)
+		{
+#pragma omp section
+			{
+				for (i=0;i<6;++i)
+				{
+					ddiff -= pow(dt,i);
+				}
+			}
+#pragma omp section
+			{
+				for (i=6;i<12;++i)
+				{
+					ddiff -= pow(dt,i);
+				}
+			}
+#pragma omp section
+			{
+				for (i=12;i<20;++i)
+				{
+					ddiff -= pow(dt,i);
+				}
+			}
+		}
+	}
+
+	if( fabs(ddiff) > rounding_error)
+	{
+		result++;
+		fprintf(logFile,"Error in Difference with doubles: Result was %E instead of 0.0\n",ddiff);
 	}
 
 	known_product = 3628800;
@@ -2122,11 +2296,15 @@ int crosscheck_section_reduction(FILE * logFile){
 	return (result==0);
 }
 
-
 int check_parallel_section_reduction(FILE * logFile){
 	int sum=7;
-	int known_sum;
+	int known_sum;	
+	double dpt,dsum=0;
+	double dknown_sum;
+	double dt=0.5;				/* base of geometric row for + and - test*/
+	double rounding_error= 1.E-10;
 	int diff;
+	double ddiff;
 	int product=1;
 	int known_product;
 	int logic_and=1;
@@ -2204,7 +2382,81 @@ int check_parallel_section_reduction(FILE * logFile){
 		result++;
 		fprintf(logFile,"Error in Difference with integers: Result was %d instead of 0.\n",diff);
 	}
+	for (i=0;i<20;++i)
+	{
+		dpt*=dt;
+	}
+	dknown_sum = (1-dpt)/(1-dt);
+#pragma omp parallel sections private(i) reduction(+:dsum)
+	{
+#pragma omp section
+		{
+			for (i=0;i<6;++i)
+			{
+				dsum += pow(dt,i);
+			}
+		}
+#pragma omp section
+		{
+			for (i=6;i<12;++i)
+			{
+				dsum += pow(dt,i);
+			}
+		}
+#pragma omp section
+		{
+			for (i=12;i<20;++i)
+			{
+				dsum += pow(dt,i);
+			}
+		}
+	}
 
+
+	if( fabs(dsum-dknown_sum) > rounding_error )
+	{
+		result++; 
+		fprintf(logFile,"Error in sum with doubles: Result was %f instead of %f (Difference: %E)\n",dsum,dknown_sum, dsum-dknown_sum);
+	}
+
+	dpt=1;
+
+	for (i=0;i<20;++i)
+	{
+		dpt*=dt;
+	}
+	fprintf(logFile,"\n");
+	ddiff = (1-dpt)/(1-dt);
+#pragma omp parallel sections private(i) reduction(-:ddiff)
+	{
+#pragma omp section
+		{
+			for (i=0;i<6;++i)
+			{
+				ddiff -= pow(dt,i);
+			}
+		}
+#pragma omp section
+		{
+			for (i=6;i<12;++i)
+			{
+				ddiff -= pow(dt,i);
+			}
+		}
+#pragma omp section
+		{
+			for (i=12;i<20;++i)
+			{
+				ddiff -= pow(dt,i);
+			}
+		}
+	}
+
+	if( fabs(ddiff) > rounding_error)
+	{
+		result++;
+		fprintf(logFile,"Error in Difference with doubles: Result was %E instead of 0.0\n",ddiff);
+	}
 
 	known_product = 3628800;
 #pragma omp parallel sections private(i) reduction(*:product)
@@ -2399,15 +2651,15 @@ int check_parallel_section_reduction(FILE * logFile){
 			{
 				bit_and = (bit_and & logics[i]);
 			}
-			}
+		}
 #pragma omp section
-			{	
-				for(i=700;i<1000;++i)
-				{
-					bit_and = (bit_and & logics[i]);
-				}
+		{	
+			for(i=700;i<1000;++i)
+			{
+				bit_and = (bit_and & logics[i]);
 			}
 		}
+	}
 	if(!bit_and)
 	{
 		result++;
@@ -2418,29 +2670,29 @@ int check_parallel_section_reduction(FILE * logFile){
 	logics[501]=0;
 
 #pragma omp parallel sections private(i) reduction(&:bit_and)
+	{
+#pragma omp section
 		{
-#pragma omp section
+			for(i=0;i<300;++i)
 			{
-				for(i=0;i<300;++i)
-				{
-					bit_and = bit_and & logics[i];
-				}
-			}
-#pragma omp section
-			{
-				for(i=300;i<700;++i)
-				{
-					bit_and = bit_and & logics[i];
-				}
-			}
-#pragma omp section
-			{
-				for(i=700;i<1000;++i)
-				{
-					bit_and = bit_and & logics[i];
-				}
+				bit_and = bit_and & logics[i];
 			}
 		}
+#pragma omp section
+		{
+			for(i=300;i<700;++i)
+			{
+				bit_and = bit_and & logics[i];
+			}
+		}
+#pragma omp section
+		{
+			for(i=700;i<1000;++i)
+			{
+				bit_and = bit_and & logics[i];
+			}
+		}
+	}
 	if(bit_and)
 	{
 		result++;
@@ -2453,29 +2705,29 @@ int check_parallel_section_reduction(FILE * logFile){
 	}
 
 #pragma omp parallel sections private(i) reduction(|:bit_or)  
+	{
+#pragma omp section
 		{
-#pragma omp section
+			for(i=0;i<300;++i)
 			{
-				for(i=0;i<300;++i)
-				{
-					bit_or = bit_or | logics[i];
-				}
-			}
-#pragma omp section
-			{
-				for(i=300;i<700;++i)
-				{
-					bit_or = bit_or | logics[i];
-				}
-			}
-#pragma omp section
-			{
-				for(i=700;i<1000;++i)
-				{
-					bit_or = bit_or | logics[i];
-				}
+				bit_or = bit_or | logics[i];
 			}
 		}
+#pragma omp section
+		{
+			for(i=300;i<700;++i)
+			{
+				bit_or = bit_or | logics[i];
+			}
+		}
+#pragma omp section
+		{
+			for(i=700;i<1000;++i)
+			{
+				bit_or = bit_or | logics[i];
+			}
+		}
+	}
 	if(bit_or)
 	{
 		result++;
@@ -2485,29 +2737,29 @@ int check_parallel_section_reduction(FILE * logFile){
 	logics[501]=1;
 
 #pragma omp parallel sections private(i) reduction(|:bit_or)
+	{
+#pragma omp section
 		{
-#pragma omp section
+			for(i=0;i<300;++i)
 			{
-				for(i=0;i<300;++i)
-				{
-					bit_or = bit_or | logics[i];
-				}
-			}
-#pragma omp section
-			{
-				for(i=300;i<700;++i)
-				{
-					bit_or = bit_or | logics[i];
-				}
-			}
-#pragma omp section
-			{
-				for(i=700;i<1000;++i)
-				{
-					bit_or = bit_or | logics[i];
-				}
+				bit_or = bit_or | logics[i];
 			}
 		}
+#pragma omp section
+		{
+			for(i=300;i<700;++i)
+			{
+				bit_or = bit_or | logics[i];
+			}
+		}
+#pragma omp section
+		{
+			for(i=700;i<1000;++i)
+			{
+				bit_or = bit_or | logics[i];
+			}
+		}
+	}
 	if(!bit_or)
 	{
 		result++;
@@ -2520,29 +2772,29 @@ int check_parallel_section_reduction(FILE * logFile){
 	}
 
 #pragma omp parallel sections private(i) reduction(^:exclusiv_bit_or)
-		{
+	{
 #pragma omp section
-			{	
-				for(i=0;i<300;++i)
-				{
-					exclusiv_bit_or = exclusiv_bit_or ^ logics[i];
-				}
-			}
-#pragma omp section
-			{	
-				for(i=300;i<700;++i)
-				{
-					exclusiv_bit_or = exclusiv_bit_or ^ logics[i];
-				}
-			}
-#pragma omp section
-			{	
-				for(i=700;i<1000;++i)
-				{
-					exclusiv_bit_or = exclusiv_bit_or ^ logics[i];
-				}
+		{	
+			for(i=0;i<300;++i)
+			{
+				exclusiv_bit_or = exclusiv_bit_or ^ logics[i];
 			}
 		}
+#pragma omp section
+		{	
+			for(i=300;i<700;++i)
+			{
+				exclusiv_bit_or = exclusiv_bit_or ^ logics[i];
+			}
+		}
+#pragma omp section
+		{	
+			for(i=700;i<1000;++i)
+			{
+				exclusiv_bit_or = exclusiv_bit_or ^ logics[i];
+			}
+		}
+	}
 	if(exclusiv_bit_or)
 	{
 		result++;
@@ -2553,29 +2805,29 @@ int check_parallel_section_reduction(FILE * logFile){
 	logics[501]=1;
 
 #pragma omp parallel sections private(i) reduction(^:exclusiv_bit_or)
+	{
+#pragma omp section
 		{
-#pragma omp section
+			for(i=0;i<300;++i)
 			{
-				for(i=0;i<300;++i)
-				{
-					exclusiv_bit_or = exclusiv_bit_or ^ logics[i];
-				}
-			}
-#pragma omp section
-			{
-				for(i=300;i<700;++i)
-				{
-					exclusiv_bit_or = exclusiv_bit_or ^ logics[i];
-				}
-			}
-#pragma omp section
-			{
-				for(i=700;i<1000;++i)
-				{
-					exclusiv_bit_or = exclusiv_bit_or ^ logics[i];
-				}
+				exclusiv_bit_or = exclusiv_bit_or ^ logics[i];
 			}
 		}
+#pragma omp section
+		{
+			for(i=300;i<700;++i)
+			{
+				exclusiv_bit_or = exclusiv_bit_or ^ logics[i];
+			}
+		}
+#pragma omp section
+		{
+			for(i=700;i<1000;++i)
+			{
+				exclusiv_bit_or = exclusiv_bit_or ^ logics[i];
+			}
+		}
+	}
 	if(!exclusiv_bit_or)
 	{
 		result++;
@@ -2586,12 +2838,16 @@ int check_parallel_section_reduction(FILE * logFile){
 	return (result==0);
 }
 
+int crosscheck_parallel_section_reduction(FILE * logFile){
 
-
-int crosscheck_parallel_section_reduction(FILE * logfile){
 	int sum=7;
-	int known_sum;
+	int known_sum;	
+	double dpt,dsum=0;
+	double dknown_sum;
+	double dt=0.5;				/* base of geometric row for + and - test*/
+	double rounding_error= 1.E-10;
 	int diff;
+	double ddiff;
 	int product=1;
 	int known_product;
 	int logic_and=1;
@@ -2606,6 +2862,7 @@ int crosscheck_parallel_section_reduction(FILE * logfile){
 	/*  int my_islarger;*/
 	/*int is_larger=1;*/
 	known_sum = (999*1000)/2+7;
+
 #pragma omp parallel sections private(i)
 	{
 #pragma omp section
@@ -2669,7 +2926,82 @@ int crosscheck_parallel_section_reduction(FILE * logfile){
 		result++;
 		/*printf("\nError in Difference: Result was %d instead of 0.\n",diff);*/
 	}
+	for (i=0;i<20;++i)
+	{
+		dpt*=dt;
+	}
+	dknown_sum = (1-dpt)/(1-dt);
+#pragma omp parallel sections private(i)
+	{
+#pragma omp section
+		{
+			for (i=0;i<6;++i)
+			{
+				dsum += pow(dt,i);
+			}
+		}
+#pragma omp section
+		{
+			for (i=6;i<12;++i)
+			{
+				dsum += pow(dt,i);
+			}
+		}
+#pragma omp section
+		{
+			for (i=12;i<20;++i)
+			{
+				dsum += pow(dt,i);
+			}
+		}
+	}
 
+
+	if( fabs(dsum-dknown_sum) > rounding_error )
+	{
+		result++; 
+		fprintf(logFile,"Error in sum with doubles: Result was %f instead of %f (Difference: %E)\n",dsum,dknown_sum, dsum-dknown_sum);
+	}
+
+	dpt=1;
+
+	for (i=0;i<20;++i)
+	{
+		dpt*=dt;
+	}
+	fprintf(logFile,"\n");
+	ddiff = (1-dpt)/(1-dt);
+#pragma omp parallel sections private(i)
+	{
+#pragma omp section
+		{
+			for (i=0;i<6;++i)
+			{
+				ddiff -= pow(dt,i);
+			}
+		}
+#pragma omp section
+		{
+			for (i=6;i<12;++i)
+			{
+				ddiff -= pow(dt,i);
+			}
+		}
+#pragma omp section
+		{
+			for (i=12;i<20;++i)
+			{
+				ddiff -= pow(dt,i);
+			}
+		}
+	}
+
+
+	if( fabs(ddiff) > rounding_error)
+	{
+		result++;
+		fprintf(logFile,"Error in Difference with doubles: Result was %E instead of 0.0\n",ddiff);
+	}
 
 	known_product = 3628800;
 #pragma omp parallel sections private(i)
@@ -2843,36 +3175,36 @@ int crosscheck_parallel_section_reduction(FILE * logfile){
 		result++;
 		/*printf("\nError in OR part 2\n");*/
 	}
-	
-		for(i=0;i<1000;++i)
+
+	for(i=0;i<1000;++i)
 	{
 		logics[i]=1;
 	}
 
 #pragma omp parallel sections private(i)
-		{
+	{
 #pragma omp section
-			{	
-				for(i=0;i<300;++i)
-				{
-					bit_and = (bit_and & logics[i]);
-				}
-			}
-#pragma omp section
-			{	
-				for(i=300;i<700;++i)
-				{
-					bit_and = (bit_and & logics[i]);
-				}
-			}
-#pragma omp section
-			{	
-				for(i=700;i<1000;++i)
-				{
-					bit_and = (bit_and & logics[i]);
-				}
+		{	
+			for(i=0;i<300;++i)
+			{
+				bit_and = (bit_and & logics[i]);
 			}
 		}
+#pragma omp section
+		{	
+			for(i=300;i<700;++i)
+			{
+				bit_and = (bit_and & logics[i]);
+			}
+		}
+#pragma omp section
+		{	
+			for(i=700;i<1000;++i)
+			{
+				bit_and = (bit_and & logics[i]);
+			}
+		}
+	}
 	if(!bit_and)
 	{
 		result++;
@@ -2883,29 +3215,29 @@ int crosscheck_parallel_section_reduction(FILE * logfile){
 	logics[501]=0;
 
 #pragma omp parallel sections private(i)
+	{
+#pragma omp section
 		{
-#pragma omp section
+			for(i=0;i<300;++i)
 			{
-				for(i=0;i<300;++i)
-				{
-					bit_and = bit_and & logics[i];
-				}
-			}
-#pragma omp section
-			{
-				for(i=300;i<700;++i)
-				{
-					bit_and = bit_and & logics[i];
-				}
-			}
-#pragma omp section
-			{
-				for(i=700;i<1000;++i)
-				{
-					bit_and = bit_and & logics[i];
-				}
+				bit_and = bit_and & logics[i];
 			}
 		}
+#pragma omp section
+		{
+			for(i=300;i<700;++i)
+			{
+				bit_and = bit_and & logics[i];
+			}
+		}
+#pragma omp section
+		{
+			for(i=700;i<1000;++i)
+			{
+				bit_and = bit_and & logics[i];
+			}
+		}
+	}
 	if(bit_and)
 	{
 		result++;
@@ -2918,29 +3250,29 @@ int crosscheck_parallel_section_reduction(FILE * logfile){
 	}
 
 #pragma omp parallel sections private(i) 
+	{
+#pragma omp section
 		{
-#pragma omp section
+			for(i=0;i<300;++i)
 			{
-				for(i=0;i<300;++i)
-				{
-					bit_or = bit_or | logics[i];
-				}
-			}
-#pragma omp section
-			{
-				for(i=300;i<700;++i)
-				{
-					bit_or = bit_or | logics[i];
-				}
-			}
-#pragma omp section
-			{
-				for(i=700;i<1000;++i)
-				{
-					bit_or = bit_or | logics[i];
-				}
+				bit_or = bit_or | logics[i];
 			}
 		}
+#pragma omp section
+		{
+			for(i=300;i<700;++i)
+			{
+				bit_or = bit_or | logics[i];
+			}
+		}
+#pragma omp section
+		{
+			for(i=700;i<1000;++i)
+			{
+				bit_or = bit_or | logics[i];
+			}
+		}
+	}
 	if(bit_or)
 	{
 		result++;
@@ -2950,29 +3282,29 @@ int crosscheck_parallel_section_reduction(FILE * logfile){
 	logics[501]=1;
 
 #pragma omp parallel sections private(i)
+	{
+#pragma omp section
 		{
-#pragma omp section
+			for(i=0;i<300;++i)
 			{
-				for(i=0;i<300;++i)
-				{
-					bit_or = bit_or | logics[i];
-				}
-			}
-#pragma omp section
-			{
-				for(i=300;i<700;++i)
-				{
-					bit_or = bit_or | logics[i];
-				}
-			}
-#pragma omp section
-			{
-				for(i=700;i<1000;++i)
-				{
-					bit_or = bit_or | logics[i];
-				}
+				bit_or = bit_or | logics[i];
 			}
 		}
+#pragma omp section
+		{
+			for(i=300;i<700;++i)
+			{
+				bit_or = bit_or | logics[i];
+			}
+		}
+#pragma omp section
+		{
+			for(i=700;i<1000;++i)
+			{
+				bit_or = bit_or | logics[i];
+			}
+		}
+	}
 	if(!bit_or)
 	{
 		result++;
@@ -2985,29 +3317,29 @@ int crosscheck_parallel_section_reduction(FILE * logfile){
 	}
 
 #pragma omp parallel sections private(i)
-		{
+	{
 #pragma omp section
-			{	
-				for(i=0;i<300;++i)
-				{
-					exclusiv_bit_or = exclusiv_bit_or | logics[i];
-				}
-			}
-#pragma omp section
-			{	
-				for(i=300;i<700;++i)
-				{
-					exclusiv_bit_or = exclusiv_bit_or | logics[i];
-				}
-			}
-#pragma omp section
-			{	
-				for(i=700;i<1000;++i)
-				{
-					exclusiv_bit_or = exclusiv_bit_or | logics[i];
-				}
+		{	
+			for(i=0;i<300;++i)
+			{
+				exclusiv_bit_or = exclusiv_bit_or | logics[i];
 			}
 		}
+#pragma omp section
+		{	
+			for(i=300;i<700;++i)
+			{
+				exclusiv_bit_or = exclusiv_bit_or | logics[i];
+			}
+		}
+#pragma omp section
+		{	
+			for(i=700;i<1000;++i)
+			{
+				exclusiv_bit_or = exclusiv_bit_or | logics[i];
+			}
+		}
+	}
 	if(exclusiv_bit_or)
 	{
 		result++;
@@ -3018,29 +3350,29 @@ int crosscheck_parallel_section_reduction(FILE * logfile){
 	logics[501]=1;
 
 #pragma omp parallel sections private(i)
+	{
+#pragma omp section
 		{
-#pragma omp section
+			for(i=0;i<300;++i)
 			{
-				for(i=0;i<300;++i)
-				{
-					exclusiv_bit_or = exclusiv_bit_or | logics[i];
-				}
-			}
-#pragma omp section
-			{
-				for(i=300;i<700;++i)
-				{
-					exclusiv_bit_or = exclusiv_bit_or | logics[i];
-				}
-			}
-#pragma omp section
-			{
-				for(i=700;i<1000;++i)
-				{
-					exclusiv_bit_or = exclusiv_bit_or | logics[i];
-				}
+				exclusiv_bit_or = exclusiv_bit_or | logics[i];
 			}
 		}
+#pragma omp section
+		{
+			for(i=300;i<700;++i)
+			{
+				exclusiv_bit_or = exclusiv_bit_or | logics[i];
+			}
+		}
+#pragma omp section
+		{
+			for(i=700;i<1000;++i)
+			{
+				exclusiv_bit_or = exclusiv_bit_or | logics[i];
+			}
+		}
+	}
 	if(!exclusiv_bit_or)
 	{
 		result++;
