@@ -133,8 +133,8 @@ int main(int argc, char* argv[])
 		    m=1;
 		}
 	    }
-	    chunksizes = malloc(global_chunknr * sizeof(int));
-	    tids_for_chunk = malloc(global_chunknr * sizeof(int));
+	    chunksizes = (int*)malloc(global_chunknr * sizeof(int));
+	    tids_for_chunk = (int*)malloc(global_chunknr * sizeof(int));
 	    global_chunknr = 0;
 	    
 	    m = 1;
