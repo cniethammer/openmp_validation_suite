@@ -1,8 +1,8 @@
 !This is the main driver to invoke different test functions
 ! more comments here.....
       program check_omp_v2_main
-	integer LOOPCOUNT 
       implicit none
+	integer LOOPCOUNT 
       integer failed, success
       integer N
       integer num_tests,crosschecked, crossfailed, j
@@ -74,7 +74,7 @@
 		write (unit,*) "Directiv worked without errors."
 		write (unit,*) "Crosschecks verified this result with", 
      &            100.0*crossfailed/N,"certainty."
-		write (*,"(A40,f5.2,A12) 
+		write (*,"(A40,f5.2,A12)")
      &    "omp_check_num_threads... verified with", 
      &    100.0*crossfailed/N,"% certainty" 
 	else
@@ -131,7 +131,7 @@
 		write (unit,*) 
      &  "Crosschecks verified this result with", 100.0*crossfailed/N,
      &  "certainty."
-		write (*,*) "omp_get_wtime... " 
+		write (*,*) "omp_get_wtime... " ,
      &  "verified with", 100.0*crossfailed/N ,"certainty."
 	else
 		write (unit,*) "Directive failed the tests!"

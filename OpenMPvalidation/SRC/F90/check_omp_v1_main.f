@@ -1,8 +1,8 @@
 !This is the main driver to invoke different test functions
 ! more comments here.....
       program check_omp_v1_main
-	integer LOOPCOUNT 
       implicit none
+	integer LOOPCOUNT 
       integer failed, success
       integer N
       integer num_tests,crosschecked, crossfailed, j
