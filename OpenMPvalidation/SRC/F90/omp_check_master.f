@@ -15,12 +15,12 @@
 !$omp end critical
 	executing_thread=omp_get_thread_num()
 !$omp end master
+!$omp end parallel
 	if ( nthreads .eq. 1 .and. executing_thread .eq. 0) then
  	  chk_omp_master_thd = 1
         else
 	  chk_omp_master_thd = 0
 	end if
-!$omp end parallel
 	end
 
 	integer function crosschk_omp_master_thd()
@@ -33,13 +33,13 @@
 !$omp critical
 	nthreads = nthreads + 1
 !$omp end critical
+!$omp end parallel     	
 	executing_thread=omp_get_thread_num()
 	if ( nthreads .eq. 1 .and. executing_thread .eq. 0) then
           crosschk_omp_master_thd = 1
         else
           crosschk_omp_master_thd = 0
         end if
-!$omp end parallel     	
         end
 
 !***************************************************************************
