@@ -6,10 +6,10 @@
 # Intel compilers:
 #
 #CC = ecc
-CC = icc
+#CC = icc
 #CC = omcc
 #CFLAGS = -O3 -ip -openmp
-CFLAGS = -Wall -O0 -openmp
+#CFLAGS = -Wall -O0 -openmp
 #CFLAGS =  -openmp
 
 # Omni compilers:
@@ -91,7 +91,7 @@ clean:
 
 
 run: check_omp_v1_main
-	rm test.log -f
+	-rm -f test.log 
 	(OMP_NUM_THREADS=2; export OMP_NUM_THREADS; ./check_omp_v1_main)
 
 run2: check_omp_v2_main
