@@ -1,4 +1,4 @@
-/* This file contains all checks for the section construct:
+/* This file contains all checks for the section construct without the checks for the reduction clauses:
 
    ordered: checks that the execution is equivalent to the serial case
 
@@ -7,69 +7,6 @@
 
 
 #include "omp_testsuite.h"
-
-
-int check_parallel_section_reduction(){
-  int sum=7;
-  int known_sum;
-  int i;
-
-  
-#pragma omp parallel sections reduction(+:sum) private(i)
-    {
-#pragma omp section
-      {
-	for (i=1;i<400;i++){
-	  sum += i;
-	}
-      }
-#pragma omp section
-      {
-	for(i=400;i<700;i++)
-	  sum += i;
-      }
-#pragma omp section
-      {
-	for(i=700;i<1000;i++)
-	  sum += i;
-      }
-      
-    }/* end of section reduction.*/
- 
-  known_sum=(999*1000)/2+7;
-  return (known_sum==sum);
-}
-
-int crosscheck_parallel_section_reduction(){
-  int sum=7;
-  int known_sum;
-  int i;
-
-  
-#pragma omp parallel sections private(i)
-    {
-#pragma omp section
-      {
-	for (i=1;i<400;i++){
-	  sum += i;
-	}
-      }
-#pragma omp section
-      {
-	for(i=400;i<700;i++)
-	  sum += i;
-      }
-#pragma omp section
-      {
-	for(i=700;i<1000;i++)
-	  sum += i;
-      }
-      
-    }/* end of section reduction.*/
- 
-  known_sum=(999*1000)/2+7;
-  return (known_sum==sum);
-}
 
 
 
