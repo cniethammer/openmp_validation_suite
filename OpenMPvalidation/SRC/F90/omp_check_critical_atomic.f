@@ -179,7 +179,7 @@
 	  result1 = result2
 	end if
 !$omp end parallel
-        print *,"1:", result1, "2:", result2, "dummy", dummy
+c        print *,"1:", result1, "2:", result2, "dummy", dummy
     	if ( result1 .eq. result2 .and. result2 .eq. dummy .and.
      &       result2 .eq. 3 ) then
 	   check_omp_flush = 1
