@@ -66,47 +66,43 @@
 	integer MAX_SIZE
 	parameter (MAX_SIZE = 1000000)
 
-	integer chunk_size
+	integer chunk_size/10/
 	integer tid
-	integer tids(MAX_SIZE)
-	integer count
-	integer tmp_count
+	integer tids(0:MAX_SIZE-1)
+	integer count/0/
+	integer tmp_count/0/
 	integer i
+	integer check_for_schedule_static
 	
 	integer,allocatable:: tmp(:)
-	integer result
+	integer result/0/
 
 	integer omp_get_thread_num
 
 	character*20 logfile
 
-	open (1, FILE = logfile)
-
-	chunk_size = 10
-	count = 0
-	tmp_count = 0
-	result = 0
+c	open (1, FILE = logfile)
 
 !$omp parallel private(tid) shared(tids, count)
 	
 	tid = omp_get_thread_num()
-!$omp parallel do schedule(static,chunk_size)
-	do i = 1 , MAX_SIZE
+!$omp do schedule(static,chunk_size)
+	do i = 0 , MAX_SIZE-1
 		tids(i) = tid
 	end do
-!$omp end parallel do	
+!$omp end do	
 !$omp end parallel 
 
-	do i = 1, MAX_SIZE-1	
+	do i = 0, MAX_SIZE-2
 		if (tids(i) .NE. tids(i+1) ) then
 			count = count + 1
 		endif
 	end do
 
-	allocate(tmp(1:(count+1)))
-	tmp(1) = 1
+	allocate(tmp(0:count))
+	tmp(0) = 1
 
-	do i = 1, MAX_SIZE-1
+	do i = 0, MAX_SIZE-2
 		if (tmp_count .GT. count) then
 			write (*,*) "---------------------"
 			write (*,*) "testinternal Error: List too small"
@@ -114,6 +110,7 @@
 			write (1,*) "-----------------------------"
 			write (1,*) "testinternal Error: List too small"
 			write (1,*) "-----------------------------"
+	 		exit
 		endif
 		
 		if (tids(i) .NE. tids(i+1) ) then
@@ -124,7 +121,7 @@
 		endif
 	end do
 
-	do i = 1, count 
+	do i = 0, count -1
 		if ( tmp(i) .NE. chunk_size) then
 			result = result + 1
 		endif
@@ -134,65 +131,66 @@
 	if (result .EQ. 0) then
 		check_for_schedule_static =  1
 	else
-		write (*,*) "Error: Thread got",result,
+		write (1,*) "Error: Thread got",result,
      &              " times consecutive chunk"
 		check_for_schedule_static =0
 	endif
 
 	end
 
-	integer function crosscheck_for_schedule_static (logfile)
-	
-	integer tid
+
+	integer function crosscheck_for_schedule_static(logfile)
 	integer MAX_SIZE
 	parameter (MAX_SIZE = 1000000)
-	integer tids(MAX_SIZE)
+
+	integer chunk_size/10/
+	integer tid
+	integer tids(0:MAX_SIZE-1)
+	integer count/0/
+	integer tmp_count/0/
 	integer i
-	integer,allocatable:: tmp(:)
-	integer chunk_size,count,result,tmp_count
-	integer omp_get_thread_num
 	
-	character* 20 logfile
+	integer,allocatable:: tmp(:)
+	integer result/0/
+
+	integer omp_get_thread_num
 	integer crosscheck_for_schedule_static
 
-!	open (1,FILE= logfile)
+	character*20 logfile
 
-	chunk_size = 10
-	count = 0
-	result = 0
-	tmp_count = 0
+c	open (1, FILE = logfile)
 
-!$omp parallel private(tid) shared(tids,count)
-
+!$omp parallel private(tid) shared(tids, count)
+	
 	tid = omp_get_thread_num()
- 
 !$omp do
-	do i = 1, MAX_SIZE
+	do i = 0 , MAX_SIZE-1
 		tids(i) = tid
 	end do
-!$omp end do 
-!$omp end parallel
+!$omp end do	
+!$omp end parallel 
 
-	do i = 1, MAX_SIZE - 1
-		if (tids(i) .NE. tids(i+1)) then
+	do i = 0, MAX_SIZE-2
+		if (tids(i) .NE. tids(i+1) ) then
 			count = count + 1
-		endif		
+		endif
 	end do
 
-	allocate(tmp(1:(count+1)))
-	tmp(1) = 1
-	
-	do i = 1, MAX_SIZE - 1
-		if( tmp_count .GT. count) then
-			write (*,*) "--------------------"
-			write (*,*) "Testinternal Error: List too small" 
-			write (*,*) "--------------------" 
-			write (1,*) "--------------------"
-			write (1,*) "Testinternal Error: List too small" 
-			write (1,*) "--------------------" 
-			exit
+	allocate(tmp(0:count))
+	tmp(0) = 1
+
+	do i = 0, MAX_SIZE-2
+		if (tmp_count .GT. count) then
+			write (*,*) "---------------------"
+			write (*,*) "testinternal Error: List too small"
+			write (*,*) "-----------------------------"
+			write (1,*) "-----------------------------"
+			write (1,*) "testinternal Error: List too small"
+			write (1,*) "-----------------------------"
+	 		exit
 		endif
-		if (tids(i) .NE. tids(i+1)) then
+		
+		if (tids(i) .NE. tids(i+1) ) then
 			tmp_count = tmp_count + 1
 			tmp(tmp_count) = 1
 		else
@@ -200,33 +198,30 @@
 		endif
 	end do
 
-	do i = 1, count
-		if (tmp(i) .NE. chunk_size) then
+	do i = 0, count -1
+		if ( tmp(i) .NE. chunk_size) then
 			result = result + 1
 		endif
 	end do
-	
-	if( result .EQ. 0) then
-		crosscheck_for_schedule_static = 1
-c		return
-	else
-		crosscheck_for_schedule_static = 0
-C		return
-	endif
-c	print *,"end of crosscheck_static",
-c     & crosscheck_for_schedule_static
-	end
 
+
+	if (result .EQ. 0) then
+		crosscheck_for_schedule_static =  1
+	else
+		crosscheck_for_schedule_static =0
+	endif
+
+	end
 
 	integer function check_for_schedule_dynamic(logfile)
 	integer tid
 	integer MAX_SIZE
 	parameter (MAX_SIZE = 1000000)
 	
-	integer tids(MAX_SIZE)
+	integer tids(0:MAX_SIZE-1)
 	integer i
 	integer,allocatable:: tmp(:)
-	integer chunk_size,count,result,tmp_count
+	integer chunk_size/10/,count/0/,result/1/,tmp_count/0/
 	integer omp_get_thread_num
 
 	character*20 logfile
@@ -236,32 +231,27 @@ c	open(1,FILE = logfile)
 
 c	print *, "check dynamic"
 
-	chunk_size = 10
-	count = 0
-	result = 0
-	tmp_count = 0
-
 !$omp parallel private(tid) shared(tids,count)
 
 	tid = omp_get_thread_num()
  
 !$omp do schedule(dynamic,chunk_size)
-	do i = 1, MAX_SIZE
+	do i = 0, MAX_SIZE-1
 		tids(i) = tid
 	end do
 !$omp end do 
 !$omp end parallel
 
-	do i = 1,( MAX_SIZE - 1)
+	do i = 0,MAX_SIZE-2
 		if (tids(i) .NE. tids(i+1)) then
 			count = count + 1
 		endif		
 	end do
 
-	allocate(tmp(1:(count+1)))
-	tmp(1) = 1
+	allocate(tmp(0:count))
+	tmp(0) = 1
 	
-	do i = 1, (MAX_SIZE - 1)
+	do i = 0, MAX_SIZE - 2
 		if (tmp_count .GT. count) then
 			write (*,*) "--------------------"
 			write (*,*) "Testinternal Error: List too small" 
@@ -277,13 +267,13 @@ c	print *, "check dynamic"
 	end do
 c	is dynamic statement working
 	
-	do i = 1, (count + 1)
+	do i = 0, count 
 	  if (tmp(i) .NE. chunk_size) then
 		result = result + ((tmp(i)/chunk_size) - 1)
  	  endif
 	end do
 
-	if ((tmp(1) .NE. MAX_SIZE ) .and. (result .GT. 1)) then
+	if ((tmp(0) .NE. MAX_SIZE ) .and. (result .GT. 1)) then
 		write (1,*) "Seem to work. (Treads got", result, 
      &     "times chunks twice by a total of",
      &      MAX_SIZE/chunk_size,"chunks" 
@@ -299,82 +289,75 @@ c	print *, "dynmic=",check_for_schedule_dynamic
 	end
 
 	integer function crosscheck_for_schedule_dynamic(logfile)
-	
 	integer tid
 	integer MAX_SIZE
 	parameter (MAX_SIZE = 1000000)
 	
-	integer tids(MAX_SIZE)
+	integer tids(0:MAX_SIZE)
 	integer i
 	integer,allocatable:: tmp(:)
-	integer chunk_size,count,result,tmp_count
+	integer chunk_size/10/,count/0/,result/1/,tmp_count/0/
 	integer omp_get_thread_num
-	integer crosscheck_for_schedule_dynamic
-	
+
 	character*20 logfile
+	integer          crosscheck_for_schedule_dynamic
 
 c	open(1,FILE = logfile)
-c	print *,"crosscheck dynamic"
-
-	chunk_size = 10
-	count = 0
-	tmp_count = 0
-	result = 1
 
 !$omp parallel private(tid) shared(tids,count)
+
 	tid = omp_get_thread_num()
-!$omp do
-	do i = 1, MAX_SIZE
+ 
+!$omp do 
+	do i = 0, MAX_SIZE-1
 		tids(i) = tid
 	end do
 !$omp end do 
-!$omp end parallel 
+!$omp end parallel
 
-	do i = 1,( MAX_SIZE - 1)
+	do i = 0,MAX_SIZE-2
 		if (tids(i) .NE. tids(i+1)) then
 			count = count + 1
 		endif		
 	end do
 
-	allocate(tmp(1:(count+1)))
-	tmp(1) = 1
+	allocate(tmp(0:count))
+	tmp(0) = 1
 	
-	do i = 1, (MAX_SIZE - 1)
-	  if (tmp_count .GT. count ) then
-		write (*,*) "--------------------"
-		write (*,*)  "Testinternal Error: List too small" 
-		write (*,*)  "--------------------" 
-	  	exit
-  	  endif
-	  if (tids(i) .NE. tids(i+1)) then
-		tmp_count = tmp_count + 1
-	        tmp(tmp_count) = 1
-	  else
-		tmp(tmp_count) = tmp(tmp_count) + 1
-	  endif
+	do i = 0, MAX_SIZE - 2
+		if (tmp_count .GT. count) then
+			write (*,*) "--------------------"
+			write (*,*) "Testinternal Error: List too small" 
+			write (*,*) "--------------------" 
+			exit
+		endif
+		if (tids(i) .NE. tids(i+1)) then
+			tmp_count = tmp_count + 1
+			tmp(tmp_count) = 1
+		else
+			tmp(tmp_count) = tmp(tmp_count) + 1
+		endif
 	end do
 c	is dynamic statement working
 	
-	do i = 1, (count + 1)
-	   if (tmp(i) .NE. chunk_size) then
+	do i = 0, count 
+	  if (tmp(i) .NE. chunk_size) then
 		result = result + ((tmp(i)/chunk_size) - 1)
-	   endif
+ 	  endif
 	end do
 
-c	print *, "result=",result
-
-	if ((tmp(1) .NE. MAX_SIZE).and.(result .GT. 1)) then
-		write (1,*) "Seem to work. (Treads got", 
-     &   result, "times chunks twice by a total of",
-     &   MAX_SIZE/chunk_size,"chunks" 
-		crosscheck_for_schedule_dynamic = 1
+	if ((tmp(0) .NE. MAX_SIZE ) .and. (result .GT. 1)) then
+c		write (1,*) "Seem to work. (Treads got", result, 
+c     &     "times chunks twice by a total of",
+c     &      MAX_SIZE/chunk_size,"chunks" 
+		crosscheck_for_schedule_dynamic= 1
 c		return
 	else
-		write (1,*) "Test negative"
-		crosscheck_for_schedule_dynamic = 0
+c		write (1,*) "Test negative"
+		crosscheck_for_schedule_dynamic= 0
 c		return
 	endif
-c	print *,"cross dynamic=",crosscheck_for_schedule_dynamic
+c	print *, "dynmic=",crosscheck_for_schedule_dynamic
 
 	end
 

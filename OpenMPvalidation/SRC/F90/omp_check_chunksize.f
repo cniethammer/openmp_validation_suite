@@ -54,12 +54,12 @@
 	  do while (notout .ge. 1 .and. (count .lt. MAX_TIME)
      &         .and. (maxiter .eq. i) )
 !$omp flush(maxiter,notout)
-	       print *, "Thread Nr. ",tid,"sleeping"
+c	       print *, "Thread Nr. ",tid,"sleeping"
 	       call sleep(SLEEPTIME)
 	       count = count + sleeptime
 	  end do
           tids(i) = tid
-	  print *,"i=",i,"tids(i)=",tids(i)
+c	  print *,"i=",i,"tids(i)=",tids(i)
 	 end do
 !$omp end do nowait
 
@@ -71,7 +71,7 @@ c	print *, "chunk size"
 
 	m = 1
 	tmp = tids(0) 
-	print *,"tmp=",tmp,"max_size=",max_size
+c	print *,"tmp=",tmp,"max_size=",max_size
 
 	global_chunknr=0
         openwork = max_size

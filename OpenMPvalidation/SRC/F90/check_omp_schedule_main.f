@@ -8,7 +8,6 @@
   	integer j/0/
   	integer result/1/
   	integer crossfailed/0/
-	integer sign/1/
 	integer check_for_schedule_static
 	integer crosscheck_for_schedule_static
 	integer check_for_schedule_dynamic
@@ -21,7 +20,9 @@
 	  integer :: fail
 	end type testcall
 	type(testcall):: alltests(4)
+	include "omp_testsuite.f"
 	logFileName= "check_schedule.log"
+
 	open(1, FILE=logFileName)
   	write(*,*) 
      &  "######## OpenMP Validation Suite V 0.93 ######"
@@ -40,11 +41,11 @@
 	alltests(1)%pass = 1
 	alltests(2)%pass = 1
 	alltests(3)%pass = 1
-	alltests(4)%pass = 1
+	alltests(4)%pass =0 
  
   	do while( alltests(i)%pass .ge. 1)
     	   crossfailed=0
-    	   result=1;
+    	   result=1
            write(1,*) 
      &     "--------------------------------------------------"
            write (1,*) alltests(i)%name
@@ -53,7 +54,7 @@
     	   do j=1,N
     	    write (1,*) "# Check: "
 
-	    select case (j)
+	    select case (i)
 	     case(1)
                alltests(1)%pass=check_for_schedule_static(logFileName)
 	     case(2)
@@ -67,7 +68,7 @@
             if ( alltests(i)%pass.ge.1 ) then
 	     write (1,*) "No errors occured during the ",
      &                   j, ". test."
-	     select case (j)
+	     select case (i)
              case(1)
                alltests(1)%fail=
      &          crosscheck_for_schedule_static(logFileName)
@@ -81,16 +82,16 @@
                alltests(4)%fail=0
             end select
  
-      	     if ( .not. alltests(i)%fail.ge.1 ) then
+      	     if ( (.not. alltests(i)%fail).ge.1 ) then
 	       write (1,*) "# Crosscheck: Verified result"
-	       crossfailed = crossfailed - 1
+	       crossfailed = crossfailed + 1
       	     else 
 	       write (1,*) "# Crosscheck: Coudn't verify result."
 	     end if
 	    else
-	     write (1,*) "--> Erroros occured during the ",
+	     write (1,*) "--> Errors occured during the ",
      &         j,". test."
-	     result=0;
+	     result=0
 	    end if
 	   end do
 	   if ( result .eq. 0) then
@@ -102,12 +103,14 @@
              crosschecked = crosscheck + 1
 	   end if
     	   write(1,*) "Result for ",alltests(i)%name
-    	   if(result.eq.1) then
+    	   if(result.ge.1) then
       	     write(1,*) "Directive worked without errors."
 	     write(1,*) "Crosschecks verified this result with "
-	     write(1,"(f5.2,A16)") 100.0*crossfailed/N,"%% certainty."
-	     write(*,*) alltests(i)%name," ... verified with ",
-     &        100.0*crossfailed/N,"% certainty"
+	     write(1,"(f5.2,A16)") 
+     &         dble(100.0*crossfailed)/dble(N),"%% certainty."
+
+	     write(*,"(A26,A31,f5.2,A16)") alltests(i)%name,
+     &        " ... verified with ",100.0*crossfailed/N,"% certainty"
 	   else
 	     write(1,*) "Directive failed the tests!"
      	     write(*,*) alltests(i)%name," ... FAILED"
@@ -117,7 +120,7 @@
 	end do
 	write(*,*)
 	write(*,*)
-  	write(*,*) " Performed a total of ",i,"tests, ",
+  	write(*,*) " Performed a total of ",i-1,"tests, ",
      &  failed," failed and ",success," successful with ",
      &  crosschecked,"cross checked"
 	write(*,*) 
