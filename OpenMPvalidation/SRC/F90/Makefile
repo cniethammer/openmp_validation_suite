@@ -17,6 +17,11 @@
 #FC=xlf90_r
 #FFLAGS=-qsmp=omp -qfixed=132 -qlanglvl=extended
 #FLINKFLAGS=-qsmp=omp -lm
+# 
+#PGI Compiler
+#FC=pgf90
+#FFLAGS=-fast -mp
+#FLINKFLAGS=-fast -mp
 
 
 
