@@ -2,9 +2,10 @@
 ! Functions: check_single_copyprivate
 !********************************************************************
 
-      integer function chk_single_copyprivate()
+      integer function check_single_copyprivate(fileunit)
       implicit none
       integer result
+      integer fileunit
       integer nr_iterations
       integer i
       integer j,thread
@@ -27,17 +28,18 @@
 !$omp end parallel
        if(result .eq. 0 .AND. 
      x  nr_iterations .eq. LOOPCOUNT) then
-          chk_single_copyprivate=1
+          check_single_copyprivate=1
        else
-          chk_single_copyprivate=0
+          check_single_copyprivate=0
        endif
        end
 
 
-      integer function crosschk_single_copyprivate()
+      integer function crosscheck_single_copyprivate(fileunit)
       implicit none
       integer result
       integer nr_iterations
+      integer fileunit
       integer i
       integer j,thread
       integer omp_get_thread_num
@@ -59,9 +61,9 @@
 !$omp end parallel
        if(result .eq. 0 .AND. 
      x  nr_iterations .eq. LOOPCOUNT) then
-          crosschk_single_copyprivate=1
+          crosscheck_single_copyprivate=1
        else
-          crosschk_single_copyprivate=0
+          crosscheck_single_copyprivate=0
        endif
        end
 
@@ -72,14 +74,16 @@
 !***************************************************************************
       subroutine check_copyprivate(N,failed,num_tests,crosschecked)
       implicit none
-      integer, external::chk_single_copyprivate
-      integer, external::crosschk_single_copyprivate
+      integer, external::check_single_copyprivate
+      integer, external::crosscheck_single_copyprivate
 
       character (len=20)::name
       integer failed
       integer N
       integer num_tests,crosschecked
       name="single COPYPRIVATE"
-      call do_test(chk_single_copyprivate,crosschk_single_copyprivate,
+      call do_test(check_single_copyprivate,
+     & crosscheck_single_copyprivate,
      x name,N,failed,num_tests,crosschecked)
       end
+
