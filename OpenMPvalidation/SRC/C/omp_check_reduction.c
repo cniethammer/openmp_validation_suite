@@ -234,7 +234,7 @@ int check_parallel_for_reduction(FILE * logFile){
 #pragma omp parallel for schedule(dynamic,1) reduction(^:exclusiv_bit_or)  
 	for(i=0;i<LOOPCOUNT;++i)
 	{
-		exclusiv_bit_or = exclusiv_bit_or | logics[i];
+		exclusiv_bit_or = exclusiv_bit_or ^ logics[i];
 	}
 	if(exclusiv_bit_or)
 	{
@@ -248,7 +248,7 @@ int check_parallel_for_reduction(FILE * logFile){
 #pragma omp parallel for schedule(dynamic,1) reduction(^:exclusiv_bit_or)
 	for(i=0;i<LOOPCOUNT;++i)
 	{
-		exclusiv_bit_or = exclusiv_bit_or | logics[i];
+		exclusiv_bit_or = exclusiv_bit_or ^ logics[i];
 	}
 	if(!exclusiv_bit_or)
 	{
@@ -788,7 +788,7 @@ int check_for_reduction(FILE * logFile){
 #pragma omp for schedule(dynamic,1) reduction(^:exclusiv_bit_or)  
 		for(i=0;i<LOOPCOUNT;++i)
 		{
-			exclusiv_bit_or = exclusiv_bit_or | logics[i];
+			exclusiv_bit_or = exclusiv_bit_or ^ logics[i];
 		}
 	}
 	if(exclusiv_bit_or)
@@ -805,7 +805,7 @@ int check_for_reduction(FILE * logFile){
 #pragma omp for schedule(dynamic,1) reduction(^:exclusiv_bit_or)
 		for(i=0;i<LOOPCOUNT;++i)
 		{
-			exclusiv_bit_or = exclusiv_bit_or | logics[i];
+			exclusiv_bit_or = exclusiv_bit_or ^ logics[i];
 		}
 	}
 	if(!exclusiv_bit_or)
@@ -1331,21 +1331,21 @@ int check_section_reduction(FILE * logFile){
 			{
 				for (i=1;i<300;i++)
 				{
-					logic_or = (logic_or && logics[i]);
+					logic_or = (logic_or || logics[i]);
 				}
 			}
 #pragma omp section
 			{
 				for (i=300;i<700;i++)
 				{
-					logic_or = (logic_or && logics[i]);
+					logic_or = (logic_or || logics[i]);
 				}
 			}
 #pragma omp section
 			{
 				for (i=700;i<1000;i++)
 				{
-					logic_or = (logic_or && logics[i]);
+					logic_or = (logic_or || logics[i]);
 				}
 			}
 		}
@@ -1555,21 +1555,21 @@ int check_section_reduction(FILE * logFile){
 			{	
 				for(i=0;i<300;++i)
 				{
-					exclusiv_bit_or = exclusiv_bit_or | logics[i];
+					exclusiv_bit_or = exclusiv_bit_or ^ logics[i];
 				}
 			}
 #pragma omp section
 			{	
 				for(i=300;i<700;++i)
 				{
-					exclusiv_bit_or = exclusiv_bit_or | logics[i];
+					exclusiv_bit_or = exclusiv_bit_or ^ logics[i];
 				}
 			}
 #pragma omp section
 			{	
 				for(i=700;i<1000;++i)
 				{
-					exclusiv_bit_or = exclusiv_bit_or | logics[i];
+					exclusiv_bit_or = exclusiv_bit_or ^ logics[i];
 				}
 			}
 		}
@@ -1591,21 +1591,21 @@ int check_section_reduction(FILE * logFile){
 			{
 				for(i=0;i<300;++i)
 				{
-					exclusiv_bit_or = exclusiv_bit_or | logics[i];
+					exclusiv_bit_or = exclusiv_bit_or ^ logics[i];
 				}
 			}
 #pragma omp section
 			{
 				for(i=300;i<700;++i)
 				{
-					exclusiv_bit_or = exclusiv_bit_or | logics[i];
+					exclusiv_bit_or = exclusiv_bit_or ^ logics[i];
 				}
 			}
 #pragma omp section
 			{
 				for(i=700;i<1000;++i)
 				{
-					exclusiv_bit_or = exclusiv_bit_or | logics[i];
+					exclusiv_bit_or = exclusiv_bit_or ^ logics[i];
 				}
 			}
 		}
@@ -2320,21 +2320,21 @@ int check_parallel_section_reduction(FILE * logFile){
 		{
 			for (i=1;i<300;i++)
 			{
-				logic_or = (logic_or && logics[i]);
+				logic_or = (logic_or || logics[i]);
 			}
 		}
 #pragma omp section
 		{
 			for (i=300;i<700;i++)
 			{
-				logic_or = (logic_or && logics[i]);
+				logic_or = (logic_or || logics[i]);
 			}
 		}
 #pragma omp section
 		{
 			for (i=700;i<1000;i++)
 			{
-				logic_or = (logic_or && logics[i]);
+				logic_or = (logic_or || logics[i]);
 			}
 		}
 	}
@@ -2525,21 +2525,21 @@ int check_parallel_section_reduction(FILE * logFile){
 			{	
 				for(i=0;i<300;++i)
 				{
-					exclusiv_bit_or = exclusiv_bit_or | logics[i];
+					exclusiv_bit_or = exclusiv_bit_or ^ logics[i];
 				}
 			}
 #pragma omp section
 			{	
 				for(i=300;i<700;++i)
 				{
-					exclusiv_bit_or = exclusiv_bit_or | logics[i];
+					exclusiv_bit_or = exclusiv_bit_or ^ logics[i];
 				}
 			}
 #pragma omp section
 			{	
 				for(i=700;i<1000;++i)
 				{
-					exclusiv_bit_or = exclusiv_bit_or | logics[i];
+					exclusiv_bit_or = exclusiv_bit_or ^ logics[i];
 				}
 			}
 		}
@@ -2558,21 +2558,21 @@ int check_parallel_section_reduction(FILE * logFile){
 			{
 				for(i=0;i<300;++i)
 				{
-					exclusiv_bit_or = exclusiv_bit_or | logics[i];
+					exclusiv_bit_or = exclusiv_bit_or ^ logics[i];
 				}
 			}
 #pragma omp section
 			{
 				for(i=300;i<700;++i)
 				{
-					exclusiv_bit_or = exclusiv_bit_or | logics[i];
+					exclusiv_bit_or = exclusiv_bit_or ^ logics[i];
 				}
 			}
 #pragma omp section
 			{
 				for(i=700;i<1000;++i)
 				{
-					exclusiv_bit_or = exclusiv_bit_or | logics[i];
+					exclusiv_bit_or = exclusiv_bit_or ^ logics[i];
 				}
 			}
 		}
