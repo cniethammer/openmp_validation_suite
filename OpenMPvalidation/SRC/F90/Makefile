@@ -1,11 +1,11 @@
 #SUN Fortran Compiler:
-FC=f90
-FFLAGS=-xopenmp -O3
-FLINKFLAGS=-O3 -xopenmp
+#FC=f90
+#FFLAGS=-xopenmp -O3
+#FLINKFLAGS=-O3 -xopenmp
 #Intel Compiler
-#FC=ifort
-#FFLAGS=-openmp -O3
-#FLINKFLAGS=-O3 -openmp
+FC=ifort
+FFLAGS=-openmp -O3
+FLINKFLAGS=-O3 -openmp
 
 
 
@@ -27,10 +27,21 @@ common_utility.o
 
 OBJS10= omp_check_chunksize.o omp_check_lib.o common_utility.o
 
-validation_suite_v1_fortran: $(OBJS) 
+default: 
+	@echo "Possible Targets are:"
+	@echo " fortran_v1  - build omp version 1 tests"
+	@echo " fortran_v2  - build omp version 2 tests"
+	@echo " check_omp_schedule_main  - build schedule clause tests"
+	@echo " check_chunksize - build chunksite tests (internal use)"
+	@echo " all       - build all binaries"
+
+
+all: fortran_v1 fortran_v2 check_omp_schedule_main check_chunksize
+
+fortran_v1: $(OBJS) 
 	$(FC) $(FLINKFLAGS) -o fortran_v1 $(OBJS)
 
-v2_fortran: $(OBJS2) 
+fortran_v2: $(OBJS2) 
 	$(FC) $(FLINKFLAGS) -o fortran_v2 $(OBJS2)
 
 omp_v2: $(OBJS2) $(OBJS3)
