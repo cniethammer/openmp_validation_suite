@@ -77,8 +77,11 @@ int main(int argc,char** argv){
     crossfailed=0;
     result=1;
     fprintf(logFile,"--------------------------------------------------\n%s\n--------------------------------------------------\n",alltests[i].name);
+    printf("%s ... ",alltests[i].name);
+    fflush(stdout);
     for(j=0;j<N;j++){
     	fprintf(logFile,"# Check: ");
+
       if(alltests[i].pass(logFile)){
 	fprintf(logFile,"No errors occured during the %d. test.\n",j+1);
       	if(!alltests[i].fail(logFile)){
@@ -106,11 +109,11 @@ int main(int argc,char** argv){
     fprintf(logFile,"Result for %s:\n",alltests[i].name);
     if(result){
       fprintf(logFile,"Directiv worked without errors.\nCrosschecks verified this result with %5.2f%% certainty.\n",100.0*crossfailed/N);
-      printf("%s ... verified with %5.2f%% certainty\n",alltests[i].name,100.0*crossfailed/N);
+      printf(" verified with %5.2f%% certainty\n",100.0*crossfailed/N);
     }
     else {
       fprintf(logFile,"Directive failed the tests!\n");
-      printf("%s ... FAILED\n",alltests[i].name);
+      printf(" FAILED\n");
     }
 
 

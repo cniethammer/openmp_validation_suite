@@ -46,6 +46,8 @@ int main(int argc,char** argv){
     crossfailed=0;
     result=1;
     fprintf(logFile,"--------------------------------------------------\n%s\n--------------------------------------------------\n",alltests[i].name);
+    printf("%s ... ",alltests[i].name);
+    fflush(stdout);
     for(j=0;j<N;j++){
     	fprintf(logFile,"# Check: ");
       if(alltests[i].pass(logFile)){
@@ -85,7 +87,7 @@ int main(int argc,char** argv){
 
     i++;
   }
-  printf("\n\n Performed a total of %d tests, %d failed and %d successful with %d cross checked\nFor detailled inforamtion on the tests see the logfile (%s)",i,failed,success,crosschecked,logFileName);
+  printf("\n\n Performed a total of %d tests, %d failed and %d successful with %d cross checked\nFor detailled information on the tests see the logfile (%s)\n",i,failed,success,crosschecked,logFileName);
   fprintf(logFile,"\n\n Performed a total of %d tests, %d failed and %d successful with %d cross checked\n",i,failed,success,crosschecked);
 fclose(logFile);
 return failed;
