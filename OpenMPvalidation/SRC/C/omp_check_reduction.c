@@ -1,9 +1,9 @@
-#include <math.h>
 #include <stdio.h>
+#include <math.h>
 #include "omp_testsuite.h"
 
 
-int check_parallel_for_reduction(){
+int check_parallel_for_reduction(FILE * logFile){
 	int sum=0;
 	int known_sum;
 	double dsum=0;
@@ -39,7 +39,7 @@ int check_parallel_for_reduction(){
 	if(known_sum!=sum)
 	{
 		result++;
-		printf("\nError in Sum with integers: Result=%d, expected result=%d\n",sum,known_sum); 
+		fprintf(logFile,"Error in sum with integers: Result was %d instead of %d\n",sum,known_sum); 
 	}
 
 	diff = (LOOPCOUNT*(LOOPCOUNT+1))/2;
@@ -52,7 +52,7 @@ int check_parallel_for_reduction(){
 	if(diff != 0)
 	{
 		result++;
-		printf("\nError in Difference: Result was %d instead of 0.\n",diff);
+		fprintf(logFile,"Error in difference with integers: Result was %d instead of 0.\n",diff);
 	}
 
 	/* Tests for doubles */
@@ -68,15 +68,12 @@ int check_parallel_for_reduction(){
 	for (i=0;i<DOUBLE_DIGITS;++i)
 	{
 	    dsum += pow(dt,i);
-	    /*
-		dsum += dtmp;
-		dtmp*=dt;*/
 	}
 
 	if( fabs(dsum-dknown_sum) > rounding_error )
 	{
 		result++; 
-		printf("\nError in sum with doubles: Calculated: %f Expected: %f (Difference: %E)\n",dsum,dknown_sum, dsum-dknown_sum);
+		fprintf(logFile,"Error in sum with doubles: Result was %f instead of %f (Difference: %E)\n",dsum,dknown_sum, dsum-dknown_sum);
 	}
 
 	dpt=1;
@@ -85,8 +82,9 @@ int check_parallel_for_reduction(){
 	{
 		dpt*=dt;
 	}
+	fprintf(logFile,"\n");
 	ddiff = (1-dpt)/(1-dt);
-#pragma omp parallel for schedule(dynamic,1) reduction(-:diff)
+#pragma omp parallel for schedule(dynamic,1) reduction(-:ddiff)
 	for (i=0;i<DOUBLE_DIGITS;++i)
 	{
 	    ddiff -= pow(dt,i);
@@ -94,7 +92,7 @@ int check_parallel_for_reduction(){
 	if( fabs(ddiff) > rounding_error)
 	{
 		result++;
-		printf("\nError in Difference with doubles: Difference %E\n",ddiff);
+		fprintf(logFile,"Error in Difference with doubles: Result was %E instead of 0.0\n",ddiff);
 	}
 
 #pragma omp parallel for schedule(dynamic,1) reduction(*:product)  
@@ -107,7 +105,7 @@ int check_parallel_for_reduction(){
 	if(known_product != product)
 	{
 		result++;
-		printf("\nError in Product: Known Product: %d\tcalculated Product: %d\n\n",known_product,product);
+		fprintf(logFile,"Error in Product with integers: Result was %d instead of %d\n\n",product,known_product);
 	}
 
 	for(i=0;i<LOOPCOUNT;i++)
@@ -123,7 +121,7 @@ int check_parallel_for_reduction(){
 	if(!logic_and)
 	{
 		result++;
-		/*printf("Error in AND part 1\n");*/
+		fprintf(logFile,"Error in logic AND part 1.\n");
 	}
 
 	logic_and = 1;
@@ -137,7 +135,7 @@ int check_parallel_for_reduction(){
 	if(logic_and)
 	{
 		result++;
-		printf("Error in AND part 2");
+		fprintf(logFile,"Error in logic AND part 2.\n");
 	}
 
 	for(i=0;i<LOOPCOUNT;i++)
@@ -153,7 +151,7 @@ int check_parallel_for_reduction(){
 	if(logic_or)
 	{
 		result++;
-		printf("Error in OR part 1");
+		fprintf(logFile,"Error in logic OR part 1.\n");
 	}
 	logic_or = 0;
 	logics[LOOPCOUNT/2]=1;
@@ -166,7 +164,7 @@ int check_parallel_for_reduction(){
 	if(!logic_or)
 	{
 		result++;
-		printf("Error in OR part 2");
+		fprintf(logFile,"Error in logic OR part 2.\n");
 	}
 
 
@@ -183,7 +181,7 @@ int check_parallel_for_reduction(){
 	if(!bit_and)
 	{
 		result++;
-		printf("Error in BIT AND part 1\n");
+		fprintf(logFile,"Error in BIT AND part 1.\n");
 	}
 
 	bit_and = 1;
@@ -197,7 +195,7 @@ int check_parallel_for_reduction(){
 	if(bit_and)
 	{
 		result++;
-		printf("Error in BIT AND part 2");
+		fprintf(logFile,"Error in BIT AND part 2.\n");
 	}
 
 	for(i=0;i<LOOPCOUNT;i++)
@@ -213,7 +211,7 @@ int check_parallel_for_reduction(){
 	if(bit_or)
 	{
 		result++;
-		printf("Error in BIT OR part 1\n");
+		fprintf(logFile,"Error in BIT OR part 1\n");
 	}
 	bit_or = 0;
 	logics[LOOPCOUNT/2]=1;
@@ -226,7 +224,7 @@ int check_parallel_for_reduction(){
 	if(!bit_or)
 	{
 		result++;
-		printf("Error in BIT OR part 2\n");
+		fprintf(logFile,"Error in BIT OR part 2\n");
 	}
 
 	for(i=0;i<LOOPCOUNT;i++)
@@ -242,7 +240,7 @@ int check_parallel_for_reduction(){
 	if(exclusiv_bit_or)
 	{
 		result++;
-		printf("Error in EXCLUSIV BIT OR part 1\n");
+		fprintf(logFile,"Error in EXCLUSIV BIT OR part 1\n");
 	}
 
 	exclusiv_bit_or = 0;
@@ -256,14 +254,14 @@ int check_parallel_for_reduction(){
 	if(!exclusiv_bit_or)
 	{
 		result++;
-		printf("Error in EXCLUSIV BIT OR part 2\n");
+		fprintf(logFile,"Error in EXCLUSIV BIT OR part 2\n");
 	}
 
 	/*printf("\nResult:%d\n",result);*/
 	return (result==0);
 }
 
-int crosscheck_parallel_for_reduction(){
+int crosscheck_parallel_for_reduction(FILE * logFile){
 	int sum=0;
 	int known_sum;
 	double dsum=0;
@@ -326,8 +324,7 @@ int crosscheck_parallel_for_reduction(){
 #pragma omp parallel for schedule(dynamic,1)
 	for (i=0;i<DOUBLE_DIGITS;++i)
 	{
-		dsum += dtmp;
-		dtmp*=dt;
+		dsum += pow(dt,i);
 	}
 
 	if(dsum!=dknown_sum && (((dsum-dknown_sum) < rounding_error) || ((dsum-dknown_sum) > rounding_error) ))
@@ -346,8 +343,7 @@ int crosscheck_parallel_for_reduction(){
 #pragma omp parallel for schedule(dynamic,1)
 	for (i=0;i<DOUBLE_DIGITS;++i)
 	{
-		ddiff -= dtmp;
-		dtmp*=dt;
+		ddiff -= pow(dt,i);
 	}
 	if(ddiff > rounding_error || ddiff < (-rounding_error))
 	{
@@ -521,7 +517,7 @@ int crosscheck_parallel_for_reduction(){
 	return (result==0);
 }
 
-int check_for_reduction(){
+int check_for_reduction(FILE * logFile){
 	int sum=0;
 	int known_sum;
 	double dsum=0;
@@ -560,7 +556,7 @@ int check_for_reduction(){
 	if(known_sum!=sum)
 	{
 		result++;
-		/*printf("\nError in Sum with integers\n"); */
+		fprintf(logFile,"Error in sum with integers: Result was %d instead of %d.\n",sum,known_sum); 
 	}
 
 	diff = (LOOPCOUNT*(LOOPCOUNT+1))/2;
@@ -576,7 +572,7 @@ int check_for_reduction(){
 	if(diff != 0)
 	{
 		result++;
-		/*printf("\nError in Difference: Result was %d instead of 0.\n",diff);*/
+		fprintf(logFile,"Error in difference with integers: Result was %d instead of 0.\n",diff);
 	}
 
 	/* Tests for doubles */
@@ -592,16 +588,15 @@ int check_for_reduction(){
 	{
 #pragma omp for schedule(dynamic,1) reduction(+:dsum)
 		for (i=0;i<DOUBLE_DIGITS;++i)
-		{
-			dsum += dtmp;
-			dtmp*=dt;
+		{	
+			dsum += pow(dt,i);
 		}
 	}
 
-	if(dsum!=dknown_sum && (((dsum-dknown_sum) < rounding_error) || ((dsum-dknown_sum) > rounding_error) ))
+	if(dsum!=dknown_sum && (fabs(dsum-dknown_sum) > rounding_error))
 	{
 		result++; 
-		/*printf("\nError in sum with doubles: Calculated: %f Expected: %f (Difference: %E)\n",dsum,dknown_sum, dsum-dknown_sum);*/
+		fprintf(logFile,"\nError in sum with doubles: Result was %f instead of: %f (Difference: %E)\n",dsum,dknown_sum, dsum-dknown_sum);
 	}
 
 	dpt=1;
@@ -613,17 +608,16 @@ int check_for_reduction(){
 	ddiff = (1-dpt)/(1-dt);
 #pragma omp parallel 
 	{
-#pragma omp for schedule(dynamic,1) reduction(-:diff)
+#pragma omp for schedule(dynamic,1) reduction(-:ddiff)
 		for (i=0;i<DOUBLE_DIGITS;++i)
 		{
-			ddiff -= dtmp;
-			dtmp*=dt;
+			ddiff -= pow(dt,i);
 		}
 	}
-	if(ddiff > rounding_error || ddiff < (-rounding_error))
+	if(fabs(ddiff) > rounding_error)
 	{
 		result++;
-		/*printf("\nError in Difference with doubles: Difference %E\n",ddiff);*/
+		fprintf(logFile,"Error in Difference with doubles: Result was %E instead of 0.0\n",ddiff);
 	}
 
 #pragma omp parallel 
@@ -639,7 +633,7 @@ int check_for_reduction(){
 	if(known_product != product)
 	{
 		result++;
-		/*printf("\nError in Product: Known Product: %d\tcalculated Product: %d\n\n",known_product,product);*/
+		fprintf(logFile,"Error in Product with integers: Result was %d instead of %d\n",product,known_product);
 	}
 
 	for(i=0;i<LOOPCOUNT;i++)
@@ -658,7 +652,7 @@ int check_for_reduction(){
 	if(!logic_and)
 	{
 		result++;
-		/*printf("Error in AND part 1\n");*/
+		fprintf(logFile,"Error in logic AND part 1\n");
 	}
 
 	logic_and = 1;
@@ -675,7 +669,7 @@ int check_for_reduction(){
 	if(logic_and)
 	{
 		result++;
-		/*printf("Error in AND part 2");*/
+		fprintf(logFile,"Error in logic AND part 2\n");
 	}
 
 	for(i=0;i<LOOPCOUNT;i++)
@@ -694,7 +688,7 @@ int check_for_reduction(){
 	if(logic_or)
 	{
 		result++;
-		/*printf("Error in OR part 1");*/
+		fprintf(logFile,"Error in logic OR part 1\n");
 	}
 	logic_or = 0;
 	logics[LOOPCOUNT/2]=1;
@@ -710,7 +704,7 @@ int check_for_reduction(){
 	if(!logic_or)
 	{
 		result++;
-		/*printf("Error in OR part 2");*/
+		fprintf(logFile,"Error in logic OR part 2\n");
 	}
 
 
@@ -730,7 +724,7 @@ int check_for_reduction(){
 	if(!bit_and)
 	{
 		result++;
-		/*printf("Error in BIT AND part 1\n");*/
+		fprintf(logFile,"Error in BIT AND part 1\n");
 	}
 
 	bit_and = 1;
@@ -747,7 +741,7 @@ int check_for_reduction(){
 	if(bit_and)
 	{
 		result++;
-		/*printf("Error in BIT AND part 2");*/
+		fprintf(logFile,"Error in BIT AND part 2\n");
 	}
 
 	for(i=0;i<LOOPCOUNT;i++)
@@ -766,7 +760,7 @@ int check_for_reduction(){
 	if(bit_or)
 	{
 		result++;
-		/*printf("Error in BIT OR part 1\n");*/
+		fprintf(logFile,"Error in BIT OR part 1\n");
 	}
 	bit_or = 0;
 	logics[LOOPCOUNT/2]=1;
@@ -782,7 +776,7 @@ int check_for_reduction(){
 	if(!bit_or)
 	{
 		result++;
-		/*printf("Error in BIT OR part 2\n");*/
+		fprintf(logFile,"Error in BIT OR part 2\n");
 	}
 
 	for(i=0;i<LOOPCOUNT;i++)
@@ -801,7 +795,7 @@ int check_for_reduction(){
 	if(exclusiv_bit_or)
 	{
 		result++;
-		/*printf("Error in EXCLUSIV BIT OR part 1\n");*/
+		fprintf(logFile,"Error in EXCLUSIV BIT OR part 1\n");
 	}
 
 	exclusiv_bit_or = 0;
@@ -818,14 +812,14 @@ int check_for_reduction(){
 	if(!exclusiv_bit_or)
 	{
 		result++;
-		/*printf("Error in EXCLUSIV BIT OR part 2\n");*/
+		fprintf(logFile,"Error in EXCLUSIV BIT OR part 2\n");
 	}
 
-	/*printf("\nResult:%d\n",result);*/
+	/*fprintf("\nResult:%d\n",result);*/
 	return (result==0);
 }
 
-int crosscheck_for_reduction(){
+int crosscheck_for_reduction(FILE * logFile){
 	int sum=0;
 	int known_sum;
 	double dsum=0;
@@ -897,8 +891,7 @@ int crosscheck_for_reduction(){
 #pragma omp for schedule(dynamic,1)
 		for (i=0;i<DOUBLE_DIGITS;++i)
 		{
-			dsum += dtmp;
-			dtmp*=dt;
+			dsum += pow(dt,i);
 		}
 	}
 
@@ -920,8 +913,7 @@ int crosscheck_for_reduction(){
 #pragma omp for schedule(dynamic,1)
 		for (i=0;i<DOUBLE_DIGITS;++i)
 		{
-			ddiff -= dtmp;
-			dtmp*=dt;
+			ddiff -= pow(dt,i);
 		}
 	}
 	if(ddiff > rounding_error || ddiff < (-rounding_error))
@@ -1129,7 +1121,7 @@ int crosscheck_for_reduction(){
 	return (result==0);
 }
 
-int check_section_reduction(){
+int check_section_reduction(FILE * logFile){
 	int sum=7;
 	int known_sum;
 	int diff;
@@ -1178,7 +1170,7 @@ int check_section_reduction(){
 	if(known_sum!=sum)
 	{
 		++result;
-		/*printf("\nError in Sum with integers\n"); */
+		fprintf(logFile,"Error in sum with integers: Result was %d instead of %d\n", sum,known_sum);
 	}
 
 	diff = (999*1000)/2;
@@ -1213,7 +1205,7 @@ int check_section_reduction(){
 	if(diff != 0)
 	{
 		result++;
-		/*printf("\nError in Difference: Result was %d instead of 0.\n",diff);*/
+		fprintf(logFile,"Error in Difference with integers: Result was %d instead of 0.\n",diff);
 	}
 
 	known_product = 3628800;
@@ -1249,7 +1241,7 @@ int check_section_reduction(){
 	if(known_product != product)
 	{
 		result++;
-		/*printf("\nError in Product: Known Product: %d\tcalculated Product: %d\n\n",known_product,product);*/
+		fprintf(logFile,"Error in Product with integers: Result was %d instead of %d\n",product,known_product);
 	}
 
 	for(i=0;i<1000;i++)
@@ -1288,7 +1280,7 @@ int check_section_reduction(){
 	if(!logic_and)
 	{
 		result++;
-		/*printf("Error in AND part 1\n");*/
+		fprintf(logFile,"Error in logic AND part 1\n");
 	}
 
 	logic_and = 1;
@@ -1325,7 +1317,7 @@ int check_section_reduction(){
 	if(logic_and)
 	{
 		result++;
-		/*printf("Error in AND part 2");*/
+		fprintf(logFile,"Error in logic AND part 2\n");
 	}
 
 	for(i=0;i<1000;i++)
@@ -1364,7 +1356,7 @@ int check_section_reduction(){
 	if(logic_or)
 	{
 		result++;
-		/*printf("\nError in OR part 1\n");*/
+		fprintf(logFile,"\nError in logic OR part 1\n");
 	}
 
 	logic_or = 0;
@@ -1401,7 +1393,7 @@ int check_section_reduction(){
 	if(!logic_or)
 	{
 		result++;
-		/*printf("\nError in OR part 2\n");*/
+		fprintf(logFile,"Error in logic OR part 2\n");
 	}
 
 
@@ -1440,7 +1432,7 @@ int check_section_reduction(){
 	if(!bit_and)
 	{
 		result++;
-		/*printf("Error in BIT AND part 1\n");*/
+		fprintf(logFile,"Error in BIT AND part 1\n");
 	}
 
 	bit_and = 1;
@@ -1476,7 +1468,7 @@ int check_section_reduction(){
 	if(bit_and)
 	{
 		result++;
-		/*printf("Error in BIT AND part 2");*/
+		fprintf(logFile,"Error in BIT AND part 2\n");
 	}
 
 	for(i=0;i<1000;i++)
@@ -1514,7 +1506,7 @@ int check_section_reduction(){
 	if(bit_or)
 	{
 		result++;
-		/*printf("Error in BIT OR part 1\n");*/
+		fprintf(logFile,"Error in BIT OR part 1\n");
 	}
 	bit_or = 0;
 	logics[501]=1;
@@ -1549,7 +1541,7 @@ int check_section_reduction(){
 	if(!bit_or)
 	{
 		result++;
-		/*printf("Error in BIT OR part 2\n");*/
+		fprintf(logFile,"Error in BIT OR part 2\n");
 	}
 
 	for(i=0;i<1000;i++)
@@ -1587,7 +1579,7 @@ int check_section_reduction(){
 	if(exclusiv_bit_or)
 	{
 		result++;
-		/*printf("Error in EXCLUSIV BIT OR part 1\n");*/
+		fprintf(logFile,"Error in EXCLUSIV BIT OR part 1\n");
 	}
 
 	exclusiv_bit_or = 0;
@@ -1623,7 +1615,7 @@ int check_section_reduction(){
 	if(!exclusiv_bit_or)
 	{
 		result++;
-		/*printf("Error in EXCLUSIV BIT OR part 2\n");*/
+		fprintf(logFile,"Error in EXCLUSIV BIT OR part 2\n");
 	}
 
 	/*printf("\nResult:%d\n",result);*/
@@ -1631,7 +1623,7 @@ int check_section_reduction(){
 }
 
 
-int crosscheck_section_reduction(){
+int crosscheck_section_reduction(FILE * logFile){
 	int sum=7;
 	int known_sum;
 	int diff;
@@ -2133,7 +2125,7 @@ int crosscheck_section_reduction(){
 }
 
 
-int check_parallel_section_reduction(){
+int check_parallel_section_reduction(FILE * logFile){
 	int sum=7;
 	int known_sum;
 	int diff;
@@ -2179,7 +2171,7 @@ int check_parallel_section_reduction(){
 	if(known_sum!=sum)
 	{
 		result++;
-		/*printf("\nError in Sum with integers\n"); */
+		fprintf(logFile,"Error in sum with integers: Result was %d instead of %d.\n",sum, known_sum);
 	}
 
 	diff = (999*1000)/2;
@@ -2212,7 +2204,7 @@ int check_parallel_section_reduction(){
 	if(diff != 0)
 	{
 		result++;
-		/*printf("\nError in Difference: Result was %d instead of 0.\n",diff);*/
+		fprintf(logFile,"Error in Difference with integers: Result was %d instead of 0.\n",diff);
 	}
 
 
@@ -2246,7 +2238,7 @@ int check_parallel_section_reduction(){
 	if(known_product != product)
 	{
 		result++;
-		/*printf("\nError in Product: Known Product: %d\tcalculated Product: %d\n\n",known_product,product);*/
+		fprintf(logFile,"Error in Product with integers: Result was %d instead of %d\n",product,known_product);
 	}
 
 	for(i=0;i<1000;i++)
@@ -2282,7 +2274,7 @@ int check_parallel_section_reduction(){
 	if(!logic_and)
 	{
 		result++;
-		/*printf("Error in AND part 1\n");*/
+		fprintf(logFile,"Error in logic AND part 1\n");
 	}
 
 	logic_and = 1;
@@ -2316,7 +2308,7 @@ int check_parallel_section_reduction(){
 	if(logic_and)
 	{
 		result++;
-		/*printf("Error in AND part 2");*/
+		fprintf(logFile,"Error in logic AND part 2");
 	}
 
 	for(i=0;i<1000;i++)
@@ -2352,7 +2344,7 @@ int check_parallel_section_reduction(){
 	if(logic_or)
 	{
 		result++;
-		/*printf("\nError in OR part 1\n");*/
+		fprintf(logFile,"Error in logic OR part 1\n");
 	}
 
 	logic_or = 0;
@@ -2386,7 +2378,7 @@ int check_parallel_section_reduction(){
 	if(!logic_or)
 	{
 		result++;
-		/*printf("\nError in OR part 2\n");*/
+		fprintf(logFile,"Error in logic OR part 2\n");
 	}
 
 	for(i=0;i<1000;++i)
@@ -2421,7 +2413,7 @@ int check_parallel_section_reduction(){
 	if(!bit_and)
 	{
 		result++;
-		/*printf("Error in BIT AND part 1\n");*/
+		fprintf(logFile,"Error in BIT AND part 1\n");
 	}
 
 	bit_and = 1;
@@ -2454,7 +2446,7 @@ int check_parallel_section_reduction(){
 	if(bit_and)
 	{
 		result++;
-		/*printf("Error in BIT AND part 2");*/
+		fprintf(logFile,"Error in BIT AND part 2");
 	}
 
 	for(i=0;i<1000;i++)
@@ -2489,7 +2481,7 @@ int check_parallel_section_reduction(){
 	if(bit_or)
 	{
 		result++;
-		/*printf("Error in BIT OR part 1\n");*/
+		fprintf(logFile,"Error in BIT OR part 1\n");
 	}
 	bit_or = 0;
 	logics[501]=1;
@@ -2521,7 +2513,7 @@ int check_parallel_section_reduction(){
 	if(!bit_or)
 	{
 		result++;
-		/*printf("Error in BIT OR part 2\n");*/
+		fprintf(logFile,"Error in BIT OR part 2\n");
 	}
 
 	for(i=0;i<1000;i++)
@@ -2556,7 +2548,7 @@ int check_parallel_section_reduction(){
 	if(exclusiv_bit_or)
 	{
 		result++;
-		/*printf("Error in EXCLUSIV BIT OR part 1\n");*/
+		fprintf(logFile,"Error in EXCLUSIV BIT OR part 1\n");
 	}
 
 	exclusiv_bit_or = 0;
@@ -2589,7 +2581,7 @@ int check_parallel_section_reduction(){
 	if(!exclusiv_bit_or)
 	{
 		result++;
-		/*printf("Error in EXCLUSIV BIT OR part 2\n");*/
+		fprintf(logFile,"Error in EXCLUSIV BIT OR part 2\n");
 	}
 
 	/*printf("\nResult:%d\n",result);*/
