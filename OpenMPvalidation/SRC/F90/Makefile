@@ -1,7 +1,15 @@
 #SUN Fortran Compiler:
-FC=f90
-FFLAGS=-xopenmp -O3
-FLINKFLAGS=-O3 -xopenmp
+#FC=f90
+#FFLAGS=-xopenmp -O3
+#FLINKFLAGS=-O3 -xopenmp
+#Intel Compiler
+FC=ifort
+FFLAGS=-openmp -O3
+FLINKFLAGS=-O3 -openmp
+
+
+
+
 OBJS= check_omp_v1_main.o omp_check_locks.o common_utility.o \
 omp_check_critical_atomic.o omp_check_lib.o omp_check_do.o \
 omp_check_section.o omp_check_single.o omp_check_parallel_do.o \
