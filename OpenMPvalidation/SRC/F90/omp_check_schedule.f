@@ -134,7 +134,7 @@
 	if (result .EQ. 0) then
 		check_for_schedule_static =  1
 	else
-		write (*,*) "Error: Thread got", check_for_schedule_static, 
+		write (*,*) "Error: Thread got",result,
      &              " times consecutive chunk"
 		check_for_schedule_static =0
 	endif
@@ -314,7 +314,7 @@ c	print *, "dynmic=",check_for_schedule_dynamic
 	character*20 logfile
 
 c	open(1,FILE = logfile)
-	print *,"crosscheck dynamic"
+c	print *,"crosscheck dynamic"
 
 	chunk_size = 10
 	count = 0
@@ -390,12 +390,12 @@ c	print *,"cross dynamic=",crosscheck_for_schedule_dynamic
 	parameter(SLEEPTIME = 1)
 
         integer threads
-        integer tids(CFSMAX_SIZE+1)
+        integer tids(0:CFSMAX_SIZE)
         integer i,m,tmp
         integer,allocatable:: chunksizes(:)
-        integer result 
-        integer notout 
-        integer maxiter 
+        integer result/1/
+        integer notout/1/ 
+        integer maxiter/0/ 
 	integer check_for_schedule_guided
 	character*20 logfile
 	integer omp_get_num_threads
@@ -405,15 +405,9 @@ c	print *,"cross dynamic=",crosscheck_for_schedule_dynamic
 	integer tid
 
 	integer global_chunknr
-	integer local_chunknr(NUMBER_OF_THREADS)
+	integer local_chunknr(0:NUMBER_OF_THREADS-1)
 	integer openwork
 	integer expected_chunk_size
-
-	result=1
-	notout = 1
-	maxiter=0
-
-	count = 0
 
 !$omp parallel 
 !$omp single
@@ -437,7 +431,7 @@ c	Each thread will start immediately with the first chunk.
 	tid = omp_get_thread_num()	
 	
 !$omp do schedule(guided,1)
-	do i=1, CFSMAX_SIZE 
+	do i=0, CFSMAX_SIZE -1
 	count = 0
 !$omp flush(maxiter)
             if (i .GT. maxiter) then
@@ -469,18 +463,19 @@ c	c) timeout arrived
 
 !$omp end parallel 
 
+c	print *, "end of // region of check guided"
+
 	m=1
-        tmp=tids(1)
+        tmp=tids(0)
 
 	global_chunknr=0
-c	local_chunknr(NUMBER_OF_THREADS)
 	openwork = CFSMAX_SIZE
 
-	do i = 1, NUMBER_OF_THREADS
+	do i = 0, NUMBER_OF_THREADS-1
 		local_chunknr(i)=0
 	enddo
 
-	tids(CFSMAX_SIZE)= (-1)
+	tids(CFSMAX_SIZE)= -1
 
 	do i = 1, CFSMAX_SIZE
 		if (tmp .EQ. tids(i)) then
@@ -495,14 +490,14 @@ c	local_chunknr(NUMBER_OF_THREADS)
 		endif
 	enddo
 
-	allocate ( chunksizes(1:global_chunknr) )
+	allocate ( chunksizes(0:global_chunknr-1) )
 
 	global_chunknr = 0
 
 	m = 1
-	tmp=tids(1)
+	tmp=tids(0)
 
-        do i = 2, CFSMAX_SIZE+1
+        do i = 1, CFSMAX_SIZE
                 if (tmp .EQ. tids(i)) then
                         m = m+1
                 else
@@ -514,7 +509,7 @@ c	local_chunknr(NUMBER_OF_THREADS)
                 endif
         enddo
 
-	do i = 1, global_chunknr
+	do i = 0, global_chunknr-1
 		if( expected_chunk_size .GT. 2) then
 		  expected_chunk_size=openwork/threads
 		endif
@@ -532,6 +527,7 @@ c	print *,"check guided=",result
 
 	end
 
+	
 	integer function crosscheck_for_schedule_guided(logfile)
 	integer NUMBER_OF_THREADS 
 	integer CFSMAX_SIZE
@@ -543,62 +539,50 @@ c	print *,"check guided=",result
 	parameter(MAX_TIME = 10)
 	parameter(SLEEPTIME = 1)
 
-	integer crosscheck_for_schedule_guided
         integer threads
-        integer tids(CFSMAX_SIZE+1)
+        integer tids(0:CFSMAX_SIZE)
         integer i,m,tmp
         integer,allocatable:: chunksizes(:)
-        integer result 
-        integer notout 
-        integer maxiter 
-
+        integer result/1/
+        integer notout/1/ 
+        integer maxiter/0/ 
+	integer crosscheck_for_schedule_guided
+	character*20 logfile
 	integer omp_get_num_threads
-	integer omp_get_num_thread
+	integer omp_get_thread_num
 
 	integer count
 	integer tid
 
 	integer global_chunknr
-	integer local_chunknr(NUMBER_OF_THREADS)
+	integer local_chunknr(0:NUMBER_OF_THREADS-1)
 	integer openwork
 	integer expected_chunk_size
 
-	character*20 logfile
-
-c	open(1, FILE = logfile)
-
-	result=1
-	notout = 1
-	maxiter=0
-
-	count = 0
-
-!$omp parallel shared(threads)
+!$omp parallel 
 !$omp single
 	threads = omp_get_num_threads()
 !$omp end single
 !$omp end parallel 
 
-        if (threads .LT.  2) then
-           write (*,*) 
+        if( threads .LT.  2) then
+                write (*,*) 
      &   "This test only works with at least two threads ."
-	   crosscheck_for_schedule_guided = 0
-	   return	
+	  check_for_schedule_guided=0
+	  return
 	endif
 
 c	Now the real parallel work:
 c
 c	Each thread will start immediately with the first chunk.
 
-c	print *, "threads=",threads
-
 !$omp parallel shared(tids)
-	count = 0
+        count=0
 	tid = omp_get_thread_num()	
+	
 !$omp do 
-	do i=1, CFSMAX_SIZE 
-
-            count=0
+	do i=0, CFSMAX_SIZE -1
+	count = 0
 !$omp flush(maxiter)
             if (i .GT. maxiter) then
 !$omp critical
@@ -613,86 +597,83 @@ c      	b) we are at the end of the loop (first thread
 c	   finished and set notout=0
 c	c) timeout arrived 
 
-	      do while (notout .ge. 1 .and.
-     & count .LT. MAX_TIME .and. ( maxiter .EQ. i))
+	     do while(notout .ge. 1.and.count .LT. MAX_TIME 
+     &        .and.  maxiter .EQ. i )
 !$omp flush(maxiter,notout)
-	        call sleep(SLEEPTIME)
-                count= count + SLEEPTIME
-	      enddo
+	       call sleep(SLEEPTIME)
+               count= count + SLEEPTIME
+	     end do
 	
-	      tids(i) = tid
+	     tids(i) = tid
 	end do
 !$omp end do nowait
 
         notout = 0
 !$omp flush(notout)
 
-!$omp end parallel
+!$omp end parallel 
 
-	print *,"cross guided"
+c	print *, "end of // region of check guided"
+
 	m=1
         tmp=tids(0)
 
 	global_chunknr=0
-c	local_chunknr(NUMBER_OF_THREADS)
 	openwork = CFSMAX_SIZE
 
-	do i = 1, NUMBER_OF_THREADS
+	do i = 0, NUMBER_OF_THREADS-1
 		local_chunknr(i)=0
 	enddo
 
-	tids(CFSMAX_SIZE+1) = -1
+	tids(CFSMAX_SIZE)= -1
 
-	do i = 1, (CFSMAX_SIZE + 1)
-		if (tmp .EQ. tids(i) ) then
-	          m = m + 1
+	do i = 1, CFSMAX_SIZE
+		if (tmp .EQ. tids(i)) then
+		  m = m+1
 		else
-		  write (*,*) global_chunknr,tmp,local_chunknr(tmp),m
+		  write (1,*) global_chunknr,tmp,
+     &             local_chunknr(tmp),m
 		  global_chunknr = global_chunknr + 1
-		  local_chunknr(tmp)=local_chunknr(tmp)+1
+		  local_chunknr(tmp) = local_chunknr(tmp) + 1
 		  tmp = tids(i)
 		  m = 1
 		endif
 	enddo
 
-	allocate (chunksizes(1:global_chunknr))
+	allocate ( chunksizes(0:global_chunknr-1) )
 
 	global_chunknr = 0
 
 	m = 1
 	tmp=tids(0)
 
-        do i = 1, (CFSMAX_SIZE + 1)
+        do i = 1, CFSMAX_SIZE
                 if (tmp .EQ. tids(i)) then
-                        m = m + 1
+                        m = m+1
                 else
-		  chunksizes(global_chunknr) = m
-		  global_chunknr = global_chunknr + 1
-		  local_chunknr(tmp)=local_chunknr(tmp)+1
-                  tmp = tids(i)
-                  m = 1
+	         chunksizes(global_chunknr) = m
+		 global_chunknr = global_chunknr + 1
+		 local_chunknr(tmp)=local_chunknr(tmp)+1
+                 tmp = tids(i)
+                 m = 1
                 endif
         enddo
 
-	do i = 1, global_chunknr
-		if (expected_chunk_size .GT. 2) then
+	do i = 0, global_chunknr-1
+		if( expected_chunk_size .GT. 2) then
 		  expected_chunk_size=openwork/threads
 		endif
-		if( result .ge. 1 .and. 
-     &           abs(chunksizes(i)-expected_chunk_size)
-     &           .LT.2)  then
-		     result = 1
+		if (result .ge. 1 .and. 
+     &    abs(chunksizes(i)-expected_chunk_size) .LT. 2) then
+		   result = 1
 		else
-	             result = 0
+		   result = 0
 		end if
-
 		openwork = openwork - chunksizes(i)
 	enddo
 
-	print *, "cross guided=",
-     &    crosscheck_for_schedule_guided
+c	print *,"crosscheck guided=",result
 	crosscheck_for_schedule_guided = result
-	return
 
 	end
-	
+
