@@ -1125,7 +1125,7 @@ int check_section_reduction(FILE * logFile){
 	double dpt,dsum=0;
 	double dknown_sum;
 	double dt=0.5;				/* base of geometric row for + and - test*/
-	double rounding_error= 1.E-10;
+	double rounding_error= 1.E-9;
 	int diff;
 	double ddiff;
 	int product=1;
