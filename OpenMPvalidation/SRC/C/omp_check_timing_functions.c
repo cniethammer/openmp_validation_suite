@@ -1,3 +1,4 @@
+#include<stdio.h>
 #include<omp.h>
 #include<stdlib.h>
 #include<unistd.h>
