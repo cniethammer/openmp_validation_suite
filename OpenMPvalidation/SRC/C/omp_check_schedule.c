@@ -1,11 +1,16 @@
-#include "omp_testsuite.h"
-#include <omp.h>
 #include <stdio.h>
+#include <omp.h>
 #include <unistd.h>
 #include <stdlib.h>
 
+#include "omp_testsuite.h"
 
-#define MAX_SIZE 1000000
+
+#define NUMBER_OF_THREADS 10
+#define CFSMAX_SIZE 1000
+#define CFDMAX_SIZE 1000000
+#define MAX_TIME 10
+#define SLEEPTIME 1
 
 
 int check_for_schedule(FILE * logFile)
@@ -35,157 +40,228 @@ int crosscheck_for_schedule(FILE * logFile)
 /* a subroutine for finding num of chunks,thread number,and the c
 hunk-size*/
 
+
+
 int check_for_schedule_static(FILE * logFile)
 {
-    const int chunk_size = 10;
-    int tid;
-    int tids[MAX_SIZE];
-    int count = 0;
-    int tmp_count = 0;
-	int i;
-	int *tmp;
-    int result = 0;
+	const int chunk_size = 7;
+	int threads;
+	int tids[CFSMAX_SIZE];
+	int i,lasttid;
+	int maxiter;
+	int notout = 1;
+	int counter = 0;
+	int tmp_count=1;
+	int lastthreadsstarttid = -1;
+	int result = 0;
 
-#pragma omp parallel private(tid) shared(tids,count)
-{ /* begin of parallel*/
-
-    tid = omp_get_thread_num();
-#pragma omp for schedule(static,chunk_size)
-
-	for(i=0;i<MAX_SIZE;++i)
-    {
-        tids[i] = tid;
-    }
-
-} /* end of parallel */
-
-    for(i=0;i<MAX_SIZE-1;++i){
-        if(tids[i]!=tids[i+1])
-        {
-            count++;
-        }
-    }
-    
-	tmp = (int*)malloc(sizeof(int)*(count+1));
-	tmp[0]=1;
-    
-	for(i=0;i<MAX_SIZE-1;++i){
-		if(tmp_count>count)
-        {
-            printf("--------------------\nTestinternal Error: List too small!!!\n--------------------\n"); /* Error handling */
-            fprintf(logFile,"--------------------\nTestinternal Error: List too small!!!\n--------------------\n"); /* Error handling */            break;
-        }
-		if(tids[i]!=tids[i+1])
-        {
-            tmp_count++;
-            tmp[tmp_count]=1;
-        }
-        else
-        {
-            tmp[tmp_count]++;
-        }
-    }
-
-/* is dynamic statement working? */
-
-    for(i=0;i<count;++i)
-    {
-		if(tmp[i]!=chunk_size)
-        {
-            result++;
-        }
-    }
-    /* for (int i=0;i<count+1;++i) printf("%d\t:=\t%d\n",i+1,tmp[i]); */
-    if(result == 0)
-    {
-		/* printf("Seems to work."); */
-		return 1;
-    }
-    else
-    {
-		fprintf(logFile,"Error: Threads got %d times  consecutive chunks.\n",result);
+#pragma omp parallel shared(tids,counter)
+	{ /* begin of parallel*/
+#pragma omp single
+		{
+			threads = omp_get_num_threads();
+		}
+	} /* end of parallel */
+	
+	if(threads < 2)
+	{
+		printf("This test only works with at least two threads");
+		fprintf(logFile,"This test only works with at least two threads");
 		return 0;
-    }
+	}
+	else 
+	{
+		fprintf(logFile,"Using an internal count of %d\nUsing a specified chunksize of %d\n",CFSMAX_SIZE,chunk_size);
+		tids[CFSMAX_SIZE-1] = -1; /* setting endflag */
+#pragma omp parallel shared(tids)
+		{ /* begin of parallel */
+			int count = 0;
+			int tid;
+			tid = omp_get_thread_num();
+
+#pragma omp for nowait schedule(static,chunk_size)
+			for(i=0;i<CFSMAX_SIZE-1;++i)
+			{
+				count=0;
+#pragma omp flush(maxiter)
+				if(i > maxiter)
+				{
+#pragma omp critical
+					{
+						maxiter=i;
+					} 
+				}
+				/*printf("thread %d sleeping",tid);*/
+				while(notout && (count < MAX_TIME) && (maxiter==i))
+				{
+#pragma omp flush(maxiter,notout)
+					sleep(SLEEPTIME);
+					count+=SLEEPTIME;
+				}
+				/*printf("thread %d awake",tid);*/
+				tids[i] = tid;
+			}
+
+			notout = 0;
+#pragma omp flush(maxiter,notout)
+		} /* end of parallel */
+
+
+
+		lasttid = tids[0];
+		tmp_count = 0; 
+
+		for(i=1;i<CFSMAX_SIZE;++i){
+			if(tids[i] == lasttid)
+			{
+				tmp_count++;
+			}
+			if(tids[i] == lasttid + 1 || tids[i] == 0)
+			{
+				if(tmp_count < chunk_size && lastthreadsstarttid < 0)
+				{
+					lastthreadsstarttid = tids[i-1];
+				}
+				if(tmp_count > chunk_size)
+				{
+					result++;
+					fprintf(logFile,"Thread got %d chunks instead of %d",tmp_count,chunk_size);
+					tmp_count = 1;
+					lasttid = tids[i];
+				}
+				if(lastthreadsstarttid == tids[i])
+				{
+					result++;
+					fprintf(logFile,"Error: Thread got chunk after he got his endchunk");
+				}
+			}
+			if(tids[i] >= threads)
+			{
+				fprintf(logFile,"Found thread with a threadnumber greater than the number of existing threads");
+			}
+			else
+			{
+				fprintf(logFile,"The next chunk was got by thread number %d instead of thread number %d",tids[i],(lasttid==threads)?lasttid+1:0);
+				result++;
+			}
+		}
+		/*printf("Alles OK beim Test von schedule(static)\n");*/
+		return result;
+	}
 }
 
 int crosscheck_for_schedule_static(FILE * logFile)
 {
-    const int chunk_size = 10;
-    int tid;
-    int tids[MAX_SIZE];
-    int count = 0;
-    int tmp_count = 0;
-	int i;
-	int *tmp;
-    int result = 0;
+	const int chunk_size = 7;
+	int threads;
+	int tids[CFSMAX_SIZE];
+	int i,lasttid;
+	int maxiter;
+	int notout = 1;
+	int counter = 0;
+	int tmp_count=1;
+	int lastthreadsstarttid = -1;
+	int result = 0;
 
-#pragma omp parallel private(tid) shared(tids,count)
-{ /* begin of parallel*/
-
-    tid = omp_get_thread_num();
-#pragma omp for
-
-	for(i=0;i<MAX_SIZE;++i)
-    {
-        tids[i] = tid;
-    }
-
-} /* end of parallel */
-
-    for(i=0;i<MAX_SIZE-1;++i){
-        if(tids[i]!=tids[i+1])
-        {
-            count++;
-        }
-    }
-    
-	tmp= (int*)malloc(sizeof(int)*(count+1));
-	tmp[0]=1;
-    
-	for(i=0;i<MAX_SIZE-1;++i){
-		if(tmp_count>count)
-        {
-            printf("--------------------\nTestinternal Error: List too small!!!\n--------------------\n"); /* Error handling */
-            fprintf(logFile,"--------------------\nTestinternal Error: List too small!!!\n--------------------\n"); /* Error handling */            break;
-        }
-		if(tids[i]!=tids[i+1])
-        {
-            tmp_count++;
-            tmp[tmp_count]=1;
-        }
-        else
-        {
-            tmp[tmp_count]++;
-        }
-    }
-
-/* is dynamic statement working? */
-
-    for(i=0;i<count;++i)
-    {
-		if(tmp[i]!=chunk_size)
-        {
-            result++;
-        }
-    }
-    /* for (int i=0;i<count+1;++i) printf("%d\t:=\t%d\n",i+1,tmp[i]); */
-    if(result == 0)
-    {
-		/* printf("Seems to work."); */
-		return 1;
-    }
-    else
-    {
-		/*fprintf(logFile,"Error: Threads got %d times  consecutive chunks.\n",result); */
+#pragma omp parallel shared(tids,counter)
+	{ /* begin of parallel*/
+#pragma omp single
+		{
+			threads = omp_get_num_threads();
+		}
+	} /* end of parallel */
+	
+	if(threads < 2)
+	{
+		printf("This test only works with at least two threads");
+		fprintf(logFile,"This test only works with at least two threads");
 		return 0;
-    }
+	}
+	else 
+	{
+		fprintf(logFile,"Using an internal count of %d\nUsing a specified chunksize of %d\n",CFSMAX_SIZE,chunk_size);
+		tids[CFSMAX_SIZE-1] = -1; /* setting endflag */
+#pragma omp parallel shared(tids)
+		{ /* begin of parallel */
+			int count = 0;
+			int tid;
+			tid = omp_get_thread_num();
+
+#pragma omp for nowait
+			for(i=0;i<CFSMAX_SIZE-1;++i)
+			{
+				count=0;
+#pragma omp flush(maxiter)
+				if(i > maxiter)
+				{
+#pragma omp critical
+					{
+						maxiter=i;
+					} 
+				}
+				/*printf("thread %d sleeping",tid);*/
+				while(notout && (count < MAX_TIME) && (maxiter==i))
+				{
+#pragma omp flush(maxiter,notout)
+					sleep(SLEEPTIME);
+					count+=SLEEPTIME;
+				}
+				/*printf("thread %d awake",tid);*/
+				tids[i] = tid;
+			}
+
+			notout = 0;
+#pragma omp flush(maxiter,notout)
+		} /* end of parallel */
+
+
+		lasttid = tids[0];
+		tmp_count = 0; 
+
+		for(i=1;i<CFSMAX_SIZE;++i){
+			if(tids[i] == lasttid)
+			{
+				tmp_count++;
+			}
+			if(tids[i] == lasttid + 1 || tids[i] == 0)
+			{
+				if(tmp_count < chunk_size && lastthreadsstarttid < 0)
+				{
+					lastthreadsstarttid = tids[i-1];
+				}
+				if(tmp_count > chunk_size)
+				{
+					result++;
+					/*fprintf(logFile,"Thread got %d chunks instead of %d",tmp_count,chunk_size);*/
+					tmp_count = 1;
+					lasttid = tids[i];
+				}
+				if(lastthreadsstarttid == tids[i])
+				{
+					result++;
+					/*fprintf(logFile,"Error: Thread got chunk after he got his endchunk");*/
+				}
+			}
+			if(tids[i] >= threads)
+			{
+				/*fprintf(logFile,"Found thread with a threadnumber greater than the number of existing threads");*/
+			}
+			else
+			{
+				/*fprintf(logFile,"The next chunk was got by thread number %d instead of thread number %d",tids[i],(lasttid==threads)?lasttid+1:0);*/
+				result++;
+			}
+		}
+		return result;
+	}
 }
+
 
 int check_for_schedule_dynamic(FILE * logFile)
 {
     const int chunk_size = 10;
     int tid;
-    int tids[MAX_SIZE];
+    int tids[CFDMAX_SIZE];
     int count = 0;
     int tmp_count = 0;
     int *tmp;
@@ -198,14 +274,14 @@ int check_for_schedule_dynamic(FILE * logFile)
     tid = omp_get_thread_num();
 #pragma omp for schedule(dynamic,chunk_size)
 
-	for(i=0;i<MAX_SIZE;++i)
+	for(i=0;i<CFDMAX_SIZE;++i)
     {
         tids[i] = tid;
     }
 
 } /* end of parallel */
 
-    for(i=0;i<MAX_SIZE-1;++i){
+    for(i=0;i<CFDMAX_SIZE-1;++i){
         if(tids[i]!=tids[i+1])
         {
             count++;
@@ -215,13 +291,13 @@ int check_for_schedule_dynamic(FILE * logFile)
 	tmp = (int*) malloc(sizeof(int)*(count+1));
 	tmp[0]=1;
     
-	for(i=0;i<MAX_SIZE-1;++i){
+	for(i=0;i<CFDMAX_SIZE-1;++i){
 		if(tmp_count>count)
         {
             printf("--------------------\nTestinternal Error: List too small!!!\n--------------------\n"); /* Error handling */
             break;
         }
-		if(tids[i]!=tids[i+1])
+	if(tids[i]!=tids[i+1])
         {
             tmp_count++;
             tmp[tmp_count]=1;
@@ -242,9 +318,9 @@ int check_for_schedule_dynamic(FILE * logFile)
         }
     }
     /* for (int i=0;i<count+1;++i) printf("%d\t:=\t%d\n",i+1,tmp[i]); */
-    if((tmp[0]!= MAX_SIZE) && (result > 1))
+    if((tmp[0]!= CFDMAX_SIZE) && (result > 1))
     {
-		fprintf(logFile,"Seems to work. (Treads got %d times chunks \"twice\" by a total of %d chunks)\n",result,MAX_SIZE/chunk_size); 
+		fprintf(logFile,"Seems to work. (Treads got %d times chunks \"twice\" by a total of %d chunks)\n",result,CFDMAX_SIZE/chunk_size); 
 		return 1;
     }
     else
@@ -259,7 +335,7 @@ int crosscheck_for_schedule_dynamic(FILE * logFile)
 {
     const int chunk_size = 10;
     int tid;
-    int tids[MAX_SIZE];
+    int tids[CFDMAX_SIZE];
     int count = 0;
     int tmp_count = 0;
     int *tmp;
@@ -272,14 +348,14 @@ int crosscheck_for_schedule_dynamic(FILE * logFile)
     tid = omp_get_thread_num();
 #pragma omp for
 
-	for(i=0;i<MAX_SIZE;++i)
+	for(i=0;i<CFDMAX_SIZE;++i)
     {
         tids[i] = tid;
     }
 
 } /* end of parallel */
 
-    for(i=0;i<MAX_SIZE-1;++i){
+    for(i=0;i<CFDMAX_SIZE-1;++i){
         if(tids[i]!=tids[i+1])
         {
             count++;
@@ -289,7 +365,7 @@ int crosscheck_for_schedule_dynamic(FILE * logFile)
 	tmp = (int*)malloc(sizeof(int)*(count+1));
 	tmp[0]=1;
     
-	for(i=0;i<MAX_SIZE-1;++i){
+	for(i=0;i<CFDMAX_SIZE-1;++i){
 		if(tmp_count>count)
         {
             printf("--------------------\nTestinternal Error: List too small!!!\n--------------------\n"); /* Error handling */
@@ -316,9 +392,9 @@ int crosscheck_for_schedule_dynamic(FILE * logFile)
         }
     }
     /* for (int i=0;i<count+1;++i) printf("%d\t:=\t%d\n",i+1,tmp[i]); */
-    if((tmp[0]!= MAX_SIZE) && (result > 1))
+    if((tmp[0]!= CFDMAX_SIZE) && (result > 1))
     {
-		/*fprintf(logFile,"Seems to work. (Treads got %d times chunks \"twice\" by a total of %d chunks)\n",result,MAX_SIZE/chunk_size); */
+		/*fprintf(logFile,"Seems to work. (Treads got %d times chunks \"twice\" by a total of %d chunks)\n",result,CFDMAX_SIZE/chunk_size); */
 		return 1;
     }
     else
@@ -327,11 +403,6 @@ int crosscheck_for_schedule_dynamic(FILE * logFile)
 		return 0;
     }
 }
-
-#define NUMBER_OF_THREADS 10
-#define CFSMAX_SIZE 1000
-#define MAX_TIME 10
-#define SLEEPTIME 1
 
 int check_for_schedule_guided(FILE * logFile)
 {
