@@ -12,6 +12,11 @@
 #FC=frt
 #FFLAGS=-KOMP,fast_GP2=2 -w -Am -X9 -Fixed
 #FLINKFLAGS=-KOMP,fast_GP2=2 -w -Am 
+# 
+#IBM Compiler
+#FC=xlf90_r
+#FFLAGS=-qsmp=omp -qfixed=132 -qlanglvl=extended
+#FLINKFLAGS=-qsmp=omp -lm
 
 
 
@@ -81,10 +86,10 @@ check_num_threads.o: check_num_threads.f common_utility.f
 omp_check_locks.o: omp_check_locks.f omp_testsuite.f common_utility.f
 
 common_utility.o: common_utility.f omp_testsuite.f
-	$(FC) -c -o common_utility.o common_utility.f 
+	$(FC) $(FFLAGS) -c -o common_utility.o common_utility.f 
 
 check_chunksize.o: omp_check_chunksize.f omp_testsuite.f common_utility.f
-	$(FC) -c -o omp_check_chunksize.o omp_check_chunksize.f \
+	$(FC) $(FFLAGS) -c -o omp_check_chunksize.o omp_check_chunksize.f \
             omp_testsuite.f common_utility.f
 
 omp_check_critical_atomic.o:common_utility.f omp_testsuite.f  common_utility.f 
@@ -131,4 +136,4 @@ run_schedule: check_omp_schedule_main
 chunksize: check_chunksize
 	(OMP_NUM_THREADS=4; export OMP_NUM_THREADS; ./check_chunksize)
 clean:
-	-rm $(OBJS) $(OBJS2) $(OBJS3) $(OBJS4) fortran_v1 fortran_v2 *~ check_chunksize check_omp_schedule_main 
+	-rm $(OBJS) $(OBJS2) $(OBJS3) $(OBJS4) fortran_v1 fortran_v2 check_chunksize check_omp_schedule_main *.o *~ 
