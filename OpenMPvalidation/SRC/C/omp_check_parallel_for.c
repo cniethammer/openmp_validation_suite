@@ -110,6 +110,7 @@ int check_parallel_for_reduction(){
 
 	known_product = KNOWN_PRODUCT;
 	if(known_product == product) result++;
+	/* else printf("\nError in Product: Known Product: %d\tcalculated Product: %d\n\n",known_product,product);*/
 
 	for(i=0;i<LOOPCOUNT;i++)
 	{
@@ -122,7 +123,7 @@ int check_parallel_for_reduction(){
 		logic_and = logic_and && logics[i];
 	}
 	if(logic_and)result++;
-	else printf("Error in AND part 1");
+	/*else printf("Error in AND part 1");*/
 	
 	logic_and = 1;
 	logics[LOOPCOUNT/2]=0;
@@ -133,7 +134,7 @@ int check_parallel_for_reduction(){
 		logic_and = logic_and && logics[i];
 	}
 	if(!logic_and)result++;
-	else printf("Error in AND part 2");
+	/*else printf("Error in AND part 2");*/
 	
 	for(i=0;i<LOOPCOUNT;i++)
 	{
@@ -146,7 +147,7 @@ int check_parallel_for_reduction(){
 		logic_or = logic_or || logics[i];
 	}
 	if(!logic_or)result++;
-	else printf("Error in OR part 1");
+	/*else printf("Error in OR part 1");*/
 	logic_or = 0;
 	logics[LOOPCOUNT/2]=1;
 
@@ -156,8 +157,8 @@ int check_parallel_for_reduction(){
 		logic_or = logic_or || logics[i];
 	}
 	if(logic_or)result++;
-	else printf("Error in OR part 2");
-	printf("\nResult:%d\n",result);
+	/*else printf("Error in OR part 2");*/
+	/*printf("\nResult:%d\n",result);*/
 	return (result==6);
 }
 
@@ -192,7 +193,7 @@ int crosscheck_parallel_for_reduction(){
 
 	known_product = KNOWN_PRODUCT;
 	if(known_product == product) result++;
-	else printf("\nError in Product: Known Product: %d\tcalculated Product: %d\n\n",known_product,product);
+	/* else printf("\nError in Product: Known Product: %d\tcalculated Product: %d\n\n",known_product,product);*/
 
 	for(i=0;i<LOOPCOUNT;i++)
 	{
@@ -205,7 +206,7 @@ int crosscheck_parallel_for_reduction(){
 		logic_and = logic_and && logics[i];
 	}
 	if(logic_and)result++;
-	else printf("Error in AND part 1");
+	/*else printf("Error in AND part 1");*/
 	
 	logic_and = 1;
 	logics[LOOPCOUNT/2]=0;
@@ -216,7 +217,7 @@ int crosscheck_parallel_for_reduction(){
 		logic_and = logic_and && logics[i];
 	}
 	if(!logic_and)result++;
-	else printf("Error in AND part 2");
+	/*else printf("Error in AND part 2");*/
 	
 	for(i=0;i<LOOPCOUNT;i++)
 	{
@@ -229,7 +230,7 @@ int crosscheck_parallel_for_reduction(){
 		logic_or = logic_or || logics[i];
 	}
 	if(!logic_or)result++;
-	else printf("Error in OR part 1");
+	/*else printf("Error in OR part 1");*/
 	logic_or = 0;
 	logics[LOOPCOUNT/2]=1;
 
@@ -239,8 +240,8 @@ int crosscheck_parallel_for_reduction(){
 		logic_or = logic_or || logics[i];
 	}
 	if(logic_or)result++;
-	else printf("Error in OR part 2");
-	printf("\nResult:%d\n",result);
+	/*else printf("Error in OR part 2");*/
+	/*printf("\nResult:%d\n",result);*/
 	return (result==6);
 }
 
