@@ -1,11 +1,11 @@
 #SUN Fortran Compiler:
-#FC=f90
-#FFLAGS=-xopenmp -O3
-#FLINKFLAGS=-O3 -xopenmp
+FC=f90
+FFLAGS=-xopenmp -O3
+FLINKFLAGS=-O3 -xopenmp
 #Intel Compiler
-FC=ifort
-FFLAGS=-openmp -O3
-FLINKFLAGS=-O3 -openmp
+#FC=ifort
+#FFLAGS=-openmp -O3
+#FLINKFLAGS=-O3 -openmp
 
 
 
@@ -22,6 +22,8 @@ omp_check_num_threads.o omp_check_single_copyprivate.o
 OBJS4= check_omp_schedule_main.o omp_check_lib.o omp_check_schedule.o \
 common_utility.o
 
+OBJS10= omp_check_chunksize.o omp_check_lib.o common_utility.o
+
 validation_suite_v1_fortran: $(OBJS) 
 	$(FC) $(FLINKFLAGS) -o fortran_v1 $(OBJS)
 
@@ -31,6 +33,9 @@ v2_fortran: $(OBJS2)
 check_omp_schedule_main: $(OBJS4)
 	$(FC) $(FLINKFLAGS) -o check_omp_schedule_main $(OBJS4)
 
+check_chunksize: $(OBJS10)
+	$(FC) $(FLINKFLAGS) -o check_chunksize $(OBJS10)
+
 check_omp_v1_main.o: check_omp_v1_main.f 
 	$(FC) -c -o check_omp_v1_main.o check_omp_v1_main.f 
 
@@ -39,10 +44,16 @@ check_omp_v2_main.o: check_omp_v2_main.f
 
 check_omp_schedule_main.o:check_omp_schedule_main.f
 
+
+
 omp_check_locks.o: omp_check_locks.f omp_testsuite.f common_utility.f
 
 common_utility.o: common_utility.f omp_testsuite.f
 	$(FC) -c -o common_utility.o common_utility.f 
+
+check_chunksize.o: omp_check_chunksize.f omp_testsuite.f common_utility.f
+	$(FC) -c -o omp_check_chunksize.o omp_check_chunksize.f \
+            omp_testsuite.f common_utility.f
 
 omp_check_critical_atomic.o:common_utility.f omp_testsuite.f  common_utility.f 
 
@@ -85,5 +96,7 @@ run2: v2_fortran
 	(OMP_NUM_THREADS=4; export OMP_NUM_THREADS; ./fortran_v2)
 run_schedule: check_omp_schedule_main
 	(OMP_NUM_THREADS=4; export OMP_NUM_THREADS; ./check_omp_schedule_main)
+chunksize: check_chunksize
+	(OMP_NUM_THREADS=4; export OMP_NUM_THREADS; ./check_chunksize)
 clean:
 	rm $(OBJS) && rm fortran_v1 
