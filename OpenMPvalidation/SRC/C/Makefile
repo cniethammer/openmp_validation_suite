@@ -47,6 +47,11 @@
 # SUN compilers
 #CC = cc
 #CFLAGS = -fast -xopenmp -lm
+#
+# open64 compilers
+# remark: -I. was a workaround because the installation came without omp.h file
+#CC = opencc
+#CFLAGS = -O0 -openmp -lm -I. -lomp -lpthread
 
 
 OBJECTS = check_omp_v1_main.o omp_check_lib.o omp_check_for.o \
