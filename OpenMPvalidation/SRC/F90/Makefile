@@ -19,6 +19,9 @@ omp_check_threadprivate.o
 OBJS2=omp_check_timing_functions.o check_omp_v2_main.o common_utility.o \
 omp_check_num_threads.o omp_check_single_copyprivate.o
 
+OBJS3=check_num_threads.o get_wticks.o get_wtime.o check_single_copyprivate.o \
+common_utility.o
+
 OBJS4= check_omp_schedule_main.o omp_check_lib.o omp_check_schedule.o \
 common_utility.o
 
@@ -29,6 +32,12 @@ validation_suite_v1_fortran: $(OBJS)
 
 v2_fortran: $(OBJS2) 
 	$(FC) $(FLINKFLAGS) -o fortran_v2 $(OBJS2)
+
+omp_v2: $(OBJS2) $(OBJS3)
+	$(FC) $(FLINKFLAGS) -o check_num_threads omp_check_num_threads.o check_num_threads.o common_utility.o
+	$(FC) $(FLINKFLAGS) -o check_single_copyprivate omp_check_single_copyprivate.o check_single_copyprivate.o common_utility.o
+	$(FC) $(FLINKFLAGS) -o get_wticks omp_check_timing_functions.o get_wticks.o common_utility.o
+	$(FC) $(FLINKFLAGS) -o get_wtime omp_check_timing_functions.o get_wtime.o common_utility.o
 
 check_omp_schedule_main: $(OBJS4)
 	$(FC) $(FLINKFLAGS) -o check_omp_schedule_main $(OBJS4)
@@ -42,9 +51,15 @@ check_omp_v1_main.o: check_omp_v1_main.f
 check_omp_v2_main.o: check_omp_v2_main.f 
 	$(FC) -c -o check_omp_v2_main.o check_omp_v2_main.f 
 
-check_omp_schedule_main.o:check_omp_schedule_main.f
+check_omp_schedule_main.o:check_omp_schedule_main.f common_utility.f
 
+check_single_copyprivate.o: check_single_copyprivate.f common_utility.f
 
+get_wticks.o: get_wticks.f common_utility.f
+
+get_wtime.o: get_wtime.f common_utility.f
+
+check_num_threads.o: check_num_threads.f common_utility.f
 
 omp_check_locks.o: omp_check_locks.f omp_testsuite.f common_utility.f
 
@@ -91,7 +106,7 @@ omp_check_single_copyprivate.o:omp_check_single_copyprivate.f \
 omp_testsuite.f common_utility.f
 
 run: validation_suite_v1_fortran
-	(OMP_NUM_THREADS=4; export OMP_NUM_THREADS; ./fortran_v1)
+	(OMP_NUM_THREADS=4; export OMP_NUM_THREADS;OMP_NESTED=TRUE;export OMP_NESTED;./fortran_v1)
 run2: v2_fortran
 	(OMP_NUM_THREADS=4; export OMP_NUM_THREADS; ./fortran_v2)
 run_schedule: check_omp_schedule_main
