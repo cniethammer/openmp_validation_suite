@@ -1,7 +1,8 @@
+#include <stdio.h>
 #include <omp.h>
 #include "omp_testsuite.h"
 
-int omp_check_num_threads(){
+int omp_check_num_threads(FILE * logFile){
   int failed=0;
   int i;
   int max_threads=0;
@@ -29,7 +30,7 @@ int omp_check_num_threads(){
  return !failed;
 }
 
-int omp_crosscheck_num_threads(){
+int omp_crosscheck_num_threads(FILE * logFile){
   int failed=0;
   int i;
   int max_threads=0;

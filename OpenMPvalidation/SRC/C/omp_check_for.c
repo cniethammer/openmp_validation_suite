@@ -5,7 +5,7 @@ ordered: checks that the execution is equivalent to the serial case
 
 
 */
-
+#include <stdio.h>
 #include <math.h>
 #include "omp_testsuite.h"
 
@@ -18,7 +18,7 @@ int check_i_islarger(int i){
 	return (islarger);
 }
 
-int check_for_ordered(){
+int check_for_ordered(FILE * logFile){
 	int sum=0;
 	int known_sum;
 	int i;
@@ -46,7 +46,7 @@ int check_for_ordered(){
 	return (known_sum==sum) && is_larger;
 }
 
-int crosscheck_for_ordered(){
+int crosscheck_for_ordered(FILE * logFile){
 	int sum=0;
 	int known_sum;
 	int i;
@@ -81,7 +81,7 @@ void do_some_work(){
 	}
 }
 
-int check_for_private(){
+int check_for_private(FILE * logFile){
 	int sum=0;
 	int sum0=0;
 	int sum1=0;
@@ -110,7 +110,7 @@ int check_for_private(){
 	return (known_sum==sum);
 }                                /* end of check_for_private*/
 
-int crosscheck_for_private(){
+int crosscheck_for_private(FILE * logFile){
 	int sum=0;
 	int sum0=0;
 	int sum1=0;
@@ -139,7 +139,7 @@ int crosscheck_for_private(){
 	return (known_sum==sum);
 }                                /* end of check_for_private*/
 
-int check_for_firstprivate(){
+int check_for_firstprivate(FILE * logFile){
 	int sum=0;
 	int sum0=0;
 	int sum1=0;
@@ -163,7 +163,7 @@ int check_for_firstprivate(){
 	return (known_sum==sum);
 }                                /* end of check_for_fistprivate*/
 
-int crosscheck_for_firstprivate(){
+int crosscheck_for_firstprivate(FILE * logFile){
 	int sum=0;
 	int sum0=0;
 	int sum1=0;
@@ -187,7 +187,7 @@ int crosscheck_for_firstprivate(){
 	return (known_sum==sum);
 }                                /* end of check_for_fistprivate*/
 
-int check_for_lastprivate(){
+int check_for_lastprivate(FILE * logFile){
 	int sum=0;
 	int sum0=0;
 	int known_sum;
@@ -211,7 +211,7 @@ int check_for_lastprivate(){
 	return ((known_sum==sum) && (i0==LOOPCOUNT) );
 }                                /* end of check_for_lastprivate*/
 
-int crosscheck_for_lastprivate(){
+int crosscheck_for_lastprivate(FILE * logFile){
 	int sum=0;
 	int sum0=0;
 	int known_sum;

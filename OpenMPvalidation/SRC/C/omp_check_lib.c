@@ -1,9 +1,9 @@
-
+#include <stdio.h>
 #include "omp.h"
 #include "omp_testsuite.h"
 
 
-int check_has_openmp(){
+int check_has_openmp(FILE * logFile){
   int rvalue=0;
 #ifdef _OPENMP
   rvalue=1;
@@ -11,7 +11,7 @@ int check_has_openmp(){
   return rvalue;
 }
 
-int crosscheck_has_openmp(){
+int crosscheck_has_openmp(FILE * logFile){
   int rvalue=0;
 #if 0
   rvalue=1;
@@ -19,7 +19,7 @@ int crosscheck_has_openmp(){
   return rvalue;
 }
 
-int check_omp_get_num_threads(){
+int check_omp_get_num_threads(FILE * logFile){
   /* checks that omp_get_num_threads is equal to the number of
      threads */
   int nthreads=0;
@@ -38,7 +38,7 @@ int check_omp_get_num_threads(){
   return nthreads==nthreads_lib;
 }
 
-int crosscheck_omp_get_num_threads(){
+int crosscheck_omp_get_num_threads(FILE * logFile){
   /* checks that omp_get_num_threads is equal to the number of
      threads */
   int nthreads=0;
@@ -57,7 +57,7 @@ int crosscheck_omp_get_num_threads(){
   return nthreads==nthreads_lib;
 }
 
-int check_omp_in_parallel(){
+int check_omp_in_parallel(FILE * logFile){
   /* checks that false is returned when called from serial region
      and true is returned when called within parallel region */
   int serial=1;
@@ -73,7 +73,7 @@ int check_omp_in_parallel(){
   return ( !(serial) && isparallel );
 }
 
-int crosscheck_omp_in_parallel(){
+int crosscheck_omp_in_parallel(FILE * logFile){
   /* checks that false is returned when called from serial region
      and true is returned when called within parallel region */
   int serial=1;

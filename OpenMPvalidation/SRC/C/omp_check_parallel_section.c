@@ -5,12 +5,12 @@
 
  */
 
-
+#include <stdio.h>
 #include "omp_testsuite.h"
 
 
 
-int check_parallel_section_private(){
+int check_parallel_section_private(FILE * logFile){
   int sum=7;
   int sum0=0;
   int known_sum;
@@ -52,7 +52,7 @@ known_sum=(999*1000)/2+7;
 return (known_sum==sum); 
 }                              /* end of check_section_private*/
 
-int crosscheck_parallel_section_private(){
+int crosscheck_parallel_section_private(FILE * logFile){
   int sum=7;
   int sum0=0;
   int known_sum;
@@ -94,7 +94,7 @@ known_sum=(999*1000)/2+7;
 return (known_sum==sum); 
 }                              /* end of check_section_private*/
 
-int check_parallel_section_firstprivate(){
+int check_parallel_section_firstprivate(FILE * logFile){
 int sum=7;
   int sum0=11;
   int known_sum;
@@ -127,7 +127,7 @@ return (known_sum==sum);
 }                              /* end of check_section_firstprivate*/
 
 
-int crosscheck_parallel_section_firstprivate(){
+int crosscheck_parallel_section_firstprivate(FILE * logFile){
 int sum=7;
   int sum0=11;
   int known_sum;
@@ -161,7 +161,7 @@ return (known_sum==sum);
 
 
 
-int check_parallel_section_lastprivate(){
+int check_parallel_section_lastprivate(FILE * logFile){
   int sum=0;
   int sum0=0;
   int known_sum;
@@ -213,7 +213,7 @@ int check_parallel_section_lastprivate(){
   return ((known_sum==sum) && (i0==999) );
 }
 
-int crosscheck_parallel_section_lastprivate(){
+int crosscheck_parallel_section_lastprivate(FILE * logFile){
   int sum=0;
   int sum0=0;
   int known_sum;

@@ -23,7 +23,7 @@
   $Id$
 
 */
-
+#include <stdio.h>
 #include <math.h>
 #include "omp_testsuite.h"
 
@@ -41,7 +41,7 @@ int check_i_islarger2(int i){
 	return (islarger);
 }
 
-int check_parallel_for_ordered(){
+int check_parallel_for_ordered(FILE * logFile){
 	int sum=0;
 	int known_sum;
 	int i;
@@ -60,7 +60,7 @@ int check_parallel_for_ordered(){
 	return (known_sum==sum) && is_larger;
 }
 
-int crosscheck_parallel_for_ordered(){
+int crosscheck_parallel_for_ordered(FILE * logFile){
 	int sum=0;
 	int known_sum;
 	int i;
@@ -87,7 +87,7 @@ void do_some_work2(){
 	}
 }
 
-int check_parallel_for_private(){
+int check_parallel_for_private(FILE * logFile){
 	int sum=0;
 	/*int sum0=0;*/
 	int known_sum;
@@ -106,7 +106,7 @@ int check_parallel_for_private(){
 	return (known_sum==sum);
 }                                /* end of check_paralel_for_private*/
 
-int crosscheck_parallel_for_private(){
+int crosscheck_parallel_for_private(FILE * logFile){
 	int sum=0;
 	/*int sum0=0;*/
 	int known_sum;
@@ -126,7 +126,7 @@ int crosscheck_parallel_for_private(){
 }                                /* end of check_paralel_for_private*/
 
 
-int check_parallel_for_firstprivate()
+int check_parallel_for_firstprivate(FILE * logFile)
 {
 	int sum=0;
 	/*int sum0=0;*/
@@ -145,7 +145,7 @@ int check_parallel_for_firstprivate()
 	return (known_sum==sum);
 }                                /* end of check_parallel_for_fistprivate*/
 
-int crosscheck_parallel_for_firstprivate()
+int crosscheck_parallel_for_firstprivate(FILE * logFile)
 {
 	int sum=0;
 	/*int sum0=0;*/
@@ -164,7 +164,7 @@ int crosscheck_parallel_for_firstprivate()
 	return (known_sum==sum);
 }                                /* end of check_parallel_for_fistprivate*/
 
-int check_parallel_for_lastprivate(){
+int check_parallel_for_lastprivate(FILE * logFile){
 	int sum=0;
 	/*int sum0=0;*/
 	int known_sum;
@@ -181,7 +181,7 @@ int check_parallel_for_lastprivate(){
 	return ((known_sum==sum) && (i0==LOOPCOUNT) );
 }                                /* end of check_parallel_for_lastprivate*/
 
-int crosscheck_parallel_for_lastprivate(){
+int crosscheck_parallel_for_lastprivate(FILE * logFile){
 	int sum=0;
 	/*int sum0=0;*/
 	int known_sum;

@@ -1,7 +1,8 @@
+#include <stdio.h>
 #include <omp.h>
 #include "omp_testsuite.h"
 
-int check_omp_master_thread()
+int check_omp_master_thread(FILE * logFile)
 {
   int nthreads=0;
   int executing_thread=-1;
@@ -20,7 +21,7 @@ int check_omp_master_thread()
   return ((nthreads==1) && (executing_thread==0 ));
 }
 
-int crosscheck_omp_master_thread()
+int crosscheck_omp_master_thread(FILE * logFile)
 {
   int nthreads=0;
   int executing_thread=-1;

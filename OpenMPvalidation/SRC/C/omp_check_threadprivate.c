@@ -10,7 +10,7 @@ static int sum0=0;
 static int myvalue=0;
 #pragma omp threadprivate(myvalue)
 
-int check_omp_threadprivate()
+int check_omp_threadprivate(FILE * logFile)
 {
   int sum=0;
   int known_sum;
@@ -39,7 +39,7 @@ int check_omp_threadprivate()
  }                          /* end of parallel*/    
   known_sum=(LOOPCOUNT*(LOOPCOUNT+1))/2;
   if (known_sum != sum ) {
-    printf(" known_sum = %d , sum = %d \n",known_sum,sum);
+    fprintf(logFile," known_sum = %d , sum = %d \n",known_sum,sum);
   }
 
 
@@ -74,7 +74,7 @@ int check_omp_threadprivate()
 	rank=omp_get_thread_num();
 	failed = failed + (myvalue != data[rank]);
 	if(myvalue != data[rank]){
-	    printf(" myvalue = %d, data[rank]= %d\n",myvalue,data[rank]);
+	    fprintf(logFile," myvalue = %d, data[rank]= %d\n",myvalue,data[rank]);
       }
     }
   }
@@ -93,7 +93,7 @@ static int crosssum0=0;
 static int crossmyvalue=0;
 /*#pragma omp threadprivate(crossmyvalue)*/
 
-int crosscheck_omp_threadprivate()
+int crosscheck_omp_threadprivate(FILE * logFile)
 {
   int sum=0;
   int known_sum;
@@ -162,7 +162,7 @@ int crosscheck_omp_threadprivate()
 static int sum1=789;
 #pragma omp threadprivate(sum1)
 
-int check_omp_copyin()
+int check_omp_copyin(FILE * logFile)
 {
   int sum=0;
   int known_sum;
@@ -178,7 +178,7 @@ int check_omp_copyin()
     }                       /*end of for*/
 #pragma omp critical
   {
-    sum= sum+sum1;
+    sum = sum+sum1;
   }                         /*end of critical*/
  }                          /* end of parallel*/    
   known_sum=(999*1000)/2;
@@ -189,7 +189,7 @@ int check_omp_copyin()
 static int crosssum1=789;
 #pragma omp threadprivate(crosssum1)
 
-int crosscheck_omp_copyin()
+int crosscheck_omp_copyin(FILE * logFile)
 {
   int sum=0;
   int known_sum;
@@ -248,7 +248,7 @@ int check_omp_copyprivate()
 static int myvalue2=0;
 
 
-int crosscheck_spmd_threadprivate(){
+int crosscheck_spmd_threadprivate(FILE * logFile){
   int iter;
 
   int *data;

@@ -2,7 +2,7 @@
 #include <omp.h>
 #include "omp_testsuite.h"
 
-int check_single_copyprivate()                                   
+int check_single_copyprivate(FILE * logFile)                                   
 {
   int result=0;
   int nr_iterations=0;
@@ -35,7 +35,7 @@ int check_single_copyprivate()
 
 
 
-int crosscheck_single_copyprivate()                                   
+int crosscheck_single_copyprivate(FILE * logFile)                                   
 {
   int result=0;
   int nr_iterations=0;

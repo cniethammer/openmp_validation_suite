@@ -1,8 +1,9 @@
+#include <stdio.h>
 #include <unistd.h>
 #include <omp.h>
 #include "omp_testsuite.h"
 
-int check_omp_critical()
+int check_omp_critical(FILE * logFile)
 {
   int i;
   int sum=0;
@@ -23,7 +24,7 @@ int check_omp_critical()
 }
 
 
-int crosscheck_omp_critical()
+int crosscheck_omp_critical(FILE * logFile)
 {
   int i;
   int sum=0;
@@ -44,7 +45,7 @@ int crosscheck_omp_critical()
 }
 
 
-int check_omp_atomic()
+int check_omp_atomic(FILE * logFile)
 {
   int i;
   int sum=0;
@@ -62,7 +63,7 @@ int check_omp_atomic()
     return(known_sum==sum);
 }
 
-int crosscheck_omp_atomic()
+int crosscheck_omp_atomic(FILE * logFile)
 {
   int i;
   int sum=0;
@@ -81,7 +82,7 @@ int crosscheck_omp_atomic()
 }
 
 
-int check_omp_barrier(){
+int check_omp_barrier(FILE * logFile){
   int result1=0;
   int result2=0;
 #pragma omp parallel
@@ -100,7 +101,7 @@ int check_omp_barrier(){
   return (result1==3);
 }
 
-int crosscheck_omp_barrier(){
+int crosscheck_omp_barrier(FILE * logFile){
   int result1=0;
   int result2=0;
 #pragma omp parallel
@@ -119,7 +120,7 @@ int crosscheck_omp_barrier(){
   return (result1==3);
 }
 
-int check_omp_flush(){
+int check_omp_flush(FILE * logFile){
   int result1=0;
   int result2=0;
   int dummy;
@@ -144,7 +145,7 @@ int check_omp_flush(){
   return ( (result1==result2) && (result2==dummy) && ( result2==3) );
 }
 
-int crosscheck_omp_flush(){
+int crosscheck_omp_flush(FILE * logFile){
   int result1=0;
   int result2=0;
   int dummy;

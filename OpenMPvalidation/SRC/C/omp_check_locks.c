@@ -1,7 +1,8 @@
+#include <stdio.h>
 #include <omp.h>
 #include "omp_testsuite.h"
     
-int check_omp_lock()
+int check_omp_lock(FILE * logFile)
 {
   omp_lock_t lck;
   int nr_threads_in_single=0;
@@ -32,7 +33,7 @@ int check_omp_lock()
   
 }
 
-int crosscheck_omp_lock()
+int crosscheck_omp_lock(FILE * logFile)
 {
   omp_lock_t lck;
   int nr_threads_in_single=0;
@@ -65,7 +66,7 @@ int crosscheck_omp_lock()
 
 
 
-int check_omp_testlock()
+int check_omp_testlock(FILE * logFile)
 {
   omp_lock_t lck;
   int nr_threads_in_single=0;
@@ -98,7 +99,7 @@ int check_omp_testlock()
     
   }
 
-int crosscheck_omp_testlock()
+int crosscheck_omp_testlock(FILE * logFile)
 {
   omp_lock_t lck;
   int nr_threads_in_single=0;
@@ -133,7 +134,7 @@ int crosscheck_omp_testlock()
 
 
 
-int check_omp_nest_lock()
+int check_omp_nest_lock(FILE * logFile)
 {
   omp_nest_lock_t lck;
   int nr_threads_in_single=0;
@@ -164,7 +165,7 @@ int check_omp_nest_lock()
   
 }
 
-int crosscheck_omp_nest_lock()
+int crosscheck_omp_nest_lock(FILE * logFile)
 {
   omp_nest_lock_t lck;
   int nr_threads_in_single=0;
@@ -197,7 +198,7 @@ int crosscheck_omp_nest_lock()
 
 
 
-int check_omp_nest_testlock()
+int check_omp_nest_testlock(FILE * logFile)
 {
   omp_nest_lock_t lck;
   int nr_threads_in_single=0;
@@ -230,7 +231,7 @@ int check_omp_nest_testlock()
     
   }
 
-int crosscheck_omp_nest_testlock()
+int crosscheck_omp_nest_testlock(FILE * logFile)
 {
   omp_nest_lock_t lck;
   int nr_threads_in_single=0;

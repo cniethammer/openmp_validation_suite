@@ -6,12 +6,12 @@ ordered: checks that the execution is equivalent to the serial case
 
 */
 
-
+#include <stdio.h>
 #include "omp_testsuite.h"
 
 
 
-int check_section_private(){
+int check_section_private(FILE * logFile){
 	int sum=7;
 	int sum0=0;
 	int known_sum;
@@ -57,7 +57,7 @@ int check_section_private(){
 }                              /* end of check_section_private*/
 
 
-int crosscheck_section_private(){
+int crosscheck_section_private(FILE * logFile){
 	int sum=7;
 	int sum0=0;
 	int known_sum;
@@ -103,7 +103,7 @@ int crosscheck_section_private(){
 }                              /* end of check_section_private*/
 
 
-int check_section_firstprivate(){
+int check_section_firstprivate(FILE * logFile){
 	int sum=7;
 	int sum0=11;
 	int known_sum;
@@ -139,7 +139,7 @@ int check_section_firstprivate(){
 }                              /* end of check_section_firstprivate*/
 
 
-int crosscheck_section_firstprivate(){
+int crosscheck_section_firstprivate(FILE * logFile){
 	int sum=7;
 	int sum0=11;
 	int known_sum;
@@ -176,7 +176,7 @@ int crosscheck_section_firstprivate(){
 
 
 
-int check_section_lastprivate(){
+int check_section_lastprivate(FILE * logFile){
 	int sum=0;
 	int sum0=0;
 	int known_sum;
@@ -231,7 +231,7 @@ int check_section_lastprivate(){
 	return ((known_sum==sum) && (i0==999) );
 }
 
-int crosscheck_section_lastprivate(){
+int crosscheck_section_lastprivate(FILE * logFile){
 	int sum=0;
 	int sum0=0;
 	int known_sum;

@@ -28,7 +28,7 @@ void my_sleep(double sleeptime){
   }
 }
 
-int omp_check_time()
+int omp_check_time(FILE * logFile)
 {
   double start=0;
   double end=0;
@@ -38,11 +38,11 @@ int omp_check_time()
   my_sleep(wait_time); 
   end=omp_get_wtime();
   measured_time=end-start;
-  /*printf("work took %f sec. time. \n",measured_time);*/
+  fprintf(logFile,"work took %f sec. time. \n",measured_time);
   return (measured_time>0.99*wait_time) && (measured_time<1.01*wait_time) ;
 }
 
-int omp_crosscheck_time()
+int omp_crosscheck_time(FILE * logFile)
 {
   double start=0;
   double end=0;
@@ -52,24 +52,24 @@ int omp_crosscheck_time()
   my_sleep(wait_time); 
   /*end=omp_get_wtime();*/
   measured_time=end-start;
-  /*printf("work took %f sec. time. \n",measured_time);*/
+  fprintf(logFile,"work took %f sec. time. \n",measured_time);
   return (measured_time>0.99*wait_time) && (measured_time<1.01*wait_time) ;
 }
 
 
 
-int omp_check_ticks_time()
+int omp_check_ticks_time(FILE * logFile)
 {
   double tick;
   tick=omp_get_wtick();
-  /*printf("work took %f sec. time. \n",tick);*/
+  fprintf(logFile,"work took %f sec. time. \n",tick);
   return ( tick>0.0) && (tick<0.01);
 }
 
-int omp_crosscheck_ticks_time()
+int omp_crosscheck_ticks_time(FILE * logFile)
 {
   double tick=0;
   /*tick=omp_get_wtick();*/
-  /*printf("work took %f sec. time. \n",tick);*/
+  fprintf(logFile,"work took %f sec. time. \n",tick);
   return ( tick>0.0) && (tick<0.01);
 }
