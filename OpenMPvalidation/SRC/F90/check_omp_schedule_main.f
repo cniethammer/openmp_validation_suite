@@ -1,6 +1,6 @@
 	program main
 	character*20 logFileName 
-  	integer i/0/
+  	integer i/1/
   	integer failed/0/
   	integer success/0/
   	integer crosschecked/0/
@@ -8,6 +8,7 @@
   	integer j/0/
   	integer result/1/
   	integer crossfailed/0/
+	integer sign/1/
 	integer check_for_schedule_static
 	integer crosscheck_for_schedule_static
 	integer check_for_schedule_dynamic
@@ -35,8 +36,13 @@
 	alltests(2)%name = "check_for_schedule_dynamic"
 	alltests(3)%name = "check_for_schedule_guided"
 	alltests(4)%name = "end"
+
+	alltests(1)%pass = 1
+	alltests(2)%pass = 1
+	alltests(3)%pass = 1
+	alltests(4)%pass = 1
  
-  	do while( alltests(i)%pass .ge. 1 )
+  	do while( alltests(i)%pass .ge. 1)
     	   crossfailed=0
     	   result=1;
            write(1,*) 
@@ -99,13 +105,12 @@
     	   if(result.eq.1) then
       	     write(1,*) "Directive worked without errors."
 	     write(1,*) "Crosschecks verified this result with "
-	     write(1,"(f5.2)") 100.0*crossfailed/N
-	     write(1,*) "%% certainty."
+	     write(1,"(f5.2,A16)") 100.0*crossfailed/N,"%% certainty."
+	     write(*,*) alltests(i)%name," ... verified with ",
+     &        100.0*crossfailed/N,"% certainty"
 	   else
 	     write(1,*) "Directive failed the tests!"
-     	     write(1,*) alltests(i)%name
-	     write(1,*) 
-     	     write(1,*) " ... FAILED"
+     	     write(*,*) alltests(i)%name," ... FAILED"
 	   end if
 
     	   i = i + 1
@@ -116,7 +121,7 @@
      &  failed," failed and ",success," successful with ",
      &  crosschecked,"cross checked"
 	write(*,*) 
-     &  "For detailled inforamtion on the tests see the logfile",
+     &  "For detailled inforamtion on the tests see the logfile ",
      &  logFileName
 
         write(1,*)
@@ -125,7 +130,7 @@
      &  failed," failed and ",success," successful with ",
      &  crosschecked,"cross checked"
         write(1,*) 
-     &  "For detailled inforamtion on the tests see the logfile",
+     &  "For detailled inforamtion on the tests see the logfile ",
      &  logFileName
 
   	
