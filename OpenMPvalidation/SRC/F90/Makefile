@@ -122,13 +122,13 @@ omp_testsuite.f common_utility.f
 omp_check_single_copyprivate.o:omp_check_single_copyprivate.f \
 omp_testsuite.f common_utility.f
 
-run: validation_suite_v1_fortran
+run: fortran_v1
 	(OMP_NUM_THREADS=4; export OMP_NUM_THREADS;OMP_NESTED=TRUE;export OMP_NESTED;./fortran_v1)
-run2: v2_fortran
+run2: fortran_v2
 	(OMP_NUM_THREADS=4; export OMP_NUM_THREADS; ./fortran_v2)
 run_schedule: check_omp_schedule_main
 	(OMP_NUM_THREADS=4; export OMP_NUM_THREADS; ./check_omp_schedule_main)
 chunksize: check_chunksize
 	(OMP_NUM_THREADS=4; export OMP_NUM_THREADS; ./check_chunksize)
 clean:
-	rm $(OBJS) && rm fortran_v1 
+	-rm $(OBJS) $(OBJS2) $(OBJS3) $(OBJS4) fortran_v1 fortran_v2 *~ check_chunksize check_omp_schedule_main 
