@@ -75,12 +75,11 @@ C23456789
 !*********************************************************************
 
         integer function chk_omp_in_parallel()
-        integer chk_omp_in_parallel
 C   checks that false is returned when called from serial region
 C     and true is returned when called within parallel region 
 	logical serial, parallel, omp_in_parallel
-        serial=.T.
-        parallel=.F.
+        serial=.TRUE.
+        parallel=.FALSE.
   	serial=omp_in_parallel()
 !$omp parallel
 !$omp single
@@ -98,8 +97,8 @@ C     and true is returned when called within parallel region
       integer function crosschk_omp_in_parallel()
 
 	logical serial, parallel, omp_in_parallel
-        serial=.T.
-        parallel=.F.
+        serial=.TRUE.
+        parallel=.FALSE.
 !  	serial=omp_in_parallel()
 !$omp parallel
 !$omp single
