@@ -2,7 +2,11 @@
   \file
   \brief This file contains all checks for the parallel for construct.
 
-  \author Matthias Mueller
+  \author Matthias Mueller, $Author$
+  
+  \version $Revision$
+
+  \date $Date$
 
 
    Currently the following clauses are tested:
@@ -14,6 +18,8 @@
    - firstprivate:
    - lastprivate:
 
+  CVS Information:
+  $Id$
 
  */
 
