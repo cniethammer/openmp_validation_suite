@@ -2,10 +2,16 @@
 #FC=f90
 #FFLAGS=-xopenmp -O3
 #FLINKFLAGS=-O3 -xopenmp
+#
 #Intel Compiler
-FC=ifort
-FFLAGS=-openmp -O3
-FLINKFLAGS=-O3 -openmp
+#FC=ifort
+#FFLAGS=-openmp -O3
+#FLINKFLAGS=-O3 -openmp
+#
+# Fujitsu Compiler
+#FC=frt
+#FFLAGS=-KOMP,fast_GP2=2 -w -Am -X9 -Fixed
+#FLINKFLAGS=-KOMP,fast_GP2=2 -w -Am 
 
 
 
