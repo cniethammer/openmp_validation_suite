@@ -64,7 +64,7 @@ int check_for_schedule_static(FILE * logFile)
         }
     }
     
-	tmp = malloc(sizeof(int)*(count+1));
+	tmp = (int*)malloc(sizeof(int)*(count+1));
 	tmp[0]=1;
     
 	for(i=0;i<MAX_SIZE-1;++i){
@@ -137,7 +137,7 @@ int crosscheck_for_schedule_static(FILE * logFile)
         }
     }
     
-	tmp= malloc(sizeof(int)*(count+1));
+	tmp= (int*)malloc(sizeof(int)*(count+1));
 	tmp[0]=1;
     
 	for(i=0;i<MAX_SIZE-1;++i){
@@ -210,7 +210,7 @@ int check_for_schedule_dynamic(FILE * logFile)
         }
     }
     
-	tmp = malloc(sizeof(int)*(count+1));
+	tmp = (int*) malloc(sizeof(int)*(count+1));
 	tmp[0]=1;
     
 	for(i=0;i<MAX_SIZE-1;++i){
@@ -284,7 +284,7 @@ int crosscheck_for_schedule_dynamic(FILE * logFile)
         }
     }
     
-	tmp = malloc(sizeof(int)*(count+1));
+	tmp = (int*)malloc(sizeof(int)*(count+1));
 	tmp[0]=1;
     
 	for(i=0;i<MAX_SIZE-1;++i){
@@ -433,7 +433,7 @@ int check_for_schedule_guided(FILE * logFile)
 		    m=1;
 		}
 	    }
-	    chunksizes = malloc(global_chunknr * sizeof(int));
+	    chunksizes = (int*)malloc(global_chunknr * sizeof(int));
 	    global_chunknr = 0;
 	    
 	    m = 1;
@@ -567,7 +567,7 @@ int crosscheck_for_schedule_guided(FILE * logFile)
 		    m=1;
 		}
 	    }
-	    chunksizes = malloc(global_chunknr * sizeof(int));
+	    chunksizes = (int*)malloc(global_chunknr * sizeof(int));
 	    global_chunknr = 0;
 	    
 	    m = 1;
