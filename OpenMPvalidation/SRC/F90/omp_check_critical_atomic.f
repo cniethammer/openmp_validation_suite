@@ -13,7 +13,7 @@
 	   sum = sum + i
 !$omp end critical
 	end do
-!$opm end do
+!$omp end do
 !$omp end parallel
 	known_sum = 999*1000/2
 	if ( known_sum .eq. sum ) then
