@@ -1,3 +1,7 @@
+# Fujitsu Compilers:
+#CC = fcc
+#CFLAGS = -KOMP,fast_GP2=2
+
 # PGI compilers
 #
 #CC = pgcc
@@ -46,7 +50,7 @@
 #
 # SUN compilers
 #CC = cc
-#CFLAGS = -fast -xopenmp -lm
+#CFLAGS = -fast -xopenmp -xvpara -lm
 #
 # open64 compilers
 # remark: -I. was a workaround because the installation came without omp.h file
