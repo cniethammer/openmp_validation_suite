@@ -33,8 +33,7 @@ static int last_i=0;
   Utility function: returns true if the passed argument is larger than 
   the argument of the last call of this function.
   */
-
-int check_i_islarger2(int i){
+static int check_i_islarger2(int i){
 	int islarger;
 	islarger=(i>last_i);
 	last_i=i;
@@ -79,10 +78,11 @@ int crosscheck_parallel_for_ordered(FILE * logFile){
 	return (known_sum==sum) && is_larger;
 }
 
-void do_some_work2(){
+/*! Utility function to spend some time in a loop */
+static void do_some_work2(){
 	int i;
 	double sum=0;
-	for(i=0;i++;i<LOOPCOUNT){
+	for(i=0;i<LOOPCOUNT;i++){
 		sum+=sqrt(i);
 	}
 }
@@ -91,7 +91,7 @@ int check_parallel_for_private(FILE * logFile){
 	int sum=0;
 	/*int sum0=0;*/
 	int known_sum;
-	int i,i2,i3;
+	int i,i2;
 #pragma omp parallel for reduction(+:sum) private(i2) schedule(static,1)
 	for (i=1;i<=LOOPCOUNT;i++)
 	{
@@ -110,7 +110,7 @@ int crosscheck_parallel_for_private(FILE * logFile){
 	int sum=0;
 	/*int sum0=0;*/
 	int known_sum;
-	int i,i2,i3;
+	int i,i2;
 #pragma omp parallel for reduction(+:sum)  schedule(static,1)
 	for (i=1;i<=LOOPCOUNT;i++)
 	{

@@ -8,8 +8,10 @@
 #include <time.h>
 #include <errno.h>
 
+#include "omp_testsuite.h"
 
-void my_sleep(double sleeptime){
+/*! Utility funtion to have a sleep funtion with better resolution */
+static void my_sleep(double sleeptime){
   struct timeval tv;
   struct timezone tzp;
   double start;

@@ -11,10 +11,10 @@ typedef struct {
   a_ptr_to_test_function fail;
 } testcall;
 
-FILE * logFile;
-const char * logFileName = "check_schedule.log";
+static FILE * logFile;
+static const char * logFileName = "check_schedule.log";
 
-testcall alltests[]={ 
+static testcall alltests[]={ 
 {"check_for_schedule_satic",check_for_schedule_static,crosscheck_for_schedule_static },
 {"check_for_schedule_dynamic",check_for_schedule_dynamic,crosscheck_for_schedule_dynamic},
 {"check_for_schedule_guided",check_for_schedule_guided,crosscheck_for_schedule_guided},

@@ -1,6 +1,7 @@
 #include "omp_testsuite.h"
 #include <omp.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #define MAX_SIZE 1000000
 

@@ -12,10 +12,10 @@ typedef struct {
   a_ptr_to_test_function fail;
 } testcall;
 
-FILE * logFile;
-const char * logFileName = "test.log";
+static FILE * logFile;
+static const char * logFileName = "test.log";
 
-testcall alltests[]={ 
+static testcall alltests[]={ 
 {"check_has_openmp",check_has_openmp,crosscheck_has_openmp },
 {"check_omp_get_num_threads",check_omp_get_num_threads,crosscheck_omp_get_num_threads },
 {"check_omp_in_parallel",check_omp_in_parallel,crosscheck_omp_in_parallel },

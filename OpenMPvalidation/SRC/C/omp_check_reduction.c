@@ -24,7 +24,7 @@ int check_parallel_for_reduction(FILE * logFile){
 	int exclusiv_bit_or=0;
 	int logics[LOOPCOUNT];
 	int i;
-	double dpt,dtmp;
+	double dpt;
 	int result=0;
 
 	dt = 1./3.;
@@ -58,7 +58,6 @@ int check_parallel_for_reduction(FILE * logFile){
 	/* Tests for doubles */
 	dsum=0;
 	dpt=1;
-	dtmp=1;
 	for (i=0;i<DOUBLE_DIGITS;++i)
 	{
 		dpt*=dt;
@@ -77,7 +76,7 @@ int check_parallel_for_reduction(FILE * logFile){
 	}
 
 	dpt=1;
-	dtmp=1;
+
 	for (i=0;i<DOUBLE_DIGITS;++i)
 	{
 		dpt*=dt;
@@ -282,7 +281,7 @@ int crosscheck_parallel_for_reduction(FILE * logFile){
 	int exclusiv_bit_or=0;
 	int logics[LOOPCOUNT];
 	int i;
-	double dpt,dtmp;
+	double dpt;
 	int result=0;
 
 	dt = 1./3.;
@@ -315,7 +314,7 @@ int crosscheck_parallel_for_reduction(FILE * logFile){
 	/* Tests for doubles */
 	dsum=0;
 	dpt=1;
-	dtmp=1;
+	
 	for (i=0;i<DOUBLE_DIGITS;++i)
 	{
 		dpt*=dt;
@@ -334,7 +333,7 @@ int crosscheck_parallel_for_reduction(FILE * logFile){
 	}
 
 	dpt=1;
-	dtmp=1;
+
 	for (i=0;i<DOUBLE_DIGITS;++i)
 	{
 		dpt*=dt;
@@ -538,7 +537,7 @@ int check_for_reduction(FILE * logFile){
 	int exclusiv_bit_or=0;
 	int logics[LOOPCOUNT];
 	int i;
-	double dpt,dtmp;
+	double dpt;
 	int result=0;
 
 	dt = 1./3.;
@@ -578,7 +577,7 @@ int check_for_reduction(FILE * logFile){
 	/* Tests for doubles */
 	dsum=0;
 	dpt=1;
-	dtmp=1;
+
 	for (i=0;i<DOUBLE_DIGITS;++i)
 	{
 		dpt*=dt;
@@ -600,7 +599,7 @@ int check_for_reduction(FILE * logFile){
 	}
 
 	dpt=1;
-	dtmp=1;
+
 	for (i=0;i<DOUBLE_DIGITS;++i)
 	{
 		dpt*=dt;
@@ -840,7 +839,7 @@ int crosscheck_for_reduction(FILE * logFile){
 	int exclusiv_bit_or=0;
 	int logics[LOOPCOUNT];
 	int i;
-	double dpt,dtmp;
+	double dpt;
 	int result=0;
 
 	dt = 1./3.;
@@ -880,7 +879,6 @@ int crosscheck_for_reduction(FILE * logFile){
 	/* Tests for doubles */
 	dsum=0;
 	dpt=1;
-	dtmp=1;
 	for (i=0;i<DOUBLE_DIGITS;++i)
 	{
 		dpt*=dt;
@@ -902,7 +900,7 @@ int crosscheck_for_reduction(FILE * logFile){
 	}
 
 	dpt=1;
-	dtmp=1;
+
 	for (i=0;i<DOUBLE_DIGITS;++i)
 	{
 		dpt*=dt;
@@ -2590,7 +2588,7 @@ int check_parallel_section_reduction(FILE * logFile){
 
 
 
-int crosscheck_parallel_section_reduction(){
+int crosscheck_parallel_section_reduction(FILE * logfile){
 	int sum=7;
 	int known_sum;
 	int diff;

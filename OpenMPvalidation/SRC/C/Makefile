@@ -9,7 +9,7 @@
 CC = icc
 #CC = omcc
 #CFLAGS = -O3 -ip -openmp
-CFLAGS = -O0 -openmp
+CFLAGS = -Wall -O0 -openmp
 #CFLAGS =  -openmp
 
 # Omni compilers:
@@ -62,7 +62,13 @@ OBJECTS2 = check_omp_v2_main.o omp_check_lib.o omp_check_single_copyprivate.o \
 OBJECTS4 = check_omp_schedule_main.o omp_check_lib.o omp_check_schedule.o        
 OBJECTS10 = omp_check_chunksize.o 
 
-default: check_omp_v1_main
+default: 
+	@echo "Possible Targets are:"
+	@echo " run       - execute omp version 1 tests"
+	@echo " run2      - execute omp version 2 tests"
+	@echo " schedule  - execute schedule clause tests"
+	@echo " chunksize - execute chunksite tests (internal use)"
+	@echo " all       - build all binaries"
 
 all:  check_omp_v1_main check_omp_v2_main check_omp_schedule_main check_chunksize
 

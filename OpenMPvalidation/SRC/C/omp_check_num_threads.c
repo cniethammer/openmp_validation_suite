@@ -4,7 +4,6 @@
 
 int omp_check_num_threads(FILE * logFile){
   int failed=0;
-  int i;
   int max_threads=0;
   int threads;
   int nthreads;
@@ -32,7 +31,6 @@ int omp_check_num_threads(FILE * logFile){
 
 int omp_crosscheck_num_threads(FILE * logFile){
   int failed=0;
-  int i;
   int max_threads=0;
   int threads;
   int nthreads;

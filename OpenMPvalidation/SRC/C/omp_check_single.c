@@ -150,7 +150,6 @@ int crosscheck_single_private(FILE * logFile)
 
 int check_single_nowait(FILE * logFile)
 {
-  int result=0;
   int nr_iterations=0;
   int total_iterations=0;
   int my_iterations=0;
@@ -189,7 +188,6 @@ int check_single_nowait(FILE * logFile)
 
 int crosscheck_single_nowait(FILE * logFile)
 {
-  int result=0;
   int nr_iterations=0;
   int total_iterations=0;
   int my_iterations=0;

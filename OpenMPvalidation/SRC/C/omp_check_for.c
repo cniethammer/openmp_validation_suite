@@ -11,7 +11,9 @@ ordered: checks that the execution is equivalent to the serial case
 
 static int last_i=0;
 
-int check_i_islarger(int i){
+/* Utility function to check that i is increasing monotonically 
+   with each call */
+static int check_i_islarger(int i){
 	int islarger;
 	islarger=(i>last_i);
 	last_i=i;
@@ -73,10 +75,11 @@ int crosscheck_for_ordered(FILE * logFile){
 	return (known_sum==sum) && is_larger;
 }
 
-void do_some_work(){
+/* Utility function do spend some time in a loop*/
+static void do_some_work(){
 	int i;
 	double sum=0;
-	for(i=0;i++;i<LOOPCOUNT){
+	for(i=0;i<LOOPCOUNT;i++){
 		sum+=sqrt(i);
 	}
 }

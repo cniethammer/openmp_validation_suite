@@ -11,10 +11,10 @@ typedef struct {
 } testcall;
 
 
-FILE * logFile;
-const char * logFileName = "test2.log";
+static FILE * logFile;
+static const char * logFileName = "test2.log";
 
-testcall alltests[]={ 
+static testcall alltests[]={ 
 {"num_threads",omp_check_num_threads,omp_crosscheck_num_threads},
 {"omp_get_wtime",omp_check_time,omp_crosscheck_time},
 {"omp_get_wticks",omp_check_ticks_time,omp_crosscheck_ticks_time},
