@@ -1,0 +1,54 @@
+How to compile and run the tests
+
+You two main ways to run tests with the testsuite:
+A) as stand alone tests for each directive or
+B) as an application (not implemented yet)
+
+------------------------------------------------------------------------------------------
+A) STAND ALONE TESTS
+------------------------------------------------------------------------------------------
+1.) Run ompts_makeHeader.pl. This will generate an up to date headerfile.
+2.) The sources for the tests are in the templates directory. Generate the 
+	sourcecode for the tests you want to run with the ompts_perlparser.pl script
+	and the -main option.
+	Dependent on if you want to create only a test or it's crosstest you have to
+	aet some more options:
+	- If you want to create a test you have to set the -test option.
+	- If you want to create a crosstest you have to set the -crosstest option.
+
+	#	Here is an example to create the source for the test and crosstest to the check 
+	#	if the compiler has openmp support:
+	#	>	./ompts_parser.pl -test -crosstest -main templates/has_openmp.tpl
+	
+	The script will create the sourcecode for the tests. The files are named like
+	the tested OpenMP directives with the prefix test for the test and crosstest for 
+	the crosstest:
+	
+	#	In the example:
+	#	>	test_has_openmp.c and 
+	#	>	crosstest_has_openmp.c
+
+3.) You now can compile the created output. At the moment you have to do this yourself.
+
+	#	In this example with the intel compiler:
+	#	>	icc -openmp -o test_has_openmp test_has_openmp.c
+	#	>	icc -openmp -o crosstest_has_openmp crosstest_has_openmp.c
+
+4.) Now you can run the test. 
+
+	#	In the example:
+	#		./test_has_openmp
+
+	It will display some inforamtions on the display. If the directive worked correct 
+	you will get the message
+	#	>	"Directiv worked without errors."
+
+	If not you can get more information in the created log file which is named like 
+	the test.
+
+	#	In the example:
+	#	>	test_has_openmp.log
+
+------------------------------------------------------------------------------------------
+B) APPLICATION
+------------------------------------------------------------------------------------------
