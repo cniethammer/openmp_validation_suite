@@ -326,14 +326,14 @@ int crosscheck_for_schedule_dynamic(FILE * logFile)
 }
 
 #define NUMBER_OF_THREADS 10
-#define MAX_SIZE 1000
+#define CFSMAX_SIZE 1000
 #define MAX_TIME 10
 #define SLEEPTIME 1
 
 int check_for_schedule_guided(FILE * logFile)
 {
 	int threads;
-	int tids[MAX_SIZE+1];
+	int tids[CFSMAX_SIZE+1];
 	int i,m,tmp;
 	int * chunksizes;
 	int result=1;	
@@ -368,7 +368,7 @@ int check_for_schedule_guided(FILE * logFile)
 		
 
 #pragma omp for nowait schedule(guided,1)
-		for(i=0;i<MAX_SIZE;++i)
+		for(i=0;i<CFSMAX_SIZE;++i)
 		{
 			/*printf(" notout=%d, count= %d\n",notout,count);*/
 			count=0;
@@ -407,17 +407,17 @@ int check_for_schedule_guided(FILE * logFile)
 	{
 	    int global_chunknr=0;
 	    int local_chunknr[NUMBER_OF_THREADS];
-	    int openwork = MAX_SIZE;
+	    int openwork = CFSMAX_SIZE;
 	    int expected_chunk_size;
 	    
 	    for(i=0;i<NUMBER_OF_THREADS;i++)
 		local_chunknr[i]=0;
 	    
-	    tids[MAX_SIZE]=-1;
+	    tids[CFSMAX_SIZE]=-1;
 	    
 
 	    /*fprintf(logFile,"# global_chunknr thread local_chunknr chunksize\n"); */
-	    for(i=1;i<=MAX_SIZE;++i)
+	    for(i=1;i<=CFSMAX_SIZE;++i)
 	    {
 		if(tmp==tids[i])
 		{
@@ -437,7 +437,7 @@ int check_for_schedule_guided(FILE * logFile)
 	    
 	    m = 1;
 	    tmp=tids[0];	    
-	    for(i=1;i<=MAX_SIZE;++i)
+	    for(i=1;i<=CFSMAX_SIZE;++i)
 	    {
 		if(tmp==tids[i])
 		{
@@ -455,7 +455,7 @@ int check_for_schedule_guided(FILE * logFile)
 
 	    for(i=0;i<global_chunknr;i++)
 	    {
-	    	expected_chunk_size = openwork / threads;
+	    	if(expected_chunk_size>2) expected_chunk_size = openwork / threads;
 		result = result && (abs(chunksizes[i]-expected_chunk_size) < 2);
 	    	openwork -= chunksizes[i];
 	    }	
@@ -467,7 +467,7 @@ int check_for_schedule_guided(FILE * logFile)
 int crosscheck_for_schedule_guided(FILE * logFile)
 {
 	int threads;
-	int tids[MAX_SIZE+1];
+	int tids[CFSMAX_SIZE+1];
 	int i,m,tmp;
 	int * chunksizes;
 	int result=1;	
@@ -502,7 +502,7 @@ int crosscheck_for_schedule_guided(FILE * logFile)
 		
 
 #pragma omp for nowait
-		for(i=0;i<MAX_SIZE;++i)
+		for(i=0;i<CFSMAX_SIZE;++i)
 		{
 			/*printf(" notout=%d, count= %d\n",notout,count);*/
 			count=0;
@@ -541,17 +541,17 @@ int crosscheck_for_schedule_guided(FILE * logFile)
 	{
 	    int global_chunknr=0;
 	    int local_chunknr[NUMBER_OF_THREADS];
-	    int openwork = MAX_SIZE;
+	    int openwork = CFSMAX_SIZE;
 	    int expected_chunk_size;
 	    
 	    for(i=0;i<NUMBER_OF_THREADS;i++)
 		local_chunknr[i]=0;
 	    
-	    tids[MAX_SIZE]=-1;
+	    tids[CFSMAX_SIZE]=-1;
 	    
 
 	    /*fprintf(logFile,"# global_chunknr thread local_chunknr chunksize\n"); */
-	    for(i=1;i<=MAX_SIZE;++i)
+	    for(i=1;i<=CFSMAX_SIZE;++i)
 	    {
 		if(tmp==tids[i])
 		{
@@ -571,7 +571,7 @@ int crosscheck_for_schedule_guided(FILE * logFile)
 	    
 	    m = 1;
 	    tmp=tids[0];	    
-	    for(i=1;i<=MAX_SIZE;++i)
+	    for(i=1;i<=CFSMAX_SIZE;++i)
 	    {
 		if(tmp==tids[i])
 		{
@@ -589,7 +589,7 @@ int crosscheck_for_schedule_guided(FILE * logFile)
 
 	    for(i=0;i<global_chunknr;i++)
 	    {
-	    	expected_chunk_size = openwork / threads;
+	    	if(expected_chunk_size>2) expected_chunk_size = openwork / threads;
 		result = result && (abs(chunksizes[i]-expected_chunk_size) < 2);
 	    	openwork -= chunksizes[i];
 	    }	

@@ -5,11 +5,15 @@
 #include <omp.h>
 #include "omp_testsuite.h"
 
+
 typedef struct { 
   char* name;
   a_ptr_to_test_function pass;
   a_ptr_to_test_function fail;
 } testcall;
+
+FILE * logFile;
+const char * logFileName = "test.log";
 
 testcall alltests[]={ 
 {"check_has_openmp",check_has_openmp,crosscheck_has_openmp },
@@ -59,27 +63,35 @@ int main(int argc,char** argv){
   int j=0;
   int result=1;
   int crossfailed=0;
-  printf("######## OpenMP Validation Suite V 0.92 ######\n");
+ 
+  
+  logFile = fopen(logFileName,"a");
+  
+  printf("######## OpenMP Validation Suite V 0.93 ######\n");
   printf("## Repetitions: %3d                       ####\n",N);
   printf("## Loop Count : %6d                    ####\n",LOOPCOUNT);
   printf("##############################################\n");
+  
+  
   while(alltests[i].pass){
     crossfailed=0;
     result=1;
+    fprintf(logFile,"--------------------------------------------------\n%s\n--------------------------------------------------\n",alltests[i].name);
     for(j=0;j<N;j++){
-      /*      printf("%s ...",alltests[i].name);*/
-      if(alltests[i].pass()){
-	/*	printf(" passed");*/
-      } else {
-	/*	printf(" failed");*/
-	result=0;
+    	fprintf(logFile,"# Check: ");
+      if(alltests[i].pass(logFile)){
+	fprintf(logFile,"No errors occured during the %d. test.\n",j+1);
+      	if(!alltests[i].fail(logFile)){
+		fprintf(logFile,"# Crosscheck: Verified result\n");
+		crossfailed++;
+      	}
+      	else {
+		fprintf(logFile,"# Crosscheck: Coudn't verify result.\n");
+      	}
       }
-    
-      if(!alltests[i].fail()){
-	/*printf(" and cross-checked\n");*/
-	crossfailed++;
-      } else {
-	/*printf("\n");*/
+      else {
+	fprintf(logFile,"--> Erroros occured during the %d. test.\n",j+1);
+	result=0;
       }
     }
     if(result==0){
@@ -91,17 +103,22 @@ int main(int argc,char** argv){
     if(crossfailed>0){
       crosschecked++;
     }
+    fprintf(logFile,"Result for %s:\n",alltests[i].name);
     if(result){
+      fprintf(logFile,"Directiv worked without errors.\nCrosschecks verified this result with %5.2f%% certainty.\n",100.0*crossfailed/N);
       printf("%s ... verified with %5.2f%% certainty\n",alltests[i].name,100.0*crossfailed/N);
     }
     else {
+      fprintf(logFile,"Directive failed the tests!\n");
       printf("%s ... FAILED\n",alltests[i].name);
     }
 
 
     i++;
   }
-  printf("\n\n Performed a total of %d tests, %d failed and %d successful with %d cross checked\n",i,failed,success,crosschecked);
+  printf("\n\n Performed a total of %d tests, %d failed and %d successful with %d cross checked\nFor detailled inforamtion on the tests see the logfile (%s)",i,failed,success,crosschecked,logFileName);
+  fprintf(logFile,"\n\n Performed a total of %d tests, %d failed and %d successful with %d cross checked\n",i,failed,success,crosschecked);
+fclose(logFile);
 return failed;
 }
 

@@ -130,10 +130,10 @@ int main()
 		    m=1;
 		}
 	    }
-
+		printf("# global_chunknr chunksize (expected chunksize)\n");
 	    for(i=0;i<global_chunknr;i++)
 	    {
-	    	expected_chunk_size = openwork / threads;
+	    	if(expected_chunk_size > 1) expected_chunk_size = openwork / threads;
 		result = result && (abs(chunksizes[i]-expected_chunk_size) < 2);
 	    	openwork -= chunksizes[i];
 		printf("%d\t%d(%d)\n",i,chunksizes[i],expected_chunk_size);
