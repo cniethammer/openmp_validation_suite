@@ -63,10 +63,10 @@ check_chunksize: $(OBJS10)
 	$(FC) $(FLINKFLAGS) -o check_chunksize $(OBJS10)
 
 check_omp_v1_main.o: check_omp_v1_main.f 
-	$(FC) -c -o check_omp_v1_main.o check_omp_v1_main.f 
+	$(FC) $(FFLAGS) -c -o check_omp_v1_main.o check_omp_v1_main.f 
 
 check_omp_v2_main.o: check_omp_v2_main.f 
-	$(FC) -c -o check_omp_v2_main.o check_omp_v2_main.f 
+	$(FC) $(FFLAGS) -c -o check_omp_v2_main.o check_omp_v2_main.f 
 
 check_omp_schedule_main.o:check_omp_schedule_main.f common_utility.f
 
