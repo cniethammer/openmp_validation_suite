@@ -38,15 +38,15 @@
 #
 #
 #CC = cc
-#CFLAGS = -mp 
+#CFLAGS = -mp -lm 
 
 # IBM compilers:
 #CC = xlc_r
-#CFLAGS = -qsmp=omp
+#CFLAGS = -qsmp=omp -lm
 #
 # SUN compilers
 #CC = cc
-#CFLAGS = -xopenmp
+#CFLAGS = -fast -xopenmp -lm
 
 
 OBJECTS = check_omp_v1_main.o omp_check_lib.o omp_check_for.o \
