@@ -3,9 +3,9 @@
       program check_omp_v2_main
       implicit none
 	integer LOOPCOUNT 
-      integer failed, success
-      integer N
-      integer num_tests,crosschecked, crossfailed, j
+
+
+      integer num_tests,crosschecked
 	integer temp,temp1
 
 	integer omp_check_num_threads,omp_crosscheck_num_threads
@@ -15,7 +15,6 @@
 	integer check_single_copyprivate
 	integer crosscheck_single_copyprivate
 	character*20 logfilename/"test2.log"/
-	integer result 
 	integer unit/1/
 
 	integer i/0/,failed/0/,success/0/
