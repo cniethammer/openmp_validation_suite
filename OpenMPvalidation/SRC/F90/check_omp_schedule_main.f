@@ -82,7 +82,7 @@
                alltests(4)%fail=0
             end select
  
-      	     if ( (.not. alltests(i)%fail).ge.1 ) then
+      	     if ( (alltests(i)%fail).ge.1 ) then
 	       write (1,*) "# Crosscheck: Verified result"
 	       crossfailed = crossfailed + 1
       	     else 
