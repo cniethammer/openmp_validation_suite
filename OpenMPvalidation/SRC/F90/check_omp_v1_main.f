@@ -25,7 +25,6 @@
 	integer chk_par_do_private,crosschk_par_do_private
 	integer chk_par_do_firstprivate,crosschk_par_do_firstprivate
 	integer chk_par_do_lastprivate,crosschk_par_do_lastprivate
-	integer chk_section_reduction,crosschk_section_reduction
 	integer check_section_private,crosscheck_section_private
 	integer chk_section_firstprivate,crosschk_section_firstprivate
 	integer chk_section_lastprivate,crosschk_section_lastprivate
