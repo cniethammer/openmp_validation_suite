@@ -1,6 +1,18 @@
-/* This file contains all checks for the for construct:
+/*! 
+  \file
+  \brief This file contains all checks for the parallel for construct.
 
-   ordered: checks that the execution is equivalent to the serial case
+  \author Matthias Mueller
+
+
+   Currently the following clauses are tested:
+
+
+   - ordered: checks that the order of execution is equivalent to the serial case
+   - reduction: calculates a parallel sum with integers
+   - private:
+   - firstprivate:
+   - lastprivate:
 
 
  */
@@ -9,6 +21,11 @@
 #include "omp_testsuite.h"
 
 static int last_i=0;
+
+/*! 
+ Utility function: returns true if the passed argument is larger than 
+ the argument of the last call of this function.
+*/
 
 int check_i_islarger2(int i){
   int islarger;
