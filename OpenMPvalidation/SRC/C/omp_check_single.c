@@ -1,11 +1,11 @@
 
 /* This file contains all checks for the single  construct: */
 
-
+#include <stdio.h>
 #include "omp_testsuite.h"
 
 
-int check_single()
+int check_single(FILE * logFile)
 {
   int nr_threads_in_single=0;
   int result=0;
@@ -29,7 +29,7 @@ int check_single()
   return(result==0)&&(nr_iterations==LOOPCOUNT);
 }                                /* end of check_single*/
 
-int crosscheck_single()
+int crosscheck_single(FILE * logFile)
 {
   int nr_threads_in_single=0;
   int result=0;
@@ -53,7 +53,7 @@ int crosscheck_single()
   return(result==0)&&(nr_iterations==LOOPCOUNT);
 }                                /* end of check_single*/
 
-int check_single_private()
+int check_single_private(FILE * logFile)
 {
   int nr_threads_in_single=0;
   int result=0;
@@ -87,7 +87,7 @@ int check_single_private()
   return(result==0)&&(nr_iterations==LOOPCOUNT);
 }                                   /* end of check_single private*/ 
 
-int crosscheck_single_private()
+int crosscheck_single_private(FILE * logFile)
 {
   int nr_threads_in_single=0;
   int result=0;
@@ -148,7 +148,7 @@ int crosscheck_single_private()
   return(j==0)&&(nr_iterations==LOOPCOUNT);
 }*/
 
-int check_single_nowait()
+int check_single_nowait(FILE * logFile)
 {
   int result=0;
   int nr_iterations=0;
@@ -187,7 +187,7 @@ int check_single_nowait()
 }                                /* end of check_single_nowait*/
 
 
-int crosscheck_single_nowait()
+int crosscheck_single_nowait(FILE * logFile)
 {
   int result=0;
   int nr_iterations=0;
