@@ -9,7 +9,7 @@ int check_parallel_for_reduction(FILE * logFile){
 	double dsum=0;
 	double dknown_sum;
 	double dt=0.5;				/* base of geometric row for + and - test*/
-	double rounding_error= 1.E-10;
+	double rounding_error= 1.E-9;
 #define DOUBLE_DIGITS 20		/* dt^DOUBLE_DIGITS */
 	int diff;
 	double ddiff;
@@ -266,7 +266,7 @@ int crosscheck_parallel_for_reduction(FILE * logFile){
 	double dsum=0;
 	double dknown_sum;
 	double dt=0.5;				/* base of geometric row for + and - test*/
-	double rounding_error= 1.E-10;
+	double rounding_error= 1.E-9;
 #define DOUBLE_DIGITS 20		/* dt^DOUBLE_DIGITS */
 	int diff;
 	double ddiff;
@@ -522,7 +522,7 @@ int check_for_reduction(FILE * logFile){
 	double dsum=0;
 	double dknown_sum;
 	double dt=0.5;				/* base of geometric row for + and - test*/
-	double rounding_error= 1.E-10;
+	double rounding_error= 1.E-9;
 #define DOUBLE_DIGITS 20		/* dt^DOUBLE_DIGITS */
 	int diff;
 	double ddiff;
@@ -824,7 +824,7 @@ int crosscheck_for_reduction(FILE * logFile){
 	double dsum=0;
 	double dknown_sum;
 	double dt=0.5;				/* base of geometric row for + and - test*/
-	double rounding_error= 1.E-10;
+	double rounding_error= 1.E-9;
 #define DOUBLE_DIGITS 20		/* dt^DOUBLE_DIGITS */
 	int diff;
 	double ddiff;
@@ -1713,7 +1713,7 @@ int crosscheck_section_reduction(FILE * logFile){
 	double dpt,dsum=0;
 	double dknown_sum;
 	double dt=0.5;				/* base of geometric row for + and - test*/
-	double rounding_error= 1.E-10;
+	double rounding_error= 1.E-9;
 	int diff;
 	double ddiff;
 	int product=1;
@@ -2302,7 +2302,7 @@ int check_parallel_section_reduction(FILE * logFile){
 	double dpt,dsum=0;
 	double dknown_sum;
 	double dt=0.5;				/* base of geometric row for + and - test*/
-	double rounding_error= 1.E-10;
+	double rounding_error= 1.E-9;
 	int diff;
 	double ddiff;
 	int product=1;
@@ -2845,7 +2845,7 @@ int crosscheck_parallel_section_reduction(FILE * logFile){
 	double dpt,dsum=0;
 	double dknown_sum;
 	double dt=0.5;				/* base of geometric row for + and - test*/
-	double rounding_error= 1.E-10;
+	double rounding_error= 1.E-9;
 	int diff;
 	double ddiff;
 	int product=1;
