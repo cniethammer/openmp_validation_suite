@@ -1760,7 +1760,7 @@
 		crosschecked = crosschecked + 1
 	endif 
 		
-		write (1,*) "Result for check_omp_in_parallel:"
+		write (1,*) "Result for check_omp_nest_lock:"
 	
 	if (result .EQ. 1) then
 		write (1,*) "Directiv worked without errors."
@@ -1816,7 +1816,7 @@
 		crosschecked = crosschecked + 1
 	endif 
 		
-		write (1,*) "Result for check_omp_in_parallel:"
+		write (1,*) "Result for check_omp_nest_testlog:"
 	
 	if (result .EQ. 1) then
 		write (1,*) "Directiv worked without errors."
