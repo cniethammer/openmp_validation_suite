@@ -38,6 +38,10 @@ int check_for_schedule_static()
     int tid;
     int tids[MAX_SIZE];
     int count = 0;
+    int tmp_count = 0;
+	int i;
+	int *tmp;
+    int result = 0;
 
 #pragma omp parallel private(tid) shared(tids,count)
 { /* begin of parallel*/
@@ -45,25 +49,24 @@ int check_for_schedule_static()
     tid = omp_get_thread_num();
 #pragma omp for schedule(static,chunk_size)
 
-	for(int i=0;i<MAX_SIZE;++i)
+	for(i=0;i<MAX_SIZE;++i)
     {
         tids[i] = tid;
     }
 
 } /* end of parallel */
 
-    for(int i=0;i<MAX_SIZE-1;++i){
+    for(i=0;i<MAX_SIZE-1;++i){
         if(tids[i]!=tids[i+1])
         {
             count++;
         }
     }
     
-	int tmp[count+1];
-    int tmp_count = 0;
+	tmp= malloc(sizeof(int)*(count+1));
 	tmp[0]=1;
     
-	for(int i=0;i<MAX_SIZE-1;++i){
+	for(i=0;i<MAX_SIZE-1;++i){
 		if(tmp_count>count)
         {
             printf("--------------------\nError: List too small!!!\n--------------------\n"); /* Error handling */
@@ -81,9 +84,8 @@ int check_for_schedule_static()
     }
 
 /* is dynamic statement working? */
-    int result = 0;
 
-    for(int i=0;i<count;++i)
+    for(i=0;i<count;++i)
     {
 		if(tmp[i]!=chunk_size)
         {
@@ -109,6 +111,10 @@ int check_for_schedule_dynamic()
     int tid;
     int tids[MAX_SIZE];
     int count = 0;
+    int tmp_count = 0;
+	int *tmp;
+	int i;
+    int result = 1;
 
 #pragma omp parallel private(tid) shared(tids,count)
 { /* begin of parallel*/
@@ -130,11 +136,10 @@ int check_for_schedule_dynamic()
         }
     }
     
-	int tmp[count+1];
-    int tmp_count = 0;
+	tmp = malloc(sizeof(int)*(count+1));
 	tmp[0]=1;
     
-	for(int i=0;i<MAX_SIZE-1;++i){
+	for(i=0;i<MAX_SIZE-1;++i){
 		if(tmp_count>count)
         {
             printf("--------------------\nError: List too small!!!\n--------------------\n"); /* Error handling */
@@ -152,9 +157,8 @@ int check_for_schedule_dynamic()
     }
 
 /* is dynamic statement working? */
-    int result = 1;
 
-    for(int i=0;i<count+1;++i)
+    for(i=0;i<count+1;++i)
     {
 		if(tmp[i]!=chunk_size)
         {
@@ -182,6 +186,10 @@ int check_for_schedule_guided()
     int tid;
     int tids[MAX_SIZE];
     int count = 0;
+    int tmp_count = 0;
+	int *tmp;
+	int i;
+    int result = 0;
 
 #pragma omp parallel private(tid) shared(tids,count)
 { /* begin of parallel*/
@@ -203,11 +211,10 @@ int check_for_schedule_guided()
         }
     }
     
-	int tmp[count+1];
-    int tmp_count = 0;
+	tmp = malloc(sizeof(int)*(count+1));
 	tmp[0]=1;
     
-	for(int i=0;i<MAX_SIZE-1;++i){
+	for(i=0;i<MAX_SIZE-1;++i){
 		if(tmp_count>count)
         {
             printf("--------------------\nError: List too small!!!\n--------------------\n");  /* Error handling */
@@ -225,8 +232,7 @@ int check_for_schedule_guided()
     }
 
 /* is guided statement working? */
-    int result = 0;
-    for(int i=0;i<count;++i)
+    for(i=0;i<count;++i)
     {
 		if(tmp[i]>tmp[i+1])
         {
@@ -245,3 +251,4 @@ int check_for_schedule_guided()
 		return 0;
     }
 }
+
