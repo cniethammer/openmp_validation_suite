@@ -59,12 +59,12 @@
 	do iter = 0, 99
 	  call random_number(harvest=my_random)
 !$omp parallel private(rank)
-	  rank = omp_get_thread_num()
+	  rank = omp_get_thread_num()+1
 	  myvalue = my_random + rank
 	  data(rank) = myvalue
 !$omp end parallel
 !$omp parallel private(rank)
-	  rank = omp_get_thread_num()
+	  rank = omp_get_thread_num()+1
 	  if ( myvalue .ne. data(rank) ) then
 	   failed = failed + 1
 	   print *, ' myvalue =',myvalue,' data(rank)=', data(rank)
@@ -124,12 +124,12 @@
 	do iter = 0, 99
 	   call random_number(harvest=my_random)
 !$omp parallel private(rank)
-	   rank = omp_get_thread_num()
+	   rank = omp_get_thread_num()+1
 	   crossmyvalue = my_random + rank
 	   data(rank) = crossmyvalue
 !$omp end parallel
 !$omp parallel reduction(+:failed) private(rank)
-	   rank = omp_get_thread_num()
+	   rank = omp_get_thread_num()+1
 	   if ( crossmyvalue .ne. data(rank) ) then
 	     failed = failed + 1
  	   end if
@@ -254,13 +254,13 @@
 !$omp end parallel
 	do iter=0, 999
 !$omp parallel private(rank)
-	   rank = omp_get_thread_num()
+	   rank = omp_get_thread_num()+1
            call random_seed(SIZE=random_size)
 	   call random_number(harvest=my_random)
 	   myvalue2 = my_random + rank
 !$omp end parallel
 !$omp parallel reduction(+:failed) private(rank)
-	   rank = omp_get_thread_num()
+	   rank = omp_get_thread_num()+1
 	   if ( myvalue2 .ne. data(rank) ) then
 	     failed = failed + 1
 	   end if
