@@ -50,8 +50,8 @@
 #
 
 # SUN compilers
-CC = cc
-CFLAGS = -xopenmp -lm
+#CC = cc
+#CFLAGS = -xopenmp -lm
 
 #
 # open64 compilers
@@ -93,7 +93,7 @@ test:main
 # precompilation tries to generate .o files for feasible tests
 # Generated Header
 #compile main.c and link with other objects to get  executables
-main:clean
+main:
 	./preCompilation $(TEST_FILENAME) $(CC) $(CFLAGS)
 	$(CC) $(CFLAGS) -o main main.c *.o
 	
