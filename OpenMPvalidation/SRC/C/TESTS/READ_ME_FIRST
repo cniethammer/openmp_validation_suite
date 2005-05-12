@@ -16,6 +16,9 @@ Edit Makefile first to set RIGHT compiler and its options to handle
 OR gmake test testfile=ALL_TEST|CUSTOM_TEST|OMP1_TEST|OMP2_TEST ..
    gmake run
 
+To clean:
+   gmake clean
+
 The default testfile used in 'gmake test' is predefined OMP1_TEST.
 CUSTOM_TEST is user defined test set containing arbitrary tests 
 from ALL_TEST. 

@@ -87,17 +87,16 @@ print_help:
 	@echo "CUSTOM_TEST    - execute customized tests"
 	@echo "the default filename is OMP1_TEST"
 
-
 default:print_help
 
 .PHONY: test
 test:main
 
-
 # precompilation tries to generate .o files for feasible tests
-# Generated Header
+# A header is generated from available .o files
 feasible_test.h:
 	 ./preCompilation $(TEST_FILENAME) $(CC) $(CFLAGS)
+
 #compile main.c and link with other objects to get  executables
 main:feasible_test.h
 	$(CC) $(CFLAGS) -o main main.c *.o
