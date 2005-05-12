@@ -9,6 +9,8 @@ It also tries to provide customized test functions in arbitrary order
 
 Usage:
 --------------------------------------------
+Edit Makefile first to set RIGHT compiler and its options to handle 
+   OpenMP test files. Some popular compilers are added already with comments.
 
    gmake test
 OR gmake test testfile=ALL_TEST|CUSTOM_TEST|OMP1_TEST|OMP2_TEST ..
@@ -40,5 +42,5 @@ Limitations:
 * cannot handle link phase error yet,ie. undefined reference to some 
 library calls in OMP 2.0 
 
-Chunhua Liao, University of Housston, May 12, 2005
+Chunhua Liao, University of Houston, May 12, 2005
 
