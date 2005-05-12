@@ -69,22 +69,26 @@ else
  TEST_FILENAME = OMP1_TEST
 endif
 
-default: 
+.PHONEY:print_help
+print_help:
 	@echo "----------------------------------"
+	@echo "Edit Makefile for proper compiler command and options"
 	@echo "usage: "
 	@echo "      gmake test TESTFILE=filename"
 	@echo "Or    gmake test                 "
 	@echo " Then:
 	@echo "      gmake run                  "
+	@echo " Clean up:                       "
+	@echo "      gmake clean                "
 	@echo "----------------------------------"
 	@echo "filename may be one of the following:"
-	@echo "OMP1_TEST        - execute omp version 1 tests"
+	@echo "OMP1_TES       - execute omp version 1 tests"
 	@echo "OMP2_TEST      - execute omp version 2 tests"
 	@echo "CUSTOM_TEST    - execute customized tests"
-	@echo "SCHED_TEST       - execute scheduling tests"
 	@echo "the default filename is OMP1_TEST"
 
 
+default:print_help
 
 .PHONY: test
 test:main
@@ -92,16 +96,16 @@ test:main
 
 # precompilation tries to generate .o files for feasible tests
 # Generated Header
+feasible_test.h:
+	 ./preCompilation $(TEST_FILENAME) $(CC) $(CFLAGS)
 #compile main.c and link with other objects to get  executables
-main:
-	./preCompilation $(TEST_FILENAME) $(CC) $(CFLAGS)
+main:feasible_test.h
 	$(CC) $(CFLAGS) -o main main.c *.o
 	
-
 clean:
-	rm -f *.o feasible_test.h main *~ 
+	rm -f *.o failed.compilation feasible_test.h main *~ 
 
-run: main
+run:main 
 	-rm -f test.log 
 	(OMP_NUM_THREADS=2; export OMP_NUM_THREADS; ./main)
 
