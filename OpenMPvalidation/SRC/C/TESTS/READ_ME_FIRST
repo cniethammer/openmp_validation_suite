@@ -2,7 +2,7 @@ Introduction:
 --------------------------------------
 
 This beta version is aimed to be robust even if some test functions 
-cannot pass the compilation.
+cannot pass the compilation using Bash scripting and gmake.
 
 It also tries to provide customized test functions in arbitrary order 
  defined by users.
@@ -18,7 +18,7 @@ OR gmake test testfile=ALL_TEST|CUSTOM_TEST|OMP1_TEST|OMP2_TEST ..
 
 The default testfile used in 'gmake test' is OMP1_TEST
 CUSTOM_TEST is user defined test set contain arbitrary tests f
-rom ALL_TEST. OMP1_TEST, OMP2_TEST are predefined test sets.
+rom ALL_TEST. OMP1_TEST, OMP2_TEST,etc are predefined test sets.
 
 Results:
 ---------------------------------------------
@@ -31,7 +31,7 @@ Changes:
 * Predefined test sets: ALL_TEST, OMP1_TEST, OMP2_TEST, and user defined 
   test set CUSTOM_TEST
 * Separated files for test functions, file names are the same as function names
-* In Makefile, there is a hidden bash script preCompilation is used to test 
+* In Makefile, it invokes a hidden bash script preCompilation used to test 
   feasible test functions and generated a header file feasible_test.h used
   in main.c
 * changed the names of omp_check_time, omp_check_num_threads, omp_check_tickes_time to check_omp_time, check_omp_num_threads, check_omp_tickes_time to be consistent to other names.
