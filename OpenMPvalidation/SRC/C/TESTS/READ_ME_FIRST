@@ -41,6 +41,18 @@ Changes:
   in main.c
 * changed the names of omp_check_time, omp_check_num_threads, omp_check_tickes_time to check_omp_time, check_omp_num_threads, check_omp_tickes_time to be consistent to other names, also facilitating the auto-generation of the c header.
 
+How to add a new test:
+------------------------------------------
+It becomes much easier to add a new test than before:
+* add test functions check_mytest_abc() and crosscheck_mytest_abc() 
+	in a file named mytest_abc.c
+* add the name into any test set file in a new line:
+  for example: add it into CUSTOM_TEST in a new line: mytest_abc
+* To run the new test:
+   gmake clean
+   gmake test testfile=CUSTOM_TEST
+   gmake run
+
 Limitations:
 -----------------------------------------
 * gmake is preferred, Solaris make will prompt error in reading Makefile
