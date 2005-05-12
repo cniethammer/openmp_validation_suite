@@ -2,7 +2,7 @@ Introduction:
 --------------------------------------
 
 This beta version is aimed to be robust even if some test functions 
-cannot pass the compilation using Bash scripting and gmake.
+cannot pass the compilation with the help of Bash scripting and gmake.
 
 It also tries to provide customized test functions in arbitrary order 
  defined by users.
@@ -16,9 +16,10 @@ Edit Makefile first to set RIGHT compiler and its options to handle
 OR gmake test testfile=ALL_TEST|CUSTOM_TEST|OMP1_TEST|OMP2_TEST ..
    gmake run
 
-The default testfile used in 'gmake test' is OMP1_TEST
-CUSTOM_TEST is user defined test set contain arbitrary tests f
-rom ALL_TEST. OMP1_TEST, OMP2_TEST,etc are predefined test sets.
+The default testfile used in 'gmake test' is predefined OMP1_TEST.
+CUSTOM_TEST is user defined test set containing arbitrary tests 
+from ALL_TEST. 
+OMP1_TEST, OMP2_TEST,etc are predefined test sets.
 
 Results:
 ---------------------------------------------
@@ -28,18 +29,19 @@ Results:
 
 Changes:
 ------------------------------------------
+* Only one main.c is used for all test cases.
 * Predefined test sets: ALL_TEST, OMP1_TEST, OMP2_TEST, and user defined 
   test set CUSTOM_TEST
 * Separated files for test functions, file names are the same as function names
 * In Makefile, it invokes a hidden bash script preCompilation used to test 
   feasible test functions and generated a header file feasible_test.h used
   in main.c
-* changed the names of omp_check_time, omp_check_num_threads, omp_check_tickes_time to check_omp_time, check_omp_num_threads, check_omp_tickes_time to be consistent to other names.
+* changed the names of omp_check_time, omp_check_num_threads, omp_check_tickes_time to check_omp_time, check_omp_num_threads, check_omp_tickes_time to be consistent to other names, also facilitating the auto-generation of the c header.
 
 Limitations:
 -----------------------------------------
 * gmake is preferred, Solaris make will prompt error in reading Makefile
-* cannot handle link phase error yet,ie. undefined reference to some 
+* cannot catch link phase error yet,ie. undefined reference to some 
 library calls in OMP 2.0 
 
 Chunhua Liao, University of Houston, May 12, 2005
