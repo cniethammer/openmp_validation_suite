@@ -20,7 +20,6 @@ fi
 #-------------------------------------------------------------
 generateBody()
 {
-#echo "-------------entering functionbody!!----------"
 # assign test name to aa
 aa="${array1[$a]}"
 # redirect following stdout to a file
@@ -150,6 +149,6 @@ do
       generateBody
       continue
     else
-      echo "test$(($a+1)) ${array1[$a]} cannot be compiled." >> failed.compilation
+      echo "test$(($a+1)) ${array1[$a]} did not pass the compilation." >> failed.compilation
     fi
 done
