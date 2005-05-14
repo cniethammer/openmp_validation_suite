@@ -1,0 +1,2 @@
+the maximum length of fortran test names is limited to 24, since
+the chk_ and crschk_  will add 7 more characters to the final function name

@@ -1,0 +1,119 @@
+!*******************************************************
+! The main driver for the Fortran tests
+!
+! Two parts are automatically generated from a customized test file 
+!
+! Author: Chunhua Liao, University of Houston
+! Date: May, 13 2005
+!*******************************************************
+
+	program main
+
+	implicit none
+	integer num_tests/0/
+	integer failed/0/
+	integer success/0/
+	integer N
+	parameter (N=20)
+	integer crosschecked/0/, crossfailed/0/, j/1/
+        integer temp,temp1  ! used to store test results
+        character*20 logfilename
+        integer result/1/
+	include 'omp_testsuite.f'
+
+! integer part for desired tests
+        include 'testdeclaration.f' 
+! end include part
+
+
+        write (*,*) "Enter logFilename:"
+        read  (*,*) logfilename
+
+        open (1, FILE = Logfilename)
+
+        write(*,*)
+     &  "######## OpenMP Validation Suite V 0.93 ######"
+        write(*,*) "## Repetitions: ",N,
+     &  "                       ####"
+        write(*,*) "## Loop Count : ",LOOPCOUNT,
+     &  "                    ####"
+        write(*,*)
+     &  "##############################################"
+
+
+!*********************************************************
+! beginning of the repeat part
+
+
+        num_tests = num_tests +1
+        result = 1  		! Assume the test will success
+        crossfailed = 0  	! assume its crosscheck should fail
+
+
+        write (1,*) "--------------------------------------------------"
+        write (1,*) "omp p_section_reduction"   ! replacing it with the test name
+        write (1,*) "--------------------------------------------------"
+
+        do j = 1, N
+                write (1,*) "# Check: "
+                temp =  check_p_section_reduction()   ! replacing it with the test name
+                if (temp .EQ. 1) then
+                        write (1,*) "No errors occured during the", j, 
+     &  ". test."
+                        temp1 = crosscheck_p_section_reduction()  ! replacing it with the cross test name
+!	crosscheck is supposed to be failed
+                        if (temp1 .EQ. 0) then
+                                write (1,*) 
+     &  " # Crosscheck: Verified result"
+                                crossfailed = crossfailed + 1
+                        else
+                                write (1,*) 
+     &  "# Crosscheck: Could not verified the result."
+                        endif
+                else
+                        write (1,*) 
+     &  "--> Errors occured during the",j, ". test."
+                        result = 0
+                endif
+        end do
+
+        if (result .EQ. 0 )then
+                failed = failed + 1
+        else
+                success = success + 1
+        endif
+
+        if (crossfailed .GT. 0) then
+                crosschecked = crosschecked + 1
+        endif
+
+                write (1,*) "Result for check_p_section_reduction:" ! replacing it with the test name
+
+        if (result .EQ. 1) then
+                write (1,*) "Directive worked without errors."
+                write (1,*) "Crosschecks verified this result with", 100.0*crossfailed/N
+                write (*,*) "check_p_section_reduction ... ",   	! replacing it with the test name
+     &          "verified with", 100.0*crossfailed/N ,"% certainty."
+        else
+                write (1,*) "Directive failed the tests!"
+                write (*,*) "check_p_section_reduction ... FAILED."   ! replacing it with the test name
+        endif
+!end of the repeat part
+!********************************
+
+
+! print summary information for all tests
+        write(1,*)
+        write(1,*)
+        write(1,*) " Performed a total of ",num_tests,"tests, ",
+     &  failed," failed and ",success," successful with ",
+     &  crosschecked,"cross checked"
+        write(1,*)
+     &  "For detailled inforamtion on the tests see the logfile ",
+     &  logFileName
+
+
+        close(1)
+c       return failed
+        end program main
+
