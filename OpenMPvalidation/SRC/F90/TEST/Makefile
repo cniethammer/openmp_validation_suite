@@ -1,7 +1,7 @@
 #SUN Fortran Compiler:
-FC=f90
-FFLAGS=-xopenmp -O3
-FLINKFLAGS=-O3 -xopenmp
+#FC=f90
+#FFLAGS=-xopenmp -O3
+#FLINKFLAGS=-O3 -xopenmp
 
 #
 #Intel Compiler
@@ -23,6 +23,12 @@ FLINKFLAGS=-O3 -xopenmp
 #FC=pgf90
 #FFLAGS=-fast -mp
 #FLINKFLAGS=-fast -mp
+
+#Pathscale Compiler
+#FC=pathf90
+#FFLAGS=  -O2 -mp
+#FLINKFLAGS=-O2 -mp
+
 
 ifdef testfile
 TESTFILE = $(testfile)
