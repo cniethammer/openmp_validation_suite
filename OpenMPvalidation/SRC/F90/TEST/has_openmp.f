@@ -27,8 +27,7 @@
         integer crschk_has_OpenMP
         crschk_has_OpenMP=0
 !version 1.
-!C23456789 
-!$      crschk_has_OpenMP=1
+!        crschk_has_OpenMP=1
 
 ! version 2.
 !#ifdef _OPENMP
