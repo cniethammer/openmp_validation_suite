@@ -24,7 +24,7 @@
               chk_omp_time=0
       endif
       end
-
+!*****************************************************
       integer function crschk_omp_time(fileunit)
       implicit none
       double precision start

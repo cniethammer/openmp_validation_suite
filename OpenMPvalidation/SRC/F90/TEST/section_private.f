@@ -42,7 +42,7 @@
           chk_section_private = 0
         end if
         end
-
+!************************************************************
         integer function crschk_section_private()
         implicit none
         integer sum, sum0, known_sum, i

@@ -2,6 +2,19 @@
 ! Functions: chk_do_private
 !********************************************************************
 
+        subroutine do_some_work()
+        implicit none
+        real i
+!Yi Wen modified here, f90
+        intrinsic sqrt
+        double precision sum
+        include "omp_testsuite.f"
+        sum = 0.0
+        do i=0.0, LOOPCOUNT-1,1.0
+          sum = sum + sqrt(i)
+        end do
+        end
+
       integer function chk_do_private()
       implicit none
       integer sum, sum0, sum1, known_sum, i
