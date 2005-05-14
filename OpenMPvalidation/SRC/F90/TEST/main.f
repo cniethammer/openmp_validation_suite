@@ -26,8 +26,6 @@
 
 ! integer part for desired tests
         include 'testdeclarations.f' 
-! end include part
-
 
         write (*,*) "Enter logFilename:"
         read  (*,*) logfilename
@@ -47,9 +45,6 @@
 !*********************************************************
 ! beginning of the repeat part
         include 'mainBody.f'
-!end of the repeat part
-!********************************
-
 
 ! print summary information for all tests
         write(1,*)
@@ -63,6 +58,14 @@
 
 
         close(1)
-c       return failed
+        write(*,*)
+        write(*,*)
+        write(*,*) " Performed a total of ",num_tests,"tests, ",
+     &  failed," failed and ",success," successful with ",
+     &  crosschecked,"cross checked"
+        write(*,*)
+     &  "For detailled inforamtion on the tests see the logfile ",
+     &  logFileName
+
         end program main
 
