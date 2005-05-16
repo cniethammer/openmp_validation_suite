@@ -10,11 +10,12 @@
 #include "omp_my_sleep.h"
 
 int <ompts:testcode:functionname>omp_barrier</ompts:testcode:functionname>(FILE * logFile){
-  int result1=0;
-  int result2=0;
+  <ompts:orphan:vars>int result1=0;
+  int result2=0;</ompts:orphan:vars>
 #pragma omp parallel
   {
-    int rank;
+	<ompts:orphan>
+    <ompts:orphan:vars>int rank;</ompts:orphan:vars>
     rank=omp_get_thread_num();
     if(rank==1){
       my_sleep(1.);
@@ -24,6 +25,7 @@ int <ompts:testcode:functionname>omp_barrier</ompts:testcode:functionname>(FILE 
     if(rank==0){
       result1=result2;
     }
+	</ompts:orphan>
   }
   return (result1==3);
 }
