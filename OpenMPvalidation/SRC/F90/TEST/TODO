@@ -1,0 +1,28 @@
+[liao@medusa validation]$ make all
+pathf90 -mp  -c -o omp_check_locks.o omp_check_locks.f
+
+      USE omp_lib
+          ^       
+pathf90-292 pathf90: ERROR CHECK_OMP_LOCK, File = omp_check_locks.f, Line = 9, Column = 11 
+  "OMP_LIB" is specified as the module name on a USE statement, but the compiler cannot find it.
+
+      INTEGER (KIND=OMP_LOCK_KIND) :: lck
+                    ^                     
+pathf90-868 pathf90: ERROR CHECK_OMP_LOCK, File = omp_check_locks.f, Line = 13, Column = 21 
+  "OMP_LOCK_KIND" is used in a constant expression, therefore it must be a constant.
+
+>>>>>>>Fortran version : sun@pivo            pgi@medusa
+omp_time               Segmentation Fault    not supported
+omp_ticks_time         Segmentation Fault    not supported
+do_schedule_static     Failed                failed
+do_schedule_dynamic    Failed                failed
+do_schedule_guided     Failed                failed
+
+>>>>>>> Fortran version: pathscale@medusa & pgi@medusa
+test30 omp_threadprivate cannot be compiled.
+test31 omp_copyin cannot be compiled.
+test32 omp_lock cannot be compiled.
+test33 omp_testlock cannot be compiled.
+test34 omp_nest_lock cannot be compiled.
+test35 omp_nest_testlock cannot be compiled.
+
