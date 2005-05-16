@@ -4,112 +4,144 @@
 # 
 # Creats the tests and the crosstests for the OpenMP-Testsuite out of an templatefiles which are given to the programm.
 # 
-# options:
+# Options:
 # -test: 		make test
 # -crosstest: 	make crosstest
-# -main			generates source for standalone tests (not implemented yet)
-# -o=FILENAME	outputfile (only when one templatefile is specified)(not implemented yet)
-# 
+# -orphan		if possible generate tests using orphan regions (not implemented yet)
+# -o=FILENAME	outputfile (only when one templatefile is specified)
 
-$mainprocsrc = "ompts_standaloneProc.c";
+
+# Using Getopt::long to extract the programm options
 use Getopt::Long;
-GetOptions("-test" => \$test,"-crosstest" => \$crosstest, "-o=s" => \$outputfile, "-main" => \$makeMain, "-f!");
-@sourcefiles = @ARGV; 
+# Using functions: Set of subroutines to modify the testcode
+use ompts_parserFunctions;
 
-#checking if options are valid:
-if(@ARGV == 0){die "No files to parse are specified!";}
-if($outputfile && (@ARGV != 1 || ($test && $crosstest) ) ){die "There were multiple files for one outputfiles specified!";} 
+# Getting given options
+GetOptions("-test" => \$test,"-crosstest" => \$crosstest, "-o=s" => \$outputfile, "-orphan" => \$orphan, "-f!");
 
-if($makeMain){
-############################################################
-# creating the test and the crosstest source as a standalone programm
-	open(MAINPROC,$mainprocsrc) or die "Could not open the sourcefile for the main program $mainprocsrc";
-	while(<MAINPROC>){
-		$mainproc .= $_;
+# Remaining arguments are the templatefiles. 
+# Adding these to the list of to be parsed files if they exist.
+foreach $file(@ARGV)
+{
+	if(-e $file){ 
+		push(@sourcefiles,$file); 
 	}
-	close(MAINPROC);
-
-	foreach $srcfile (@sourcefiles){
-		
-		# reading sourcefile:
-		open(TESTCODE,$srcfile) or die "Could not open the sourcefile";
-		while(<TESTCODE>){
-			$sourcecode .= $_;
-		}
-		close(TESTCODE);
-		$sourcecode =~ /\<ompts\:directive\>(.*)\<\/ompts\:directive\>/;
-		$directive = $1;
-		# extracting the sourcecode:
-		$sourcecode =~ /\<ompts\:testcode\>(.*?)\<\/ompts\:testcode\>/gs;
-		$sourcecode = $1;
-		$sourcecode =~ /\<ompts\:testcode\:functionname\>(.*)\<\/ompts\:testcode\:functionname\>/;
-		$functionname = $1;
-		if($crosstest){
-			open(OUTFILE,">crosstest_".$functionname."\.c") or die "Could not create the outputfile for the crosstest.";
-			$_ = $sourcecode;
-			s#\<ompts\:testcode\:functionname\>(.*)\<\/ompts\:testcode\:functionname\>#crosscheck\_$1#;
-			s#\<ompts\:crosscheck\>(.*?)\<\/ompts\:crosscheck\>#$1#gs;
-			s#\<ompts\:check\>(.*?)\<\/ompts:check\>##gs;
-			$mainproc =~ s#\<testfunctionname\>#crosscheck\_$functionname#gs;
-			$mainproc =~ s#\<directive\>#$directive (crosscheck)#gs;
-			$_.=$mainproc;
-			print OUTFILE $_;
-			close(OUTFILE);
-		}
-		
-		# creating the test main:
-		if($test){
-			open(OUTFILE,">test_".$functionname."\.c") or die "Could not create the outputfile for the test.";
-			$_ = $sourcecode;
-			s#\<ompts\:testcode\:functionname\>(.*)\<\/ompts\:testcode\:functionname\>#check_$1#;
-			s#\<ompts\:check\>(.*?)\<\/ompts\:check\>#$1#gs;
-			s#\<ompts\:crosscheck\>(.*?)\<\/ompts\:crosscheck\>##gs;
-			$mainproc =~ s#\<testfunctionname\>#check\_$functionname#gs;
-			$mainproc =~ s#\<directive\>#$directive#gs;
-			$_.=$mainproc;
-			print OUTFILE $_;
-			close(OUTFILE);
-		}
+	else
+	{
+		print "Error: Unknown Option $file\n";
 	}
 }
-else{
-############################################################
-# creating the test and crosstest source as a function:
-	foreach $srcfile (@sourcefiles){
-		
-		# reading sourcefile:
-		open(TESTCODE,$srcfile) or die "Could not open the sourcefile";
-		while(<TESTCODE>){
-			$sourcecode .= $_;
-		}
-		close(TESTCODE);
+	
+# Checking if options were valid:
+if(@sourcefiles == 0){die "No files to parse are specified!";}
+if($outputfile && (@sourcefiles != 1 || ($test && $crosstest) ) ){die "There were multiple files for one outputfiles specified!";} 
 
-		# extracting the sourcecode:
-		$sourcecode =~ /\<ompts\:testcode\>(.*?)\<\/ompts\:testcode\>/gs;
-		$sourcecode = $1;
-		$sourcecode =~ /\<ompts\:testcode\:functionname\>(.*)\<\/ompts\:testcode\:functionname\>/;
-		$functionname = $1;
+# Reading the templates for the tests into @sources
+foreach $srcfile (@sourcefiles)
+{
+	# Reading the content of the current sourcefile	into $src
+	open(TEST,$srcfile) or print "Error: Could not open template $srcfile\n";
+	while(<TEST>){
+		$src .= $_;
+	}
+	close(TEST);
+	# Adding the content $src to the end of the list @sources
+	push(@sources,$src);
+}
 
-		# creating the crosstest function:
-		if($crosstest){
-			open(OUTFILE,">crosstest_".$functionname."\.c") or die "Could not create the outputfile for the crosstest.";
-			$_ = $sourcecode;
-			s#\<ompts\:testcode\:functionname\>(.*)\<\/ompts\:testcode\:functionname\>#crosscheck\_$1#;
-			s#\<ompts\:crosscheck\>(.*?)\<\/ompts\:crosscheck\>#$1#gs;
-			s#\<ompts\:check\>(.*?)\<\/ompts:check\>##gs;
-			print OUTFILE $_;
-			close(OUTFILE);
+# Extracting the source for the mainprogramm and saving it in $mainprocsrc
+$mainprocsrc = "ompts_standaloneProc.c";
+open(MAINPROC,$mainprocsrc) or die "Could not open the sourcefile for the main program $mainprocsrc";
+while(<MAINPROC>){
+	$mainproc .= $_;
+}
+
+
+foreach $src(@sources)
+{
+	# Some temporary testinformation:
+	($description) = get_tag_values('ompts:testdescription',$src);
+	($directive) = get_tag_values('ompts:directive',$src);
+	($functionname) = get_tag_values('ompts:testcode:functionname',$src);
+
+
+	# Creating the source for the test:
+	if($test)
+	{
+		open(OUTFILE,">test_$functionname.c") or die("Could not create the output file for $directive");
+		($code) = get_tag_values('ompts:testcode',$src);
+		# Make modifications for the orphaned testversion if necessary:
+		if($orphan)
+		{
+			# Create declarations for orphan vars:
+			$orphvarsdef = make_global_vars_def($code);
+			# Generate predeclarations for orpahn functions:
+			$orphfuncsdefs = orph_functions_declarations('test_',$code);
+			# Generate the orphan functions:
+			$orphfuncs = create_orph_functions('test_',$code);
+			# Replace orphan regions by functioncalls:
+			($code) = orphan_regions2functions( 'test_', ($code) );
+			# Deleting the former declarations of the variables in the orphan regions:
+			($code) = delete_tags('ompts:orphan:vars',($code));
+			# Put all together:
+			$code = $orphvarsdef . $orphfuncsdefs . $code . $orphfuncs;
 		}
-		
-		# creating the test function:
-		if($test){
-			open(OUTFILE,">test_".$functionname."\.c") or die "Could not create the outputfile for the test.";
-			$_ = $sourcecode;
-			s#\<ompts\:testcode\:functionname\>(.*)\<\/ompts\:testcode\:functionname\>#check_$1#;
-			s#\<ompts\:check\>(.*?)\<\/ompts\:check\>#$1#gs;
-			s#\<ompts\:crosscheck\>(.*?)\<\/ompts\:crosscheck\>##gs;
-			print OUTFILE $_;
-			close(OUTFILE);
+		# Remove the marks for the orpahn regions and its variables:
+		($code) = enlarge_tags('ompts:orphan','','',($code));
+		($code) = enlarge_tags('ompts:orphan:vars','','',($code));
+		# Remove the marks for the testcode:
+		($code) = enlarge_tags('ompts:check','','',($code));
+		# Removing the code for the crosstest:
+		($code) = delete_tags('ompts:crosscheck',($code));		
+		# Putting together the functions and the mainprogramm:
+		$code .= $mainproc;
+		# Making some final modifications:
+		($code) = replace_tags('testfunctionname',"test_$functionname",($code));
+		($code) = replace_tags('directive',$directive,($code));
+		($code) = replace_tags('description',$description,($code));
+		($code) = enlarge_tags('ompts:testcode:functionname','test_','',($code) );
+		# Write the result into the file and close it:
+		print OUTFILE $code;
+		close(OUTFILE);
+	}
+	
+	# Creating the source for the crosstest:
+	if($crosstest)
+	{
+		open(OUTFILE,">crosstest_$functionname.c") or die("Could not create the output file for $directive");
+		($code) = get_tag_values('ompts:testcode',$src);
+		# Make modifications for the orphaned crosstestversion if necessary:
+		if($orphan)
+		{
+			# Create declarations for orphan vars:
+			$orphvarsdef = make_global_vars_def($code);
+			# Generate predeclarations for orpahn functions:
+			$orphfuncsdefs = orph_functions_declarations('crosstest_',$code);
+			# Generate the orphan functions:
+			$orphfuncs = create_orph_functions('crosstest_',$code);
+			# Replace orphan regions by functioncalls:
+			($code) = orphan_regions2functions( 'crosstest_', ($code) );
+			# Deleting the former declarations of the variables in the orphan regions:
+			($code) = delete_tags('ompts:orphan:vars',($code));
+			# Put all together:
+			$code = $orphvarsdef . $orphfuncsdefs . $code . $orphfuncs;
 		}
+		# Remove the marks for the orpahn regions and its variables:
+		($code) = enlarge_tags('ompts:orphan','','',($code));
+		($code) = enlarge_tags('ompts:orphan:vars','','',($code));
+		# Remove the marks for the crosstestcode:
+		($code) = enlarge_tags('ompts:crosscheck','','',($code));
+		# Removing the code for the test:
+		($code) = delete_tags('ompts:check',($code));		
+		# Putting together the functions and the mainprogramm:
+		$code .= $mainproc;
+		# Making some final modifications:
+		($code) = replace_tags('testfunctionname',"crosstest_$functionname",($code));
+		($code) = replace_tags('directive',$directive,($code));
+		($code) = replace_tags('description',$description,($code));
+		($code) = enlarge_tags('ompts:testcode:functionname','crosstest_','',($code) );
+		# Write result into the file and close the it:
+		print OUTFILE $code;
+		close(OUTFILE);
 	}
 }
