@@ -10,18 +10,21 @@ It also tries to provide customized test functions in arbitrary order
 Usage:
 --------------------------------------------
 Edit Makefile first to set RIGHT compiler and its options to handle 
-   OpenMP test files. Some popular compilers are added already with comments.
-
-   gmake test
-OR gmake test testfile=ALL_TEST|CUSTOM_TEST|OMP1_TEST|OMP2_TEST ..
+   OpenMP test files. Some popular compilers are added with comments.
+Basic usage
+   gmake clean
    gmake run
 
-To clean:
-   gmake clean
+Flexible usage:
+        gmake clean
+        gmake run testfile=OMP1_TEST | OMP2_TEST | CUSTOME_TEST
+        gmake run will use OMP1_TEST by default
+
+        CUSTOME_TEST can be changed with any test names from ALL_TEST.
 
 The default testfile used in 'gmake test' is predefined OMP1_TEST.
 CUSTOM_TEST is user defined test set containing arbitrary tests 
-from ALL_TEST. 
+from ALL_TEST.
 OMP1_TEST, OMP2_TEST,etc are predefined test sets.
 
 Results:
