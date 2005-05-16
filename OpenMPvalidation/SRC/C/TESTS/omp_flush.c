@@ -4,54 +4,60 @@
 #include "omp_testsuite.h"
 #include "omp_my_sleep.h"
 
-int check_omp_flush(FILE * logFile){
-  int result1=0;
-  int result2=0;
+int
+check_omp_flush (FILE * logFile)
+{
+  int result1 = 0;
+  int result2 = 0;
   int dummy;
 #pragma omp parallel
   {
 
     int rank;
-    rank=omp_get_thread_num();
+    rank = omp_get_thread_num ();
 #pragma omp barrier
-    if(rank==1){
-      result2=3;
+    if (rank == 1)
+      {
+	result2 = 3;
 #pragma omp flush(result2)
-      dummy=result2;
-    }
-    
-    if(rank==0){
-      my_sleep(1.);
+	dummy = result2;
+      }
+
+    if (rank == 0)
+      {
+	my_sleep (1.);
 #pragma omp flush(result2)
-      result1=result2;
-    }
+	result1 = result2;
+      }
   }
-  return ( (result1==result2) && (result2==dummy) && ( result2==3) );
+  return ((result1 == result2) && (result2 == dummy) && (result2 == 3));
 }
 
-int crosscheck_omp_flush(FILE * logFile){
-  int result1=0;
-  int result2=0;
+int
+crosscheck_omp_flush (FILE * logFile)
+{
+  int result1 = 0;
+  int result2 = 0;
   int dummy;
 #pragma omp parallel
   {
 
     int rank;
-    rank=omp_get_thread_num();
+    rank = omp_get_thread_num ();
 #pragma omp barrier
-    if(rank==1){
-      result2=3;
+    if (rank == 1)
+      {
+	result2 = 3;
 #pragma omp flush(result2)
-      dummy=result2;
-    }
-    
-    if(rank==0){
-      my_sleep(1.);
+	dummy = result2;
+      }
+
+    if (rank == 0)
+      {
+	my_sleep (1.);
 #pragma omp flush(result2)
-      result1=result2;
-    }
+	result1 = result2;
+      }
   }
-  return ( (result1==result2) && (result2==dummy) && ( result2==3) );
+  return ((result1 == result2) && (result2 == dummy) && (result2 == 3));
 }
-
-

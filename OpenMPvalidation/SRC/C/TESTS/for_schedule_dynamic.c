@@ -14,150 +14,157 @@
 
 
 
-int check_for_schedule_dynamic(FILE * logFile)
+int
+check_for_schedule_dynamic (FILE * logFile)
 {
-    const int chunk_size = 10;
-    int tid;
-    int tids[CFDMAX_SIZE];
-    int count = 0;
-    int tmp_count = 0;
-    int *tmp;
-    int i;
-    int result = 1;
+  const int chunk_size = 10;
+  int tid;
+  int tids[CFDMAX_SIZE];
+  int count = 0;
+  int tmp_count = 0;
+  int *tmp;
+  int i;
+  int result = 1;
 
 #pragma omp parallel private(tid) shared(tids,count)
-{ /* begin of parallel*/
+  {				/* begin of parallel */
 
-    tid = omp_get_thread_num();
+    tid = omp_get_thread_num ();
 #pragma omp for schedule(dynamic,chunk_size)
 
-	for(i=0;i<CFDMAX_SIZE;++i)
+    for (i = 0; i < CFDMAX_SIZE; ++i)
+      {
+	tids[i] = tid;
+      }
+
+  }				/* end of parallel */
+
+  for (i = 0; i < CFDMAX_SIZE - 1; ++i)
     {
-        tids[i] = tid;
+      if (tids[i] != tids[i + 1])
+	{
+	  count++;
+	}
     }
 
-} /* end of parallel */
+  tmp = (int *) malloc (sizeof (int) * (count + 1));
+  tmp[0] = 1;
 
-    for(i=0;i<CFDMAX_SIZE-1;++i){
-        if(tids[i]!=tids[i+1])
-        {
-            count++;
-        }
-    }
-    
-	tmp = (int*) malloc(sizeof(int)*(count+1));
-	tmp[0]=1;
-    
-	for(i=0;i<CFDMAX_SIZE-1;++i){
-		if(tmp_count>count)
-        {
-            printf("--------------------\nTestinternal Error: List too small!!!\n--------------------\n"); /* Error handling */
-            break;
-        }
-	if(tids[i]!=tids[i+1])
-        {
-            tmp_count++;
-            tmp[tmp_count]=1;
-        }
-        else
-        {
-            tmp[tmp_count]++;
-        }
+  for (i = 0; i < CFDMAX_SIZE - 1; ++i)
+    {
+      if (tmp_count > count)
+	{
+	  printf ("--------------------\nTestinternal Error: List too small!!!\n--------------------\n");	/* Error handling */
+	  break;
+	}
+      if (tids[i] != tids[i + 1])
+	{
+	  tmp_count++;
+	  tmp[tmp_count] = 1;
+	}
+      else
+	{
+	  tmp[tmp_count]++;
+	}
     }
 
 /* is dynamic statement working? */
 
-    for(i=0;i<count+1;++i)
+  for (i = 0; i < count + 1; ++i)
     {
-		if(tmp[i]!=chunk_size)
-        {
-            result+=((tmp[i]/chunk_size)-1);
-        }
+      if (tmp[i] != chunk_size)
+	{
+	  result += ((tmp[i] / chunk_size) - 1);
+	}
     }
-    /* for (int i=0;i<count+1;++i) printf("%d\t:=\t%d\n",i+1,tmp[i]); */
-    if((tmp[0]!= CFDMAX_SIZE) && (result > 1))
+  /* for (int i=0;i<count+1;++i) printf("%d\t:=\t%d\n",i+1,tmp[i]); */
+  if ((tmp[0] != CFDMAX_SIZE) && (result > 1))
     {
-		fprintf(logFile,"Seems to work. (Treads got %d times chunks \"twice\" by a total of %d chunks)\n",result,CFDMAX_SIZE/chunk_size); 
-		return 1;
+      fprintf (logFile,
+	       "Seems to work. (Treads got %d times chunks \"twice\" by a total of %d chunks)\n",
+	       result, CFDMAX_SIZE / chunk_size);
+      return 1;
     }
-    else
+  else
     {
-		fprintf(logFile,"Test negativ.\n");
-		return 0;
+      fprintf (logFile, "Test negativ.\n");
+      return 0;
     }
 }
 
 
-int crosscheck_for_schedule_dynamic(FILE * logFile)
+int
+crosscheck_for_schedule_dynamic (FILE * logFile)
 {
-    const int chunk_size = 10;
-    int tid;
-    int tids[CFDMAX_SIZE];
-    int count = 0;
-    int tmp_count = 0;
-    int *tmp;
-    int i;
-    int result = 1;
+  const int chunk_size = 10;
+  int tid;
+  int tids[CFDMAX_SIZE];
+  int count = 0;
+  int tmp_count = 0;
+  int *tmp;
+  int i;
+  int result = 1;
 
 #pragma omp parallel private(tid) shared(tids,count)
-{ /* begin of parallel*/
+  {				/* begin of parallel */
 
-    tid = omp_get_thread_num();
+    tid = omp_get_thread_num ();
 #pragma omp for
 
-	for(i=0;i<CFDMAX_SIZE;++i)
+    for (i = 0; i < CFDMAX_SIZE; ++i)
+      {
+	tids[i] = tid;
+      }
+
+  }				/* end of parallel */
+
+  for (i = 0; i < CFDMAX_SIZE - 1; ++i)
     {
-        tids[i] = tid;
+      if (tids[i] != tids[i + 1])
+	{
+	  count++;
+	}
     }
 
-} /* end of parallel */
+  tmp = (int *) malloc (sizeof (int) * (count + 1));
+  tmp[0] = 1;
 
-    for(i=0;i<CFDMAX_SIZE-1;++i){
-        if(tids[i]!=tids[i+1])
-        {
-            count++;
-        }
-    }
-    
-	tmp = (int*)malloc(sizeof(int)*(count+1));
-	tmp[0]=1;
-    
-	for(i=0;i<CFDMAX_SIZE-1;++i){
-		if(tmp_count>count)
-        {
-            printf("--------------------\nTestinternal Error: List too small!!!\n--------------------\n"); /* Error handling */
-            break;
-        }
-		if(tids[i]!=tids[i+1])
-        {
-            tmp_count++;
-            tmp[tmp_count]=1;
-        }
-        else
-        {
-            tmp[tmp_count]++;
-        }
+  for (i = 0; i < CFDMAX_SIZE - 1; ++i)
+    {
+      if (tmp_count > count)
+	{
+	  printf ("--------------------\nTestinternal Error: List too small!!!\n--------------------\n");	/* Error handling */
+	  break;
+	}
+      if (tids[i] != tids[i + 1])
+	{
+	  tmp_count++;
+	  tmp[tmp_count] = 1;
+	}
+      else
+	{
+	  tmp[tmp_count]++;
+	}
     }
 
 /* is dynamic statement working? */
 
-    for(i=0;i<count+1;++i)
+  for (i = 0; i < count + 1; ++i)
     {
-		if(tmp[i]!=chunk_size)
-        {
-            result+=((tmp[i]/chunk_size)-1);
-        }
+      if (tmp[i] != chunk_size)
+	{
+	  result += ((tmp[i] / chunk_size) - 1);
+	}
     }
-    /* for (int i=0;i<count+1;++i) printf("%d\t:=\t%d\n",i+1,tmp[i]); */
-    if((tmp[0]!= CFDMAX_SIZE) && (result > 1))
+  /* for (int i=0;i<count+1;++i) printf("%d\t:=\t%d\n",i+1,tmp[i]); */
+  if ((tmp[0] != CFDMAX_SIZE) && (result > 1))
     {
-		/*fprintf(logFile,"Seems to work. (Treads got %d times chunks \"twice\" by a total of %d chunks)\n",result,CFDMAX_SIZE/chunk_size); */
-		return 1;
+      /*fprintf(logFile,"Seems to work. (Treads got %d times chunks \"twice\" by a total of %d chunks)\n",result,CFDMAX_SIZE/chunk_size); */
+      return 1;
     }
-    else
+  else
     {
-		/*fprintf(logFile,"Test negativ.\n");*/
-		return 0;
+      /*fprintf(logFile,"Test negativ.\n"); */
+      return 0;
     }
 }
-

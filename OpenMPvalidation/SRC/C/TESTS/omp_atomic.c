@@ -4,40 +4,40 @@
 #include "omp_testsuite.h"
 #include "omp_my_sleep.h"
 
-int check_omp_atomic(FILE * logFile)
+int
+check_omp_atomic (FILE * logFile)
 {
   int i;
-  int sum=0;
+  int sum = 0;
   int known_sum;
 #pragma omp parallel
   {
 #pragma omp for
-    for(i=0;i<1000;i++)
+    for (i = 0; i < 1000; i++)
       {
 #pragma omp atomic
-	  sum+=i;
+	sum += i;
       }
   }
-    known_sum=999*1000/2;
-    return(known_sum==sum);
+  known_sum = 999 * 1000 / 2;
+  return (known_sum == sum);
 }
 
-int crosscheck_omp_atomic(FILE * logFile)
+int
+crosscheck_omp_atomic (FILE * logFile)
 {
   int i;
-  int sum=0;
+  int sum = 0;
   int known_sum;
 #pragma omp parallel
   {
 #pragma omp for
-    for(i=0;i<1000;i++)
+    for (i = 0; i < 1000; i++)
       {
 
-	  sum+=i;
+	sum += i;
       }
   }
-    known_sum=999*1000/2;
-    return(known_sum==sum);
+  known_sum = 999 * 1000 / 2;
+  return (known_sum == sum);
 }
-
-
