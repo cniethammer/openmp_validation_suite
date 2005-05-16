@@ -6,7 +6,6 @@ Version 1.0b
 
 I.	How to compile and run the tests
 	A) As stand alone tests for each directive or
-	B) As an application (not implemented yet)
 II.	How to add new tests / The structure of testtemplates
 	A) Description of the template structure
 
@@ -16,22 +15,23 @@ I.	How to compile and run the tests
 
 You have two main ways to run tests with the testsuite:
 A) As stand alone tests for each directive or
-B) As an application (not implemented yet)
 
 	A) STAND ALONE TESTS
 
 1.) Run ompts_makeHeader.pl. This will generate an up to date headerfile.
 2.) The sources for the tests are in the templates directory. Generate the 
-	sourcecode for the tests you want to run with the ompts_perlparser.pl script
-	and the -main option.
+	sourcecode for the tests you want to run with the ompts_parser.pl script
 	Dependent on if you want to create only a test or it's crosstest you have to
-	aet some more options:
-	- If you want to create a test you have to set the -test option.
-	- If you want to create a crosstest you have to set the -crosstest option.
+	add some more options:
+	- If you want to create the sourcecode for the test you have to set the -test option.
+	- If you want to create the sourcecode for the crosstest you have to set 
+	  the -crosstest option.
+	If you want to create the source for an 'orphaned' test version - if it is supported - 
+	you have to add the -orphan option.
 
 	#	Here is an example to create the source for the test and crosstest to the check 
 	#	if the compiler has openmp support:
-	#	>	./ompts_parser.pl -test -crosstest -main templates/has_openmp.tpl
+	#	>	./ompts_parser.pl -test -crosstest templates/has_openmp.tpl
 	
 	The script will create the sourcecode for the tests. The files are named like
 	the tested OpenMP directives with the prefix test for the test and crosstest for 
@@ -71,12 +71,15 @@ I.B) APPLICATION
 II.	How to add new tests / The structure of testtemplates
 ------------------------------------------------------------------------------------------
 
-The testsuite is based on templates so that you only have only one file for test/crosstest/orpahtests set.
+The testsuite is based on templates so that you only have one file for test,crosstest 
+and orphantest.
 
 	A) Description of the template structure
 
-The syntax of the templates is much like xml. So each test begins with '<ompts:test>' and ends with '</ompts:test>'.
-In between there are several other blocks holing information:
+The syntax of the templates is much like xml. So each test begins with '<ompts:test>' and 
+ends with '</ompts:test>'.
+
+In between there are several other blocks holding information:
 
 - <ompts:testdescription> </omtps:testdescription>
 Inbetween this tag you can give an description on what the test checks and how it works.
@@ -88,13 +91,20 @@ This tag is used to specify the OpenMP-version which includes the tested directi
 Used to specify the directive how it is called in the programming language.
 
 - <ompts:dependences> </ompts:dependences>
-With this tag you can specify other omp directives which are necessary for the correct execution of your test. The directives have to be listed by the name of their testfunctions but with spaces instead underlines in the name. (e.g. 'omp master' for the master directive which is checked by the test named 'omp_master') Multiple directives are seperated by ','.
+With this tag you can specify other omp directives which are necessary for the correct 
+execution of your test. The directives have to be listed by the name of their testfunctions 
+but with spaces instead underlines in the name. (e.g. 'omp master' for the master directive 
+which is checked by the test named 'omp_master') Multiple directives are seperated by ','.
 
 - <ompts:testcode> </ompts:testcode>
 In this tag stands the whole sourcecode for the test / crosstest.
-Each test has to be written as a function which takes a filepointer 'FILE * logFile' and returns an int. 
-If the test has been passed succesfull it has to return 0. The filepointer can be used to write information into a logfile.
-To tell the testsuite the name of your testfunction you have to enclodse it into the '<ompts:testcode:functionname> </ompts:testcode:functionname>' tag.
+Each test has to be written as a function which takes a filepointer 'FILE * logFile' and 
+returns an int. If the test has been passed succesfull it has to return 0. The filepointer 
+can be used to write information into a logfile.
+
+To tell the testsuite the name of your testfunction you have to enclodse it into the 
+'<ompts:testcode:functionname> </ompts:testcode:functionname>' tag.
+
 An example to demonstrate the syntax up to this point of description:
 
 	<ompts:test>
@@ -114,17 +124,32 @@ An example to demonstrate the syntax up to this point of description:
 	</ompts:testcode>
 	</ompts:test> 
 
-If there are differences between test and crosstest you can use the <ompts:check> </ompts:check> and <ompts:crosscheck> </ompts:crosscheck> tag.
-When generating the test the parser will use the code enclosed in <onpts:check> tags and cut out the code written in <ompts:crosscheck> tags. So you have two possibilities to write your template for test and crosstest:
-The first way you can write the complete code is to write the test in one <ompts:check> tag and later the crosstest in one <ompts:crosscheck> tag. The second way is to write both tests only by enclosing differing parts in according tags.
-The first method should be prefered if test and crosstest differ much from each other. The second e.g. if only want to change an option like replaceing an omp singleprivate clauase by an omp private clause or to cut out an directive like omp flush.
-When you use the first way you have to take care of the functionname! You have to declare it twice with <ompts:testcode:functionname>!
+If there are differences between test and crosstest you can use the <ompts:check> </ompts:check> 
+and <ompts:crosscheck> </ompts:crosscheck> tag.
+When generating the test the parser will use the code enclosed in <onpts:check> tags and cut out 
+the code written in <ompts:crosscheck> tags. So you have two possibilities to write your template 
+for test and crosstest:
+The first way you can write the complete code is to write the test in one <ompts:check> tag and 
+later the crosstest in one <ompts:crosscheck> tag. 
+The second way is to write both tests only by enclosing differing parts in according tags.
+
+The first method should be prefered if test and crosstest differ much from each other. The second 
+e.g. if you only want to change a few options like replaceing an omp singleprivate clauase by an 
+omp private clause or to cut out an directive like omp flush.
+When you use the first way you have to take care of the functionname! You have to declare it twice 
+with <ompts:testcode:functionname>!
 
 - <ompts:orpahn> </ompts:orphan>
-This tag can be used if you want to enable your test to check the directive in orphan regions, too. The code enclosed in this part will be written to an separate file as a function which will be called instead. If you have variables which you are used outside this region you have to declare them as global variables enclosed in an <ompts:orphan:vars> tag. For more information see the description of the <omps:orpahn:vars> tag.
+This tag can be used if you want to enable your test to check the directive in orphan regions, too. 
+The code enclosed in this part will be written to an separate function which will be called instead. 
+If you have variables which are used outside this region you have to declare them as global variables 
+enclosed in an <ompts:orphan:vars> tag. For more information see the description of the <omps:orpahn:vars> 
+tag.
 
 - <ompts:orphan:vars> </ompts:orphan:vars>
-This tag is used to specify an global variable for an orphan region. For each variable you have to use a single declaration.
+This tag is used to specify global variables for an orphan region. For each variable you have to use a 
+single declaration. You can either decalar all variables in one single or in several differnt regions.
+
 Example:
 	<ompts:orphan:vars>
 	int i; int j;
