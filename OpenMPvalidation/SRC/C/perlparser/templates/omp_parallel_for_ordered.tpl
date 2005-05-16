@@ -22,19 +22,20 @@ static int check_i_islarger2(int i){
 }
 
 int <ompts:testcode:functionname>parallel_for_ordered</ompts:testcode:functionname>(FILE * logFile){
-	int sum=0;
-	int known_sum;
-	int i;
+	<ompts:orphan:vars>int sum=0;
 	int is_larger=1;
-	last_i=0;
+	int i;</ompts:orphan:vars>
+	int known_sum;
 #pragma omp parallel for schedule(static,1) <ompts:check>ordered</ompts:check><ompts:crosscheck></ompts:crosscheck>
 	for (i=1;i<100;i++)
 	{
+	<ompts:orphan>
 <ompts:check>#pragma omp ordered</ompts:check><ompts:crosscheck></ompts:crosscheck>
 		{
 			is_larger= check_i_islarger2(i) && is_larger;
 			sum=sum+i;
 		}
+	</ompts:orphan>
 	}
 	known_sum=(99*100)/2;
 	return (known_sum==sum) && is_larger;
