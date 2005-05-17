@@ -11,16 +11,20 @@
 
 int <ompts:testcode:functionname>omp_atomic</ompts:testcode:functionname>(FILE * logFile)
 {
+<ompts:orphan:vars>
   int i;
   int sum=0;
+</ompts:orphan:vars>
   int known_sum;
 #pragma omp parallel
   {
 #pragma omp for
     for(i=0;i<1000;i++)
       {
+<ompts:orphan>
 <ompts:check>#pragma omp atomic</ompts:check><ompts:crosscheck></ompts:crosscheck>
 	  sum+=i;
+</ompts:orphan>
       }
   }
     known_sum=999*1000/2;

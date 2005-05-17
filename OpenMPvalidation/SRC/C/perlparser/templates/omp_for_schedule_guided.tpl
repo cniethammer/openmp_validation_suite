@@ -21,12 +21,15 @@
 int <ompts:testcode:functionname>omp_for_schedule_guided</ompts:testcode:functionname>(FILE * logFile)
 {
 	int threads;
-	int tids[CFSMAX_SIZE+1];
-	int i,m,tmp;
+	<ompts:orphan:vars>
+	int * tids;
+	int i; int m; int tmp;
 	int * chunksizes;
 	int result=1;	
 	int notout = 1;
 	int maxiter=0;
+	</ompts:orphan:vars>
+	tids = ( int * )malloc(sizeof(int)*CFSMAX_SIZE);
 	
 #pragma omp parallel
 	{
@@ -50,11 +53,11 @@ int <ompts:testcode:functionname>omp_for_schedule_guided</ompts:testcode:functio
 
 #pragma omp parallel shared(tids) 
 	{
-		int count = 0.;
-		int tid;
+		<ompts:orphan:vars>int count = 0.;
+		int tid;</ompts:orphan:vars>
 		tid = omp_get_thread_num();
 		
-
+		<ompts:orphan>
 #pragma omp for nowait <ompts:check>schedule(guided,1)</ompts:check><ompts:crosscheck></ompts:crosscheck>
 		for(i=0;i<CFSMAX_SIZE;++i)
 		{
@@ -69,22 +72,22 @@ int <ompts:testcode:functionname>omp_for_schedule_guided</ompts:testcode:functio
 			}
 
 			/* if it is not our turn we wait 
-                            a) until another thread executed an iteration 
-                               with a higher iteration count
-                            b) we are at the end of the loop (first thread finished                           and set notout=0 OR
-                            c) timeout arrived */ 
+			   a) until another thread executed an iteration with a higher iteration count
+			   b) we are at the end of the loop (first thread finished and set notout=0 OR
+			   c) timeout arrived */ 
 
 			while(notout && (count < MAX_TIME) && (maxiter==i))
 			{
-			/*printf("Thread Nr. %d sleeping\n",tid);*/
+				/* printf("Thread Nr. %d sleeping\n",tid); */
 #pragma omp flush(maxiter,notout)
 				my_sleep(SLEEPTIME);
 				count+=SLEEPTIME;
 			}
-			/*printf("Thread Nr. %d working once\n",tid);*/
+			/* printf("Thread Nr. %d working once\n",tid); */
 			tids[i]=tid;
 		} /*end omp for*/
-		
+		</ompts:orphan>	
+
 		notout = 0;
 #pragma omp flush(notout)
 	}/* end omp parallel*/
