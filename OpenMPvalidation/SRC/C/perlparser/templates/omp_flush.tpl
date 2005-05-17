@@ -11,9 +11,11 @@
 #include "omp_my_sleep.h"
 
 int <ompts:testcode:functionname>omp_flush</ompts:testcode:functionname>(FILE * logFile){
+<ompts:orphan:vars>
   int result1=0;
   int result2=0;
   int dummy;
+</ompts:orphan:vars>
 #pragma omp parallel
   {
     int rank;
@@ -21,17 +23,21 @@ int <ompts:testcode:functionname>omp_flush</ompts:testcode:functionname>(FILE * 
 #pragma omp barrier
     if(rank==1){
       result2=3;
+<ompts:orphan>
 <ompts:check>#pragma omp flush(result2)</ompts:check><ompts:crosscheck></ompts:crosscheck>
       dummy=result2;
+</ompts:orphan>
     }
     
     if(rank==0){
       my_sleep(1.);
+<ompts:orphan>
 <ompts:check>#pragma omp flush(result2)</ompts:check><ompts:crosscheck></ompts:crosscheck>
       result1=result2;
+</ompts:orphan>
     }
   }
-  return ( (result1==result2) && (result2==dummy) && ( result2==3) );
+  return ( (result1==result2) && (result2==dummy) && (result2==3) );
 }
 </ompts:testcode>
 </ompts:test>

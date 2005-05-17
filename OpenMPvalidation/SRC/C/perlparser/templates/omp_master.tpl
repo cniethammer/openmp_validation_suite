@@ -10,10 +10,13 @@
 
 int <ompts:testcode:functionname>omp_master</ompts:testcode:functionname>(FILE * logFile)
 {
+<ompts:orphan:vars>
   int nthreads=0;
   int executing_thread=-1;
+</ompts:orphan:vars>
 #pragma omp parallel
   {
+<ompts:orphan>
 <ompts:check>#pragma omp master </ompts:check><ompts:crosscheck></ompts:crosscheck>
     {
 #pragma omp critical
@@ -23,8 +26,9 @@ int <ompts:testcode:functionname>omp_master</ompts:testcode:functionname>(FILE *
       executing_thread=omp_get_thread_num();
       
     }/* end of master*/
-  }/* end of parallel*/
-  return ((nthreads==1) && (executing_thread==0 ));
+</ompts:orphan>
+}/* end of parallel*/
+return ((nthreads==1) && (executing_thread==0 ));
 }
 </ompts:testcode>
 </ompts:test>

@@ -9,14 +9,17 @@
 
 int <ompts:testcode:functionname>omp_single</ompts:testcode:functionname>(FILE * logFile)
 {
+	<ompts:orphan:vars>
 	int nr_threads_in_single=0;
 	int result=0;
 	int nr_iterations=0;
 	int i;
+	</ompts:orphan:vars>
 #pragma omp parallel private(i)
 	{
 		for (i=0;i<LOOPCOUNT;i++)
 		{
+			<ompts:orphan>
 			<ompts:check>#pragma omp single </ompts:check><ompts:crosscheck></ompts:crosscheck>
 			{  
 #pragma omp flush
@@ -26,6 +29,7 @@ int <ompts:testcode:functionname>omp_single</ompts:testcode:functionname>(FILE *
 				nr_threads_in_single--;
 				result=result+nr_threads_in_single;
 			}                          /* end of single*/    
+			</ompts:orphan>
 		}                           /* end of for  */
 	}                             /* end of parallel */
 	return(result==0)&&(nr_iterations==LOOPCOUNT);
