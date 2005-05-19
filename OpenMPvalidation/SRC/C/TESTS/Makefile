@@ -76,7 +76,7 @@ print_help:
 	@echo "usage: "
 	@echo "      gmake test TESTFILE=filename"
 	@echo "Or    gmake test                 "
-	@echo " Then:
+	@echo " Then:							"
 	@echo "      gmake run                  "
 	@echo " Clean up:                       "
 	@echo "      gmake clean                "
