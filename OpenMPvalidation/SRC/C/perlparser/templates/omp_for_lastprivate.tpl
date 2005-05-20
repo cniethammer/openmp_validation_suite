@@ -10,19 +10,23 @@
 
 int <ompts:testcode:functionname>omp_for_lastprivate</ompts:testcode:functionname>(FILE * logFile){
 	int sum=0;
+<ompts:orphan:vars>
 	int sum0=0;
-	int known_sum;
 	int i;
 	int i0=-1;
+</ompts:orphan:vars>
+	int known_sum;
 #pragma omp parallel firstprivate(sum0) 
 	{
 		/*sum0=0;*/
+<ompts:orphan>
 #pragma omp for schedule(static,7) <ompts:check>lastprivate(i0)</ompts:check><ompts:crosscheck></ompts:crosscheck>
 		for (i=1;i<=LOOPCOUNT;i++)
 		{
 			sum0=sum0+i;
 			i0=i;
 		}                       /*end of for*/
+</ompts:orphan>
 #pragma omp critical
 		{
 			sum= sum+sum0;

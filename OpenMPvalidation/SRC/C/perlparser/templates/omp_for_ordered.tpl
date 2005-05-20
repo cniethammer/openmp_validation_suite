@@ -20,15 +20,20 @@ static int check_i_islarger(int i){
 }
 
 int <ompts:testcode:functionname>omp_for_ordered</ompts:testcode:functionname>(FILE * logFile){
+<ompts:orphan:vars>
 	int sum=0;
-	int known_sum;
 	int i;
 	int my_islarger;
+</ompts:orphan:vars>
 	int is_larger=1;
+	int known_sum;
+
 	last_i=0;
+
 #pragma omp parallel private(my_islarger) 
 	{
 		my_islarger=1;
+<ompts:orphan>
 #pragma omp for schedule(static,1) ordered
 		for (i=1;i<100;i++)
 		{
@@ -38,6 +43,7 @@ int <ompts:testcode:functionname>omp_for_ordered</ompts:testcode:functionname>(F
 				sum=sum+i;
 			}
 		}
+</ompts:orphan>
 #pragma omp critical
 		{
 			is_larger = is_larger && my_islarger;
