@@ -172,7 +172,7 @@ sub make_global_vars_def
 			s/\n//gs;
 			s/  //gs;
 			# put the new declaration at the end of $result
-			$result .= "\n $_;";
+			if($_ ne ""){ $result .= "\n $_;"; }
 		}
 	}
 	$result .= "\n\n/* End of declaration. */\n\n";
