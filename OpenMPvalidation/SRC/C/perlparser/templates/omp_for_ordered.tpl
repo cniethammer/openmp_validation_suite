@@ -34,17 +34,17 @@ int <ompts:testcode:functionname>omp_for_ordered</ompts:testcode:functionname>(F
 #pragma omp parallel private(my_islarger) 
 	{
 		my_islarger=1;
-<ompts:orphan>
 #pragma omp for schedule(static,1) ordered
 		for (i=1;i<100;i++)
 		{
+<ompts:orphan>
 <ompts:check>#pragma omp ordered</ompts:check><ompts:crosscheck></ompts:crosscheck>
 			{
 				my_islarger= check_i_islarger(i) && my_islarger;
 				sum=sum+i;
 			}
-		}
 </ompts:orphan>
+		}
 #pragma omp critical
 		{
 			is_larger = is_larger && my_islarger;

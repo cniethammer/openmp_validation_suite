@@ -25,11 +25,14 @@ int <ompts:testcode:functionname>omp_for_schedule_guided</ompts:testcode:functio
 	int * tids;
 	int i; int m; int tmp;
 	int * chunksizes;
-	int result=1;	
-	int notout = 1;
-	int maxiter=0;
+	int result;	
+	int notout;
+	int maxiter;
 	</ompts:orphan:vars>
 	tids = ( int * )malloc(sizeof(int)*CFSMAX_SIZE);
+	result=1;	
+	notout = 1;
+	maxiter=0;
 	
 #pragma omp parallel
 	{

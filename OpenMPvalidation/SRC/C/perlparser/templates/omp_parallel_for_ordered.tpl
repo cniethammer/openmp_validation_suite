@@ -22,10 +22,16 @@ static int check_i_islarger2(int i){
 }
 
 int <ompts:testcode:functionname>parallel_for_ordered</ompts:testcode:functionname>(FILE * logFile){
-	<ompts:orphan:vars>int sum=0;
-	int is_larger=1;
-	int i;</ompts:orphan:vars>
+	<ompts:orphan:vars>
+	int sum;
+	int is_larger;
+	int i;
+	</ompts:orphan:vars>
+
 	int known_sum;
+
+	sum=0;
+	is_larger=1;
 #pragma omp parallel for schedule(static,1) <ompts:check>ordered</ompts:check><ompts:crosscheck></ompts:crosscheck>
 	for (i=1;i<100;i++)
 	{

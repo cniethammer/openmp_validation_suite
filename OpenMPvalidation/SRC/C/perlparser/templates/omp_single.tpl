@@ -10,11 +10,14 @@
 int <ompts:testcode:functionname>omp_single</ompts:testcode:functionname>(FILE * logFile)
 {
 	<ompts:orphan:vars>
-	int nr_threads_in_single=0;
-	int result=0;
-	int nr_iterations=0;
+	int nr_threads_in_single;
+	int result;
+	int nr_iterations;
 	int i;
 	</ompts:orphan:vars>
+	nr_threads_in_single=0;
+	result=0;
+	nr_iterations=0;
 #pragma omp parallel private(i)
 	{
 		for (i=0;i<LOOPCOUNT;i++)
