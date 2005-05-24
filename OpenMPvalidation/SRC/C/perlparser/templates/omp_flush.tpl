@@ -12,10 +12,12 @@
 
 int <ompts:testcode:functionname>omp_flush</ompts:testcode:functionname>(FILE * logFile){
 <ompts:orphan:vars>
-  int result1=0;
-  int result2=0;
+  int result1;
+  int result2;
   int dummy;
 </ompts:orphan:vars>
+  result1=0;
+  result2=0;
 #pragma omp parallel
   {
     int rank;

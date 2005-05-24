@@ -11,9 +11,11 @@
 int <ompts:testcode:functionname>omp_master</ompts:testcode:functionname>(FILE * logFile)
 {
 <ompts:orphan:vars>
-  int nthreads=0;
-  int executing_thread=-1;
+  int nthreads;
+  int executing_thread;
 </ompts:orphan:vars>
+  nthreads=0;
+  executing_thread=-1;
 #pragma omp parallel
   {
 <ompts:orphan>

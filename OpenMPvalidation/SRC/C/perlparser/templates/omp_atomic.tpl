@@ -13,8 +13,9 @@ int <ompts:testcode:functionname>omp_atomic</ompts:testcode:functionname>(FILE *
 {
 <ompts:orphan:vars>
   int i;
-  int sum=0;
+  int sum;
 </ompts:orphan:vars>
+  sum=0;
   int known_sum;
 #pragma omp parallel
   {
