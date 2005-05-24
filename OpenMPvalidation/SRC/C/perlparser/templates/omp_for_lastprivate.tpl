@@ -11,11 +11,14 @@
 int <ompts:testcode:functionname>omp_for_lastprivate</ompts:testcode:functionname>(FILE * logFile){
 	int sum=0;
 <ompts:orphan:vars>
-	int sum0=0;
 	int i;
-	int i0=-1;
+	int sum0;
+	int i0;
 </ompts:orphan:vars>
 	int known_sum;
+
+	sum0=0;
+	i0=-1;
 #pragma omp parallel firstprivate(sum0) 
 	{
 		/*sum0=0;*/

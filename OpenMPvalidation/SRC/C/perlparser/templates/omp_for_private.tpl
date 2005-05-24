@@ -18,15 +18,23 @@ static void do_some_work(){
 }
 
 int <ompts:testcode:functionname>omp_for_private</ompts:testcode:functionname>(FILE * logFile){
-	int sum=0;
-	int sum0=0;
-	int sum1=0;
-	int known_sum;
+	int sum;
+<ompts:orphan:vars>
 	int i;
+	int sum0;
+	int sum1;
+</ompts:orphan:vars>
+
+	int known_sum;
+
+	sum0=0;
+	sum1=0;
 #pragma omp parallel private(sum1)
 	{
 		sum0=0;
 		sum1=0; /* setting sum0 and sum1 in each thread to 0 */
+
+<ompts:orphan>
 #pragma omp for <ompts:check>private(sum0)</ompts:check><ompts:crosscheck></ompts:crosscheck> schedule(static,1)
 		for (i=1;i<=LOOPCOUNT;i++)
 		{
@@ -37,6 +45,8 @@ int <ompts:testcode:functionname>omp_for_private</ompts:testcode:functionname>(F
 #pragma omp flush
 			sum1=sum0;
 		}                       /*end of for*/
+</ompts:orphan>
+
 #pragma omp critical
 		{
 			sum= sum+sum1;

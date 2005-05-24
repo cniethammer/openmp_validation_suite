@@ -12,10 +12,14 @@ int <ompts:testcode:functionname>omp_for_firstprivate</ompts:testcode:functionna
 	int sum=0;
 <ompts:orphan:vars>
 	int i;
-	int sum0=0;
-	int sum1=0;
+	int sum0;
+	int sum1;
 </ompts:orphan:vars>
+
 	int known_sum;
+
+	sum0=0;
+	sum1=0;
 #pragma omp parallel firstprivate(sum1)
 	{
 		/*sum0=0;*/
