@@ -153,7 +153,7 @@ single declaration. You can either decalar all variables in one single or in sev
 Example:
 	<ompts:orphan:vars>
 	int i; int j;
-	double d=1.0;
+	double d;
 	double d2;
 	</ompts:orphan:vars>
 
