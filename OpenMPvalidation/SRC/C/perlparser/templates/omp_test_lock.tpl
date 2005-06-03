@@ -8,7 +8,7 @@
 #include <omp.h>
 #include "omp_testsuite.h"
     
-int <ompts:testcode:functionname>ompf_omp_test_lock</ompts:testcode:functionname>(FILE * logFile)
+int <ompts:testcode:functionname>omp_test_lock</ompts:testcode:functionname>(FILE * logFile)
 {
   omp_lock_t lck;
   int nr_threads_in_single=0;
