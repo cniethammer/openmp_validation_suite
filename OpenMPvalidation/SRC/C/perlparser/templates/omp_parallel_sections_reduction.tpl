@@ -14,7 +14,7 @@ int <ompts:testcode:functionname>omp_parallel_sections_reduction</ompts:testcode
 	double dpt,dsum=0;
 	double dknown_sum;
 	double dt=0.5;				/* base of geometric row for + and - test*/
-	double rounding_error= 1.E-9;
+	double rounding_error= 1.E-5;
 	int diff;
 	double ddiff;
 	int product=1;
