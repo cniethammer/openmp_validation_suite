@@ -15,16 +15,14 @@ int <ompts:testcode:functionname>omp_for_lastprivate</ompts:testcode:functionnam
 	int sum=0;
 <ompts:orphan:vars>
 	int i;
-	int sum0;
 	int i0;
 </ompts:orphan:vars>
 	int known_sum;
 
-	sum0=0;
 	i0=-1;
 #pragma omp parallel 
 	{
-		/*sum0=0;*/
+		sum0=0;
 <ompts:orphan>
 #pragma omp for schedule(static,7) <ompts:check>lastprivate(i0)</ompts:check><ompts:crosscheck></ompts:crosscheck>
 		for (i=1;i<=LOOPCOUNT;i++)
