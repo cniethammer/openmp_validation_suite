@@ -12,7 +12,6 @@
 int <ompts:testcode:functionname>omp_critical</ompts:testcode:functionname>(FILE * logFile)
 {
 <ompts:orphan:vars>
-  int i;
   int sum;
 </ompts:orphan:vars>
 
@@ -21,17 +20,18 @@ int <ompts:testcode:functionname>omp_critical</ompts:testcode:functionname>(FILE
   sum=0;
 #pragma omp parallel
   {
+<ompts:orphan>
+	int i;
 #pragma omp for
     for(i=0;i<1000;i++)
       {
-<ompts:orphan>
 <ompts:check>#pragma omp critical</ompts:check><ompts:crosscheck></ompts:crosscheck>
 	{
 	  sum=sum+i;
 	}
+      }/* end for*/
 </ompts:orphan>
-      }
-  }
+  }/* end parallel*/
   known_sum=999*1000/2;
   return(known_sum==sum);
 }
