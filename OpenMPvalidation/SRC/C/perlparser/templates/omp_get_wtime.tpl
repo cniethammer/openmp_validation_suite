@@ -12,7 +12,7 @@
 #include "omp_testsuite.h"
 #include "omp_my_sleep.h"
 
-int <ompts:testcode:functionname>ompf_omp_get_wtime</ompts:testcode:functionname>(FILE * logFile)
+int <ompts:testcode:functionname>omp_get_wtime</ompts:testcode:functionname>(FILE * logFile)
 {
   double start=0;
   double end=0;
