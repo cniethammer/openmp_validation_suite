@@ -21,7 +21,7 @@ static int check_i_islarger2(int i){
 	return (islarger);
 }
 
-int <ompts:testcode:functionname>parallel_for_ordered</ompts:testcode:functionname>(FILE * logFile){
+int <ompts:testcode:functionname>omp_parallel_for_ordered</ompts:testcode:functionname>(FILE * logFile){
 	<ompts:orphan:vars>
 	int sum;
 	int is_larger;
@@ -32,6 +32,7 @@ int <ompts:testcode:functionname>parallel_for_ordered</ompts:testcode:functionna
 
 	sum=0;
 	is_larger=1;
+	last_i=0;
 #pragma omp parallel for schedule(static,1) <ompts:check>ordered</ompts:check><ompts:crosscheck></ompts:crosscheck>
 	for (i=1;i<100;i++)
 	{
@@ -44,6 +45,8 @@ int <ompts:testcode:functionname>parallel_for_ordered</ompts:testcode:functionna
 	</ompts:orphan>
 	}
 	known_sum=(99*100)/2;
+	fprintf(logFile," known_sum = %d , sum = %d \n",known_sum,sum);
+	fprintf(logFile," is_larger = %d\n",is_larger);
 	return (known_sum==sum) && is_larger;
 }
 </ompts:testcode>
