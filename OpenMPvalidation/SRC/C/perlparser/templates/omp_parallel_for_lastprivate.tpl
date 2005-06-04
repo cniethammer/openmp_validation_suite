@@ -8,7 +8,7 @@
 #include <omp.h>
 #include "omp_testsuite.h"
 
-int <ompts:testcode:functionname>parallel_for_lastprivate</ompts:testcode:functionname>(FILE * logFile){
+int <ompts:testcode:functionname>omp_parallel_for_lastprivate</ompts:testcode:functionname>(FILE * logFile){
 	int sum=0;
 	/*int sum0=0;*/
 	int known_sum;
