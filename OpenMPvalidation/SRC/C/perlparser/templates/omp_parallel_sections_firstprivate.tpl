@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include "omp_testsuite.h"
 
-int <ompts:testcode:functionname>parallel_sections_firstprivate</ompts:testcode:functionname>(FILE * logFile){
+int <ompts:testcode:functionname>omp_parallel_sections_firstprivate</ompts:testcode:functionname>(FILE * logFile){
 int sum=7;
   int sum0=11;
   int known_sum;
