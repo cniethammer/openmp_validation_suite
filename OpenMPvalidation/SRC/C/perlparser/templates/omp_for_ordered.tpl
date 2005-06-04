@@ -22,34 +22,33 @@ static int check_i_islarger(int i){
 int <ompts:testcode:functionname>omp_for_ordered</ompts:testcode:functionname>(FILE * logFile){
 <ompts:orphan:vars>
 	int sum;
-	int i;
-	int my_islarger;
+	int is_larger;
 </ompts:orphan:vars>
 	int known_sum;
-	int is_larger=1;
 
 	last_i=0;
 	sum=0;
-
-#pragma omp parallel private(my_islarger) 
+	is_larger=1;
+#pragma omp parallel 
 	{
-		my_islarger=1;
+<ompts:orphan>
+		int my_islarger=1;
+		int i;
 #pragma omp for schedule(static,1) ordered
 		for (i=1;i<100;i++)
 		{
-<ompts:orphan>
 <ompts:check>#pragma omp ordered</ompts:check><ompts:crosscheck></ompts:crosscheck>
 			{
 				my_islarger= check_i_islarger(i) && my_islarger;
 				sum=sum+i;
 			}
-</ompts:orphan>
 		}
 #pragma omp critical
 		{
 			is_larger = is_larger && my_islarger;
 		}
-	}
+</ompts:orphan>
+	}/* end of parallel*/
 	known_sum=(99*100)/2;
 	return (known_sum==sum) && is_larger;
 }

@@ -8,6 +8,9 @@
 #include <math.h>
 #include "omp_testsuite.h"
 
+int sum0;
+#pragma omp threadprivate(sum0)
+
 int <ompts:testcode:functionname>omp_for_lastprivate</ompts:testcode:functionname>(FILE * logFile){
 	int sum=0;
 <ompts:orphan:vars>
@@ -19,7 +22,7 @@ int <ompts:testcode:functionname>omp_for_lastprivate</ompts:testcode:functionnam
 
 	sum0=0;
 	i0=-1;
-#pragma omp parallel firstprivate(sum0) 
+#pragma omp parallel 
 	{
 		/*sum0=0;*/
 <ompts:orphan>
@@ -36,6 +39,8 @@ int <ompts:testcode:functionname>omp_for_lastprivate</ompts:testcode:functionnam
 		}                         /*end of critical*/
 	}                          /* end of parallel*/    
 	known_sum=(LOOPCOUNT*(LOOPCOUNT+1))/2;
+	fprintf(logFile," known_sum = %d , sum = %d \n",known_sum,sum);
+	fprintf(logFile," LOOPCOUNT = %d , i0 = %d \n",LOOPCOUNT,i0);
 	return ((known_sum==sum) && (i0==LOOPCOUNT) );
 }                                /* end of check_for_lastprivate*/
 </ompts:testcode>

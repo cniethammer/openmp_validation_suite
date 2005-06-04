@@ -17,19 +17,21 @@ static void do_some_work(){
 	}
 }
 
+int sum1;
+#pragma omp threadprivate(sum1)
+
 int <ompts:testcode:functionname>omp_for_private</ompts:testcode:functionname>(FILE * logFile){
-	int sum;
+	int sum=0;
 <ompts:orphan:vars>
 	int i;
 	int sum0;
-	int sum1;
 </ompts:orphan:vars>
 
 	int known_sum;
 
 	sum0=0;
 	sum1=0;
-#pragma omp parallel private(sum1)
+#pragma omp parallel 
 	{
 		sum0=0;
 		sum1=0; /* setting sum0 and sum1 in each thread to 0 */
@@ -53,6 +55,7 @@ int <ompts:testcode:functionname>omp_for_private</ompts:testcode:functionname>(F
 		}                         /*end of critical*/
 	}                          /* end of parallel*/    
 	known_sum=(LOOPCOUNT*(LOOPCOUNT+1))/2;
+	fprintf(logFile,"expected sum = %d, calculated sum = %d\n",known_sum,sum);
 	return (known_sum==sum);
 }                                
 </ompts:testcode>
