@@ -7,7 +7,7 @@
 #include "omp.h"
 #include "omp_testsuite.h"
 
-int <ompts:testcode:functionname>ompf_omp_get_num_threads</ompts:testcode:functionname>(FILE * logFile){
+int <ompts:testcode:functionname>omp_get_num_threads</ompts:testcode:functionname>(FILE * logFile){
   /* checks that omp_get_num_threads is equal to the number of
      threads */
   int nthreads=0;

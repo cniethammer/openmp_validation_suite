@@ -7,7 +7,7 @@
 #include "omp.h"
 #include "omp_testsuite.h"
 
-int <ompts:testcode:functionname>ompf_omp_in_parallel</ompts:testcode:functionname>(FILE * logFile){
+int <ompts:testcode:functionname>omp_in_parallel</ompts:testcode:functionname>(FILE * logFile){
   int serial=1;
   int isparallel=0;
 <ompts:check>
