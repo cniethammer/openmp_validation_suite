@@ -18,7 +18,7 @@ static void do_some_work(){
 	}
 }
 
-int <ompts:testcode:functionname>parallel_for_private</ompts:testcode:functionname>(FILE * logFile){
+int <ompts:testcode:functionname>omp_parallel_for_private</ompts:testcode:functionname>(FILE * logFile){
 	int sum=0;
 	int known_sum;
 	int i,i2;
