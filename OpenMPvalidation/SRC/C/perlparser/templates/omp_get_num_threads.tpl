@@ -4,26 +4,36 @@
 <ompts:directive>omp_get_num_threads</ompts:directive>
 <ompts:testcode>
 #include <stdio.h>
+
 #include "omp.h"
 #include "omp_testsuite.h"
 
-int <ompts:testcode:functionname>omp_get_num_threads</ompts:testcode:functionname>(FILE * logFile){
-  /* checks that omp_get_num_threads is equal to the number of
-     threads */
-  int nthreads=0;
-  int nthreads_lib=-1;
+int <ompts:testcode:functionname>omp_get_num_threads</ompts:testcode:functionname> (FILE * logFile)
+{
+    /* checks that omp_get_num_threads is equal to the number of
+       threads */
+    <ompts:orphan:vars>
+	int nthreads_lib;
+    </ompts:orphan:vars>
+    int nthreads = 0;
+
+    int nthreads_libi = -1;
+
 #pragma omp parallel 
-  {
-    #pragma omp critical
     {
-      nthreads++;
-    }
-    #pragma omp single
-    { 
-<ompts:check>nthreads_lib=omp_get_num_threads();</ompts:check><ompts:crosscheck></ompts:crosscheck>
-    }
-  } /* end of parallel */
-  return nthreads==nthreads_lib;
+#pragma omp critical
+	{
+	    nthreads++;
+	}	/* end of critical */
+#pragma omp single
+	{ 
+<ompts:orphan>
+	    <ompts:check>nthreads_lib=omp_get_num_threads ();</ompts:check>
+</ompts:orphan>
+	}	/* end of single */
+    }	/* end of parallel */
+
+    return (nthreads == nthreads_lib);
 }
 </ompts:testcode>
 </ompts:test>
