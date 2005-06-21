@@ -6,43 +6,46 @@
 <ompts:testcode>
 #include <stdio.h>
 #include <math.h>
+
 #include "omp_testsuite.h"
 
 int sum1;
 #pragma omp threadprivate(sum1)
 
-int <ompts:testcode:functionname>omp_for_firstprivate</ompts:testcode:functionname>(FILE * logFile){
-
-<ompts:orphan:vars>
-	int i;
-	int sum;
+int <ompts:testcode:functionname>omp_for_firstprivate</ompts:testcode:functionname> (FILE * logFile)
+{
+    int sum;
+    <ompts:orphan:vars>
 	int sum0;
-</ompts:orphan:vars>
+	int sum1;
+    </ompts:orphan:vars>
 
-	int known_sum;
+    int known_sum;
 
-	sum=0;
-	sum0=0;
-	sum1=0;
-#pragma omp parallel 
-	{
-		/*sum0=0;*/
-<ompts:orphan>
+    sum = 0;
+    sum0 = 0;
+    sum1 = 0;
+
+#pragma omp parallel
+    {
+	/* sum0 = 0; */
+	<ompts:orphan>
+	int i;
 #pragma omp for <ompts:check>firstprivate(sum0)</ompts:check><ompts:crosscheck></ompts:crosscheck>
-		for (i=1;i<=LOOPCOUNT;i++)
-		{
-			sum0=sum0+i;
-			sum1=sum0;
-		}                       /*end of for*/
-</ompts:orphan>
+	for (i = 1; i <= LOOPCOUNT; i++)
+	{
+	    sum0 = sum0 + i;
+	    sum1 = sum0;
+	}	/* end of for */
+	</ompts:orphan>
 #pragma omp critical
-		{
-			sum= sum+sum1;
-		}                         /*end of critical*/
-	}                          /* end of parallel*/    
-	known_sum=(LOOPCOUNT*(LOOPCOUNT+1))/2;
-	fprintf(logFile," known_sum = %d , calculated sum = %d\n",known_sum,sum);
-	return (known_sum==sum);
+	{
+	    sum = sum + sum1;
+	}	/* end of critical */
+    }	/* end of parallel */    
+
+    known_sum = (LOOPCOUNT * (LOOPCOUNT + 1)) / 2;
+    return (known_sum == sum);
 }
 </ompts:testcode>
 </ompts:test>

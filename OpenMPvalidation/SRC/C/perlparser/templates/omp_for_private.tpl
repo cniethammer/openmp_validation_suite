@@ -6,57 +6,60 @@
 <ompts:testcode>
 #include <stdio.h>
 #include <math.h>
+
 #include "omp_testsuite.h"
 
-/* Utility function do spend some time in a loop*/
-static void do_some_work(){
-	int i;
-	double sum=0;
-	for(i=0;i<1000;i++){
-		sum+=sqrt(i);
-	}
+/* Utility function do spend some time in a loop */
+static void do_some_work (){
+    int i;
+    double sum = 0;
+    for(i = 0; i < 1000; i++){
+	sum += sqrt (i);
+    }
 }
 
 int sum1;
 #pragma omp threadprivate(sum1)
 
-int <ompts:testcode:functionname>omp_for_private</ompts:testcode:functionname>(FILE * logFile){
-	int sum=0;
-<ompts:orphan:vars>
-	int i;
+int <ompts:testcode:functionname>omp_for_private</ompts:testcode:functionname> (FILE * logFile)
+{
+    int sum = 0;
+    <ompts:orphan:vars>
 	int sum0;
-</ompts:orphan:vars>
+    </ompts:orphan:vars>
 
-	int known_sum;
+    int known_sum;
 
-	sum0=0;
-	sum1=0;
-#pragma omp parallel 
-	{
-		sum0=0;
-		sum1=0; /* setting sum0 and sum1 in each thread to 0 */
+    sum0 = 0;	/* setting (global) sum0 = 0 */
 
-<ompts:orphan>
-#pragma omp for <ompts:check>private(sum0)</ompts:check><ompts:crosscheck></ompts:crosscheck> schedule(static,1)
-		for (i=1;i<=LOOPCOUNT;i++)
-		{
-			sum0=sum1;
+#pragma omp parallel
+    {
+	sum1 = 0;	/* setting sum1 in each thread to 0 */
+
+	{	/* begin of orphaned block */
+	<ompts:orphan>
+	    int i;
+#pragma omp for <ompts:check>private(sum0)</ompts:check> schedule(static,1)
+	    for (i = 1; i <= LOOPCOUNT; i++)
+	    {
+		sum0 = sum1;
 #pragma omp flush
-			sum0=sum0+i;
-			do_some_work();
+		sum0 = sum0 + i;
+		do_some_work ();
 #pragma omp flush
-			sum1=sum0;
-		}                       /*end of for*/
-</ompts:orphan>
+		sum1 = sum0;
+	    }	/* end of for */
+	</ompts:orphan>
+	}	/* end of orphaned block */
 
 #pragma omp critical
-		{
-			sum= sum+sum1;
-		}                         /*end of critical*/
-	}                          /* end of parallel*/    
-	known_sum=(LOOPCOUNT*(LOOPCOUNT+1))/2;
-	fprintf(logFile,"expected sum = %d, calculated sum = %d\n",known_sum,sum);
-	return (known_sum==sum);
+	{
+	    sum = sum + sum1;
+	}	/*end of critical*/
+    }	/* end of parallel*/    
+
+    known_sum = (LOOPCOUNT * (LOOPCOUNT + 1)) / 2;
+    return (known_sum == sum);
 }                                
 </ompts:testcode>
 </ompts:test>

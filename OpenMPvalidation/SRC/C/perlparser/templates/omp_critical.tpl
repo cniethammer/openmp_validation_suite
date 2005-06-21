@@ -6,34 +6,37 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <omp.h>
+
 #include "omp_testsuite.h"
 #include "omp_my_sleep.h"
 
-int <ompts:testcode:functionname>omp_critical</ompts:testcode:functionname>(FILE * logFile)
+int <ompts:testcode:functionname>omp_critical</ompts:testcode:functionname> (FILE * logFile)
 {
-<ompts:orphan:vars>
-  int sum;
-</ompts:orphan:vars>
+    <ompts:orphan:vars>
+	int sum;
+    </ompts:orphan:vars>
 
-  int known_sum;
+    int known_sum;
 
-  sum=0;
+    sum = 0;
+
 #pragma omp parallel
-  {
-<ompts:orphan>
-	int i;
+    {
+	<ompts:orphan>
+	    int i;
 #pragma omp for
-    for(i=0;i<1000;i++)
-      {
-<ompts:check>#pragma omp critical</ompts:check><ompts:crosscheck></ompts:crosscheck>
-	{
-	  sum=sum+i;
-	}
-      }/* end for*/
-</ompts:orphan>
-  }/* end parallel*/
-  known_sum=999*1000/2;
-  return(known_sum==sum);
+	    for (i = 0; i < 1000; i++)
+	    {
+		<ompts:check>#pragma omp critical</ompts:check>
+		{
+		    sum = sum + i;
+		}	/* end of critical */
+	    }	/* end of for */
+	</ompts:orphan>
+    }	/* end of parallel */
+
+    known_sum = 999 * 1000 / 2;
+    return (known_sum == sum);
 }
 </ompts:testcode>
 </ompts:test>
