@@ -17,7 +17,7 @@ int <ompts:testcode:functionname>omp_get_num_threads</ompts:testcode:functionnam
     </ompts:orphan:vars>
     int nthreads = 0;
 
-    int nthreads_libi = -1;
+    nthreads_libi = -1;
 
 #pragma omp parallel 
     {
