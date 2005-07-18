@@ -28,7 +28,7 @@ int <ompts:testcode:functionname>omp_get_num_threads</ompts:testcode:functionnam
 #pragma omp single
 	{ 
 <ompts:orphan>
-	    <ompts:check>nthreads_lib=omp_get_num_threads ();</ompts:check>
+	    <ompts:check>nthreads_lib = omp_get_num_threads ();</ompts:check>
 </ompts:orphan>
 	}	/* end of single */
     }	/* end of parallel */

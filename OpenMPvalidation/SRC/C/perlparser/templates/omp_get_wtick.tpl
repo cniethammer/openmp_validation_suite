@@ -10,10 +10,15 @@
 
 int <ompts:testcode:functionname>omp_get_wtick</ompts:testcode:functionname>(FILE * logFile)
 {
-  double tick;
-  <ompts:check>tick=omp_get_wtick();</ompts:check><ompts:crosscheck></ompts:crosscheck>
-  fprintf(logFile,"work took %f sec. time. \n",tick);
-  return ( tick>0.0) && (tick<0.01);
+    <ompts:orphan:vars>
+	double tick;
+    </ompts:orphan:vars>
+
+    <ompts:orphan>
+	<ompts:check>tick = omp_get_wtick ();</ompts:check>
+    </ompts:orphan>
+    fprintf (logFile, "Work took %lf sec. time.\n", tick);
+    return ((tick > 0.0) && (tick < 0.01));
 }
 </ompts:testcode>
 </ompts:test>
