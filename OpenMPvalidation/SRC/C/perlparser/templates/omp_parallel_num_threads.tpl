@@ -9,30 +9,39 @@
 #include "omp_testsuite.h"
 
 int <ompts:testcode:functionname>omp_parallel_num_threads</ompts:testcode:functionname>(FILE * logFile){
-  int failed=0;
-  int max_threads=0;
-  int threads;
-  int nthreads;
-  /* first we check how many threads are available*/
+    <ompts:orphan:vars>
+	int failed;
+	int threads;
+	int nthreads;
+    </ompts:orphan:vars>
+
+    int max_threads = 0;
+
+    failed = 0;
+
+    /* first we check how many threads are available */
 #pragma omp parallel
- {
+    {
 #pragma omp master
-   max_threads=omp_get_num_threads();
- }
- 
- /* we increase the number of threads from one to maximum:*/
- for(threads=1; threads<=max_threads;threads++){
-   nthreads=0;
-   
-#pragma omp parallel reduction(+:failed) <ompts:check>num_threads(threads)</ompts:check><ompts:crosscheck></ompts:crosscheck>
-  {
-    failed=failed+!(threads==omp_get_num_threads());
+	max_threads = omp_get_num_threads ();
+    }
+
+    /* we increase the number of threads from one to maximum:*/
+    for (threads = 1; threads <= max_threads; threads++)
+    {
+	nthreads = 0;
+
+	<ompts:orphan>
+#pragma omp parallel reduction(+:failed) <ompts:check>num_threads(threads)</ompts:check>
+	    {
+		failed = failed + !(threads == omp_get_num_threads ());
 #pragma omp atomic
-    nthreads+=1;
-  }
-  failed=failed+!(nthreads==threads);
- }
- return !failed;
+	    nthreads += 1;
+	    }
+	</ompts:orphan>
+	failed = failed + !(nthreads == threads);
+    }
+    return (!failed);
 }
 </ompts:testcode>
 </ompts:test>
