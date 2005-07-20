@@ -9,39 +9,50 @@
 
 int <ompts:testcode:functionname>omp_single_nowait</ompts:testcode:functionname>(FILE * logFile)
 {
-  int nr_iterations=0;
-  int total_iterations=0;
-  int my_iterations=0;
-  int i;
+    <ompts:orphan:vars>
+	int nr_iterations;
+	int my_iterations;
+    </ompts:orphan:vars>
+
+    int total_iterations = 0;
+    int i;
+
+    nr_iterations = 0;
+    my_iterations = 0;
+
 #pragma omp parallel private(i)
-  {
-    for (i=0;i<LOOPCOUNT;i++)
-      {
-<ompts:check>#pragma omp single nowait</ompts:check><ompts:crosscheck></ompts:crosscheck>
-		  {
+    {
+	for (i = 0; i < LOOPCOUNT; i++)
+	{
+	    <ompts:orphan>
+		<ompts:check>#pragma omp single nowait</ompts:check>
+		{
 #pragma omp atomic  
-			  nr_iterations++;
-		  }                          /* end of single*/    
-      }                           /* end of for  */
-  }                             /* end of parallel */
+		    nr_iterations++;
+		} /* end of single*/    
+	    </ompts:orphan>
+	} /* end of for  */
+    } /* end of parallel */
 
 #pragma omp parallel private(i,my_iterations) 
-  {
-	  my_iterations=0;
-	  for (i=0;i<LOOPCOUNT;i++)
-	  {
-<ompts:check>#pragma omp single nowait</ompts:check><ompts:crosscheck></ompts:crosscheck>
-		  {
-			  my_iterations++;
-		  }                          /* end of single*/    
-	  }                           /* end of for  */
+    {
+	my_iterations = 0;
+	for (i = 0; i < LOOPCOUNT; i++)
+	{
+	    <ompts:orphan>
+		<ompts:check>#pragma omp single nowait</ompts:check>
+		{
+		    my_iterations++;
+		} /* end of single*/    
+	    </ompts:orphan>
+	} /* end of for  */
 #pragma omp critical
-	  {
-		  total_iterations += my_iterations;
-	  }
+	{
+	    total_iterations += my_iterations;
+	}
 
-  }                             /* end of parallel */
-  return((nr_iterations==LOOPCOUNT) && (total_iterations==LOOPCOUNT));
-}                                /* end of check_single_nowait*/
+    } /* end of parallel */
+    return ((nr_iterations == LOOPCOUNT) && (total_iterations == LOOPCOUNT));
+} /* end of check_single_nowait*/
 </ompts:testcode>
 </ompts:test>
