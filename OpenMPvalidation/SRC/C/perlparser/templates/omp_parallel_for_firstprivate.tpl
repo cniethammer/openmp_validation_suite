@@ -10,19 +10,19 @@
 
 int <ompts:testcode:functionname>omp_parallel_for_firstprivate</ompts:testcode:functionname>(FILE * logFile)
 {
-	int sum=0;
-	int known_sum;
-	int i2=3;
-	int i;
+    int sum = 0;
+    int known_sum;
+    int i2 = 3;
+    int i;
 
 #pragma omp parallel for reduction(+:sum) <ompts:check>firstprivate(i2)</ompts:check><ompts:crosscheck>private(i2)</ompts:crosscheck>
-	for (i=1;i<=LOOPCOUNT;i++)
-	{
-		sum=sum+(i+i2);
-	}                       /*end of for*/
+    for (i = 1; i <= LOOPCOUNT; i++)
+    {
+	sum = sum + (i + i2);
+    } /*end of for*/
 
-	known_sum=(LOOPCOUNT*(LOOPCOUNT+1))/2+i2*LOOPCOUNT;
-	return (known_sum==sum);
-}                           /* end of check_parallel_for_fistprivate*/
+    known_sum = (LOOPCOUNT * (LOOPCOUNT + 1)) / 2 + i2 * LOOPCOUNT;
+    return (known_sum == sum);
+} /* end of check_parallel_for_fistprivate */
 </ompts:testcode>
 </ompts:test>
