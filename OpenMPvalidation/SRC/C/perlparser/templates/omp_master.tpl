@@ -5,7 +5,6 @@
 <ompts:dependences>omp critical</ompts:dependences>
 <ompts:testcode>
 #include <stdio.h>
-#include <omp.h>
 #include "omp_testsuite.h"
 
 int <ompts:testcode:functionname>omp_master</ompts:testcode:functionname>(FILE * logFile)

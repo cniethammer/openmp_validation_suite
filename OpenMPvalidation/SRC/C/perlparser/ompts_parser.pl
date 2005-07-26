@@ -100,6 +100,7 @@ foreach $src(@sources)
 		($code) = replace_tags('directive',$directive,($code));
 		($code) = replace_tags('description',$description,($code));
 		($code) = enlarge_tags('ompts:testcode:functionname','test_','',($code) );
+		$code =  "\#include \"omp_testsuite.h\"\n".$code;
 		# Write the result into the file and close it:
 		print OUTFILE $code;
 		close(OUTFILE);
@@ -140,6 +141,7 @@ foreach $src(@sources)
 		($code) = replace_tags('directive',$directive,($code));
 		($code) = replace_tags('description',$description,($code));
 		($code) = enlarge_tags('ompts:testcode:functionname','crosstest_','',($code) );
+		$code =  "\#include \"omp_testsuite.h\"\n".$code;
 		# Write result into the file and close the it:
 		print OUTFILE $code;
 		close(OUTFILE);

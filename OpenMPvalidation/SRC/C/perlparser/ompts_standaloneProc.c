@@ -43,7 +43,7 @@ int main()
 	}
 	else{
 		fprintf(logFile,"\nDirective failed the test %i times out of %i. %i were successful\n",failed,N,success);
-		printf("Directive failed the test %i times out of %i. %i were successful\n",failed,N,success);
+		printf("Directive failed the test %i times out of %i.\n%i test(s) were successful\n",failed,N,success);
 		result=failed;
 	}
 	return result;

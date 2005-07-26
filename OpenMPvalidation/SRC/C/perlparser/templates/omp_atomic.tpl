@@ -5,7 +5,6 @@
 <ompts:testcode>
 #include <stdio.h>
 #include <unistd.h>
-#include <omp.h>
 
 #include "omp_testsuite.h"
 #include "omp_my_sleep.h"

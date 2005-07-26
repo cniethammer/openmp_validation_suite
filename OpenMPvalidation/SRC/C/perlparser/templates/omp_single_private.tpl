@@ -16,15 +16,17 @@ int <ompts:testcode:functionname>omp_single_private</ompts:testcode:functionname
 {
     <ompts:orphan:vars>
 	int nr_threads_in_single;
+	int result;
+	int nr_iterations;
     </ompts:orphan:vars>
-    int result = 0;
-    int nr_iterations = 0;
     int i;
 
     myit = 0;
     nr_threads_in_single = 0;
+    nr_iterations = 0;
+    result = 0;
 
-#pragma omp parallel private(i,myresult)
+#pragma omp parallel private(i)
     {
 	myresult = 0;
 	myit = 0;
@@ -41,7 +43,7 @@ int <ompts:testcode:functionname>omp_single_private</ompts:testcode:functionname
 		nr_threads_in_single--;
 		myresult = myresult + nr_threads_in_single;
 	    } /* end of single */    
-	<ompts:orphan>
+	</ompts:orphan>
 	} /* end of for */
 #pragma omp critical
 	{

@@ -5,7 +5,6 @@
 <ompts:dependences>omp flush</ompts:dependences>
 <ompts:testcode>
 #include <stdio.h>
-#include <omp.h>
 #include "omp_testsuite.h"
 
 omp_lock_t lck;

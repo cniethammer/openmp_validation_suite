@@ -25,9 +25,9 @@ int <ompts:testcode:functionname>omp_for_ordered</ompts:testcode:functionname> (
 {
     <ompts:orphan:vars>
 	int sum;
+	int is_larger = 1;
     </ompts:orphan:vars>
     int known_sum;
-    int is_larger = 1;
 
     last_i = 0;
     sum = 0;
@@ -46,11 +46,11 @@ int <ompts:testcode:functionname>omp_for_ordered</ompts:testcode:functionname> (
 		    sum = sum + i;
 		}	/* end of ordered */
 	    }	/* end of for */
-	</ompts:orphan>
 #pragma omp critical
-	{
-	    is_larger = is_larger && my_islarger;
-	}	/* end of critical */
+	    {
+		is_larger = is_larger && my_islarger;
+	    }	/* end of critical */
+	</ompts:orphan>
     }
 
     known_sum=(99 * 100) / 2;

@@ -4,7 +4,6 @@
 <ompts:directive>omp_get_wtick</ompts:directive>
 <ompts:testcode>
 #include<stdio.h>
-#include<omp.h>
 
 #include "omp_testsuite.h"
 

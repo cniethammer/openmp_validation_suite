@@ -5,7 +5,6 @@
 <ompts:dependences>omp flush,omp for nowait,omp critical,omp single</ompts:dependences>
 <ompts:testcode>
 #include <stdio.h>
-#include <omp.h>
 #include <unistd.h>
 #include <stdlib.h>
 

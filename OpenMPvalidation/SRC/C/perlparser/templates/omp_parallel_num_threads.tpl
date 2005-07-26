@@ -5,7 +5,6 @@
 <ompts:dependences>omp master,omp parallel reduction,omp atomic</ompts:dependences>
 <ompts:testcode>
 #include <stdio.h>
-#include <omp.h>
 #include "omp_testsuite.h"
 
 int <ompts:testcode:functionname>omp_parallel_num_threads</ompts:testcode:functionname>(FILE * logFile){

@@ -5,7 +5,6 @@
 <ompts:dependences>omp parallel schedule(static)</ompts:dependences>
 <ompts:testcode>
 #include <stdio.h>
-#include <omp.h>
 #include "omp_testsuite.h"
 
 static int last_i = 0;

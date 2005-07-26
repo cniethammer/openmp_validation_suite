@@ -5,7 +5,6 @@
 <ompts:testcode>
 #include <stdio.h>
 
-#include "omp.h"
 #include "omp_testsuite.h"
 
 int <ompts:testcode:functionname>omp_get_num_threads</ompts:testcode:functionname> (FILE * logFile)
@@ -17,7 +16,7 @@ int <ompts:testcode:functionname>omp_get_num_threads</ompts:testcode:functionnam
     </ompts:orphan:vars>
     int nthreads = 0;
 
-    nthreads_libi = -1;
+    nthreads_lib = -1;
 
 #pragma omp parallel 
     {

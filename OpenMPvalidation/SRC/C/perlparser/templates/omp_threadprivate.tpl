@@ -7,13 +7,12 @@
 #include "omp_testsuite.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include <omp.h>
 
 static int sum0 = 0;
-<ompts:check>#pragma omp threadprivate(sum0)</ompts:check><ompts:crosscheck></ompts:crosscheck>
+<ompts:check>#pragma omp threadprivate(sum0)</ompts:check>
 
-static int myvalue=0;
-<ompts:check>#pragma omp threadprivate(myvalue)</ompts:check><ompts:crosscheck></ompts:crosscheck>
+static int myvalue = 0;
+<ompts:check>#pragma omp threadprivate(myvalue)</ompts:check>
 
 int <ompts:testcode:functionname>omp_threadprivate</ompts:testcode:functionname>(FILE * logFile)
 {

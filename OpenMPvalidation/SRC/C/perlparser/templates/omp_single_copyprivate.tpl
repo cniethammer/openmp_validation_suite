@@ -2,21 +2,25 @@
 <ompts:testdescription>Test which checks the omp single copyprivate directive.</ompts:testdescription>
 <ompts:ompversion>2.0</ompts:ompversion>
 <ompts:directive>omp single copyprivate</ompts:directive>
-<ompts:dependences>omp parllel private,omp critical</ompts:dependences>
+<ompts:dependences>omp parllel,omp critical</ompts:dependences>
 <ompts:testcode>
-#include <omp.h>
 #include "omp_testsuite.h"
 
 int <ompts:testcode:functionname>omp_single_copyprivate</ompts:testcode:functionname>(FILE * logFile)                                   
 {
-    int result = 0;
-    int nr_iterations = 0;
-    int i;
-#pragma omp parallel private(i)
+    <ompts:orphan:vars>
+	int result;
+	int nr_iterations;
+    </ompts:orphan:vars>
+
+    result = 0;
+    nr_iterations = 0;
+#pragma omp parallel
     {
-	for (i = 0; i < LOOPCOUNT; i++)
-	{
-	    <ompts:orphan>
+	<ompts:orphan>
+	    int i;
+	    for (i = 0; i < LOOPCOUNT; i++)
+	    {
 		int j;
 		/*
 		   int thread;
@@ -34,9 +38,9 @@ int <ompts:testcode:functionname>omp_single_copyprivate</ompts:testcode:function
 		    /*printf ("thread = %d, j = %d, i = %d\n", thread, j, i);*/
 		    result = result + j - i;
 		}
-	    </ompts:orphan>
 #pragma omp barrier
-	} /* end of for */
+	    } /* end of for */
+	</ompts:orphan>
     } /* end of parallel */
     return ((result == 0) && (nr_iterations == LOOPCOUNT));
 }

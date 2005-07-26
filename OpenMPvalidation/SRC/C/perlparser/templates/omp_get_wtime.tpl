@@ -4,7 +4,6 @@
 <ompts:directive>omp_get_wtime</ompts:directive>
 <ompts:testcode>
 #include<stdio.h>
-#include<omp.h>
 #include<stdlib.h>
 #include<unistd.h>
 
@@ -19,10 +18,10 @@ int <ompts:testcode:functionname>omp_get_wtime</ompts:testcode:functionname>(FIL
 	double end;
     </ompts:orphan:vars>
     double measured_time;
+    int wait_time = 1; 
 
     start = 0;
     end = 0;
-    int wait_time = 1; 
 
     <ompts:orphan>
 	<ompts:check>start = omp_get_wtime ();</ompts:check>

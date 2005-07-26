@@ -4,14 +4,13 @@
 <ompts:directive>omp_in_parallel</ompts:directive>
 <ompts:testcode>
 #include <stdio.h>
-#include "omp.h"
 #include "omp_testsuite.h"
 
 int <ompts:testcode:functionname>omp_in_parallel</ompts:testcode:functionname>(FILE * logFile){
     <ompts:orphan:vars>
 	int serial;
 	int isparallel;
-    <ompts:orphan:vars>
+    </ompts:orphan:vars>
 
     serial = 1;
     isparallel = 0;

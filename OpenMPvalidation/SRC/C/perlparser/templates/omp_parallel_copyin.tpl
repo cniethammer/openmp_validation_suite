@@ -6,7 +6,6 @@
 <ompts:testcode>
 #include <stdio.h>
 #include <stdlib.h>
-#include <omp.h>
 #include "omp_testsuite.h"
 
 static int sum1 = 789;
@@ -17,9 +16,9 @@ int <ompts:testcode:functionname>omp_parallel_copyin</ompts:testcode:functionnam
     <ompts:orphan:vars>
 	int sum;
     </ompts:orphan:vars>
+    int known_sum;
 
     sum = 0;
-    int known_sum;
     sum1 = 0;
 
 #pragma omp parallel <ompts:check>copyin(sum1)</ompts:check>

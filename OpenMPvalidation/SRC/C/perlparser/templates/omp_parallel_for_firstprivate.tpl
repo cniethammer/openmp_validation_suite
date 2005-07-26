@@ -5,7 +5,6 @@
 <ompts:dependences>omp parallel for reduction,omp parallel for private</ompts:dependences>
 <ompts:testcode>
 #include <stdio.h>
-#include <omp.h>
 #include "omp_testsuite.h"
 
 int <ompts:testcode:functionname>omp_parallel_for_firstprivate</ompts:testcode:functionname>(FILE * logFile)

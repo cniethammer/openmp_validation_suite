@@ -153,7 +153,7 @@ int <ompts:testcode:functionname>omp_for_reduction</ompts:testcode:functionname>
 	</ompts:orphan>
     }
 
-    if (dsum != dknown_sum && (fabs (dsum - dknown_sum) > rounding_error)) {
+    if (fabs (dsum - dknown_sum) > rounding_error) {
 	result++; 
 	fprintf (logFile, "\nError in sum with doubles: Result was %f instead of: %f (Difference: %E)\n", dsum, dknown_sum, dsum-dknown_sum);
     }

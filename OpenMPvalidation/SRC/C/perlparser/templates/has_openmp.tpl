@@ -5,7 +5,6 @@
 <ompts:testcode>
 #include <stdio.h>
 
-#include "omp.h"
 #include "omp_testsuite.h"
 
 int <ompts:testcode:functionname>has_openmp</ompts:testcode:functionname>(FILE * logFile){
