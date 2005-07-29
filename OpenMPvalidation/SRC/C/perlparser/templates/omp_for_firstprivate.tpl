@@ -17,7 +17,6 @@ int <ompts:testcode:functionname>omp_for_firstprivate</ompts:testcode:functionna
     int sum;
     <ompts:orphan:vars>
 	int sum0;
-	int sum1;
     </ompts:orphan:vars>
 
     int known_sum;
