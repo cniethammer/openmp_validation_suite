@@ -83,6 +83,6 @@ $headerfile .= "\n#endif";
 
 # craeting the headerfile:
 open(OUTFILE,">".$outfile) or die "Could not create the haedaerfile ($outfile)";
-print OUTFILE $headerfile;
+print OUTFILE $headerfile."\n";
 close(OUTFILE);
 
