@@ -7,11 +7,13 @@
 #include <stdio.h>
 #include "omp_testsuite.h"
 
+int my_iterations;
+#pragma omp threadprivate(my_iterations)
+
 int <ompts:testcode:functionname>omp_single_nowait</ompts:testcode:functionname>(FILE * logFile)
 {
     <ompts:orphan:vars>
 	int nr_iterations;
-	int my_iterations;
     </ompts:orphan:vars>
 
     int total_iterations = 0;
@@ -34,7 +36,7 @@ int <ompts:testcode:functionname>omp_single_nowait</ompts:testcode:functionname>
 	} /* end of for  */
     } /* end of parallel */
 
-#pragma omp parallel private(i,my_iterations) 
+#pragma omp parallel private(i) 
     {
 	my_iterations = 0;
 	for (i = 0; i < LOOPCOUNT; i++)
