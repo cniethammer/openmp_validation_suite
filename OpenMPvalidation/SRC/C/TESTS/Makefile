@@ -55,9 +55,12 @@
 
 #
 # open64 compilers
-# remark: -I. was a workaround because the installation came without omp.h file
 #CC = opencc
-#CFLAGS = -O0 -openmp -lm -I. -lomp -lpthread
+#CFLAGS = -O3 -openmp
+
+#Pathscale compilers
+#CC = pathcc
+#CFLAGS = -O3 -openmp -lm
 
 ifdef testfile
 TESTFILE = $(testfile)
