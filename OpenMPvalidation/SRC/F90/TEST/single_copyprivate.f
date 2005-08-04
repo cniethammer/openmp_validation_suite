@@ -49,7 +49,7 @@
 !$omp parallel private(i,j,thread)
       do i=0,LOOPCOUNT-1
 	thread=omp_get_thread_num()
-!$omp single private(j)
+!$omp single 
 	nr_iterations=nr_iterations+1
 	j=i
 !$omp end single

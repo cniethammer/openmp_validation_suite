@@ -27,9 +27,9 @@
 ! integer part for desired tests
         include 'testdeclarations.f' 
 
-        write (*,*) "Enter logFilename:"
-        read  (*,*) logfilename
-
+!        write (*,*) "Enter logFilename:"
+!        read  (*,*) logfilename
+	logfilename="test.log"
         open (1, FILE = Logfilename)
 
         write(*,*)
