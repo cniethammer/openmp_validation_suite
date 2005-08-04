@@ -21,7 +21,7 @@ check_omp_num_threads (FILE * logFile)
     {
       nthreads = 0;
 
-#pragma omp parallel num_threads(threads),reduction(+:failed)
+#pragma omp parallel num_threads(threads) reduction(+:failed)
       {
 	failed = failed + !(threads == omp_get_num_threads ());
 #pragma omp atomic
