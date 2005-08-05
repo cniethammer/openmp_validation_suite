@@ -1,5 +1,7 @@
 #include <stdio.h>
+#ifdef _OPENMP
 #include <omp.h>
+#endif
 #include "omp_testsuite.h"
 
 int

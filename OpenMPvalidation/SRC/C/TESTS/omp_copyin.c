@@ -67,38 +67,6 @@ crosscheck_omp_copyin (FILE * logFile)
 
 }				/* end of check_threadprivate */
 
-
-
-/*#pragma omp threadprivate(sum0)
-int check_omp_copyprivate()
-{
-  int sum=0;
-  int known_sum;
-  int i;
-#pragma omp parallel 
-  {
-    for (i=1;i<1000;i++)
-      {
-#pragma omp single copyprivate(sum0) 
-	{
-	  sum0=sum0+i;
-	} 
-      
-
-#pragma omp critical
-    {
-      sum= sum+sum0;
-    }                        
-}                     
-      }                   
-  known_sum=(999*1000)/2;
-  return (known_sum==sum);
-  
-}*/
-
-
-
-
 static int myvalue2 = 0;
 
 

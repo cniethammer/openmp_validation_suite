@@ -29,6 +29,10 @@
 #FFLAGS=  -O2 -mp
 #FLINKFLAGS=-O2 -mp
 
+#Open64 Compiler
+#FC=openf90
+#FFLAGS=  -O2 -mp
+#FLINKFLAGS=-O2 -mp
 
 ifdef testfile
 TESTFILE = $(testfile)

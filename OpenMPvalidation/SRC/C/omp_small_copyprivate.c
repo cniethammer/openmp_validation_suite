@@ -1,13 +1,15 @@
 #include <omp.h>
 
 float x=0.0;
-#pragma omp threadprivate(x)
+int y=0;
+#pragma omp threadprivate(x,y)
 
 void init ()
 {
-  #pragma omp single copyprivate(x)
+  #pragma omp single copyprivate(x,y)
   {
     x=1.0;
+    y=1;
   }
 }
 
