@@ -81,7 +81,7 @@ main:mainBody.f
 
 .PHONY:clean
 clean:
-	rm -f main *.o testdeclarations.f  mainBody.f failed.compilation
+	rm -f main *.o testdeclarations.f  mainBody.f test.log failed.compilation
 .PHONY:run
 run:main
 	(OMP_NUM_THREADS=2; export OMP_NUM_THREADS; ./main)
