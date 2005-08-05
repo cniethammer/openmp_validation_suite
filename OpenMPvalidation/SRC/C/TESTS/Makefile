@@ -105,7 +105,7 @@ main:feasible_test.h
 	$(CC) $(CFLAGS) -o main main.c *.o
 	
 clean:
-	rm -f *.o failed.compilation feasible_test.h main *~ 
+	rm -f *.o failed.compilation feasible_test.h main test.log *~ 
 
 run:main 
 	-rm -f test.log 
