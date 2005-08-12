@@ -30,7 +30,7 @@
         sum0=0
         myvalue=0
         random_size=45
-        call omp_set_dynamic(0)
+        call omp_set_dynamic(.FALSE.)
 !$omp parallel
 	sum0 = 0
 !$omp do
@@ -47,7 +47,7 @@
 	  print *, ' known_sum =', known_sum, ', sum =',sum
 	end if
 
-	call omp_set_dynamic(0)
+	call omp_set_dynamic(.FALSE.)
 	
 !$omp parallel
 !$omp master
@@ -101,7 +101,7 @@
         sum = 0
 	failed = 0
         random_size=45
-	call omp_set_dynamic(0)
+	call omp_set_dynamic(.FALSE.)
 !$omp parallel
 	crosssum0 = 0
 !$omp do 
