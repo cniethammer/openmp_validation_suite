@@ -74,8 +74,8 @@ foreach $template (@templates){
 	$functionname = $1."(FILE \* logfile);";
 	$source =~ /\<ompts\:directive\>(.*)\<\/ompts\:directive\>/;
 	$directive = $1;
-	$headerfile .= "int check_".$functionname."  /* Test for ".$directive." */\n";
-	$headerfile .= "int crosscheck_".$functionname."  /* Crosstest for ".$directive." */\n";
+	$headerfile .= "int test_".$functionname."  /* Test for ".$directive." */\n";
+	$headerfile .= "int crosstest_".$functionname."  /* Crosstest for ".$directive." */\n";
 }
 
 # inserting the end of the includeguard:
