@@ -13,8 +13,6 @@
 #define LOOPCOUNT 1000
 #define REPETITIONS 20
 
-int test_omp_atomic(FILE * logfile);  /* Test for omp atomic */
-int crosstest_omp_atomic(FILE * logfile);  /* Crosstest for omp atomic */
 int test_has_openmp(FILE * logfile);  /* Test for _OPENMP */
 int crosstest_has_openmp(FILE * logfile);  /* Crosstest for _OPENMP */
 int test_omp_atomic(FILE * logfile);  /* Test for omp atomic */
@@ -99,8 +97,8 @@ int test_omp_test_nest_lock(FILE * logfile);  /* Test for omp_test_nest_lock */
 int crosstest_omp_test_nest_lock(FILE * logfile);  /* Crosstest for omp_test_nest_lock */
 int test_omp_threadprivate(FILE * logfile);  /* Test for omp threadprivate */
 int crosstest_omp_threadprivate(FILE * logfile);  /* Crosstest for omp threadprivate */
-int test_omp_get_num_threads(FILE * logfile);  /* Test for omp_get_num_threads */
-int crosstest_omp_get_num_threads(FILE * logfile);  /* Crosstest for omp_get_num_threads */
+int test_omp_section_private(FILE * logfile);  /* Test for omp section private */
+int crosstest_omp_section_private(FILE * logfile);  /* Crosstest for omp section private */
 int test_omp_atomic(FILE * logfile);  /* Test for omp atomic */
 int crosstest_omp_atomic(FILE * logfile);  /* Crosstest for omp atomic */
 int test_omp_critical(FILE * logfile);  /* Test for omp critical */

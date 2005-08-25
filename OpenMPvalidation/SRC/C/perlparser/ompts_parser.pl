@@ -35,6 +35,13 @@ foreach $file(@ARGV)
 # Checking if options were valid:
 if(@sourcefiles == 0){die "No files to parse are specified!";}
 if($outputfile && (@sourcefiles != 1 || ($test && $crosstest) ) ){die "There were multiple files for one outputfiles specified!";} 
+if($orphan){
+    $orphanprefix = "orphaned";
+}
+else {
+    $orphanprefix = "";
+}
+    
 
 # Reading the templates for the tests into @sources
 foreach $srcfile (@sourcefiles)
@@ -68,7 +75,7 @@ foreach $src(@sources)
 	# Creating the source for the test:
 	if($test)
 	{
-		open(OUTFILE,">test_$functionname.c") or die("Could not create the output file for $directive");
+		open(OUTFILE,">".$orphanprefix."test_".$functionname.".c") or die("Could not create the output file for $directive");
 		($code) = get_tag_values('ompts:testcode',$src);
 		# Make modifications for the orphaned testversion if necessary:
 		if($orphan)
@@ -109,7 +116,7 @@ foreach $src(@sources)
 	# Creating the source for the crosstest:
 	if($crosstest)
 	{
-		open(OUTFILE,">crosstest_$functionname.c") or die("Could not create the output file for $directive");
+		open(OUTFILE,">".$orphanprefix."crosstest_".$functionname.".c") or die("Could not create the output file for $directive");
 		($code) = get_tag_values('ompts:testcode',$src);
 		# Make modifications for the orphaned crosstestversion if necessary:
 		if($orphan)

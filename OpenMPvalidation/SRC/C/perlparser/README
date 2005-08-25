@@ -5,7 +5,8 @@ Version 1.0b
 
 
 I.	How to compile and run the tests
-	A) As stand alone tests for each directive or
+	A) Using the runtest script.
+	B) Manual generation of stand alone tests for a directive
 II.	How to add new tests / The structure of testtemplates
 	A) Description of the template structure
 
@@ -14,9 +15,25 @@ I.	How to compile and run the tests
 ------------------------------------------------------------------------------------------
 
 You have two main ways to run tests with the testsuite:
-A) As stand alone tests for each directive or
+First you can use the runtestscript, which generates and runs the tests specified in an an 
+inputfile, or you can compile the tests by your own using the ompts_parser.pl script.
 
-	A) STAND ALONE TESTS
+	A) Using the runtest script.
+
+Using the runtest.pl script is rather easy: You only have to generate a file containing the 
+names of the tests (one test per line) an run the runtest.pl script with the filename.
+
+	#	>	./runtest.pl testlist
+
+With the testsuite there come three testlists: One containing all tests, one with the tests 
+for version 2.0 of OpenMP and one with the tests for version 2.5 of OpenMP.
+If you dont't want to test the directives in orphaned mode you can use the -norphan option.
+You also can use the runtest.pl script eather to compile all tests or run compiled tests
+e.g. for cross compilation on other platforms. For this there are the options -norun and 
+-nocompile.
+With the --help option you can show the complete list of options and thier explanations.
+
+	B) Manual generation of stand alone tests for a directive
 
 1.) Run ompts_makeHeader.pl. This will generate an up to date headerfile.
 2.) The sources for the tests are in the templates directory. Generate the 
@@ -61,10 +78,6 @@ A) As stand alone tests for each directive or
 
 	#	In the example:
 	#	>	test_has_openmp.log
-
-------------------------------------------------------------------------------------------
-I.B) APPLICATION
-------------------------------------------------------------------------------------------
 
 
 ------------------------------------------------------------------------------------------

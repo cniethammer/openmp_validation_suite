@@ -75,4 +75,4 @@ test1:
 
 
 clean:
-	-rm test_*.c crosstest_*.c *.out *.log 
+	-rm orphaned* test_* crosstest_* *.out *.log 
