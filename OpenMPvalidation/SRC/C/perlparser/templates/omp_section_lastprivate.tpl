@@ -6,59 +6,68 @@
 #include <stdio.h>
 #include "omp_testsuite.h"
 
+
 int <ompts:testcode:functionname>omp_section_lastprivate</ompts:testcode:functionname>(FILE * logFile){
-	int sum=0;
-	int sum0=0;
-	int known_sum;
-	int i;
-	int i0=-1;
+    <ompts:orphan:vars>
+	int i0 = -1;
+	int sum = 0;
+    </ompts:orphan:vars>
+    int known_sum;
+
+    i0 = -1;
+    sum = 0;
+
 #pragma omp parallel
+    {
+	<ompts:orphan>
+	int i;
+	int sum0 = 0;
+#pragma omp sections <ompts:check>lastprivate(i0)</ompts:check><ompts:crosscheck>private(i0)</ompts:crosscheck> private(i,sum0)
 	{
-<ompts:check>#pragma omp sections  lastprivate(i0) private(i,sum0)</ompts:check><ompts:crosscheck>#pragma omp sections  private(i0) private(i,sum0)</ompts:crosscheck>
-		{
 #pragma omp section  
-			{
-				sum0=0;
-				for (i=1;i<400;i++)
-				{
-					sum0=sum0+i;
-					i0=i;
-				}
+	    {
+		sum0 = 0;
+		for (i = 1; i < 400; i++)
+		{
+		    sum0 = sum0 + i;
+		    i0 = i;
+		}
 #pragma omp critical
-				{
-					sum= sum+sum0;
-				}                         /*end of critical*/
-			}/* end of section */
+		{
+		    sum = sum + sum0;
+		} /*end of critical*/
+	    } /* end of section */
 #pragma omp section 
-			{
-				sum0=0;
-				for(i=400;i<700;i++)
-				{
-					sum0=sum0+i;                       /*end of for*/
-					i0=i;
-				}
+	    {
+		sum0 = 0;
+		for(i = 400; i < 700; i++)
+		{
+		    sum0 = sum0 + i;
+		    i0 = i;
+		}
 #pragma omp critical
-				{
-					sum= sum+sum0;
-				}                         /*end of critical*/
-			}
+		{
+		    sum = sum + sum0;
+		} /*end of critical*/
+	    }
 #pragma omp section 
-			{
-				sum0=0;
-				for(i=700;i<1000;i++)
-				{
-					sum0=sum0+i;
-					i0=i;
-				}
+	    {
+		sum0 = 0;
+		for(i = 700; i < 1000; i++)
+		{
+		    sum0 = sum0 + i;
+		    i0 = i;
+		}
 #pragma omp critical
-				{
-					sum= sum+sum0;
-				}                         /*end of critical*/
-			}
-		}/* end of sections*/
-	}                          /* end of parallel*/    
-	known_sum=(999*1000)/2;
-	return ((known_sum==sum) && (i0==999) );
+		{
+		    sum = sum + sum0;
+		} /*end of critical*/
+	    }
+	} /* end of sections*/
+	</ompts:orphan>
+    } /* end of parallel*/    
+    known_sum = (999 * 1000) / 2;
+    return ((known_sum == sum) && (i0 == 999) );
 }
 </ompts:testcode>
 </ompts:test>

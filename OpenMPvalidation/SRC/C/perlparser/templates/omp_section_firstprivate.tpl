@@ -6,17 +6,19 @@
 #include <stdio.h>
 #include "omp_testsuite.h"
 
+
 int <ompts:testcode:functionname>omp_section_firstprivate</ompts:testcode:functionname>(FILE * logFile){
 	<ompts:orphan:vars>
 	    int sum;
-	<ompts:orphan:vars>
+	    int sum0;
+	</ompts:orphan:vars>
 	int known_sum;
 
+	sum0 = 11;
 	sum = 7;
 #pragma omp parallel
 	{
 <ompts:orphan>
-	    int sum0 = 11;
 #pragma omp  sections <ompts:check>firstprivate(sum0)</ompts:check><ompts:crosscheck>private(sum0)</ompts:crosscheck>
 		{
 #pragma omp section 
