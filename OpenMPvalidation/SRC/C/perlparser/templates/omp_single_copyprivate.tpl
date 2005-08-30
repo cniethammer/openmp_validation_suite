@@ -6,6 +6,9 @@
 <ompts:testcode>
 #include "omp_testsuite.h"
 
+int j;
+#pragma omp threadprivate(j)
+
 int <ompts:testcode:functionname>omp_single_copyprivate</ompts:testcode:functionname>(FILE * logFile)                                   
 {
     <ompts:orphan:vars>
@@ -21,12 +24,11 @@ int <ompts:testcode:functionname>omp_single_copyprivate</ompts:testcode:function
 	    int i;
 	    for (i = 0; i < LOOPCOUNT; i++)
 	    {
-		int j;
 		/*
 		   int thread;
 		   thread = omp_get_thread_num ();
 		 */
-#pragma omp single <ompts:check>copyprivate(j)</ompts:check><ompts:crosscheck>private(j)</ompts:crosscheck>
+#pragma omp single <ompts:check>copyprivate(j)</ompts:check>
 		{
 		    nr_iterations++;
 		    j = i;
