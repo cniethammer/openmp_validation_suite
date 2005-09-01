@@ -1,3 +1,9 @@
+#
+#uncomment the desired compiler and modify options if necessary
+#change NUM_THREADS to the proper one on your machine
+#
+
+NUM_THREADS=4
 #SUN Fortran Compiler:
 #FC=f90
 #FFLAGS=-xopenmp -O3
@@ -26,13 +32,13 @@
 
 #Pathscale Compiler
 #FC=pathf90
-#FFLAGS=  -O2 -mp
-#FLINKFLAGS=-O2 -mp
+#FFLAGS= -mp -Ofast -lm
+#FLINKFLAGS=-mp -Ofast -lm
 
 #Open64 Compiler
 #FC=openf90
-#FFLAGS=  -O2 -mp
-#FLINKFLAGS=-O2 -mp
+#FFLAGS=  -Ofast -mp
+#FLINKFLAGS=-Ofast -mp
 
 ifdef testfile
 TESTFILE = $(testfile)
@@ -84,4 +90,4 @@ clean:
 	rm -f main *.o testdeclarations.f  mainBody.f test.log failed.compilation
 .PHONY:run
 run:main
-	(OMP_NUM_THREADS=2; export OMP_NUM_THREADS; ./main)
+	(OMP_NUM_THREADS=$(NUM_THREADS); export OMP_NUM_THREADS; ./main)
