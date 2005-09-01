@@ -17,6 +17,7 @@
 #define MAX_TIME 5
 #define SLEEPTIME 0.5
 
+const int chunk_size = 10;
 
 int <ompts:testcode:functionname>omp_for_schedule_dynamic</ompts:testcode:functionname> (FILE * logFile)
 {
@@ -26,7 +27,6 @@ int <ompts:testcode:functionname>omp_for_schedule_dynamic</ompts:testcode:functi
 </ompts:orphan:vars>
 
     int i;
-    const int chunk_size = 10;
     int tidsArray[CFDMAX_SIZE];
     int count = 0;
     int tmp_count = 0;
