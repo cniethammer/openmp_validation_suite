@@ -1,3 +1,10 @@
+# Make file for the OpenMP validation suite C version
+# uncomment the desired compiler and compilation flags
+# change NUM_THREADS to desired value
+
+# the number of threads this validation suite will use
+NUM_THREADS= 5
+
 # Fujitsu Compilers:
 #CC = fcc
 #CFLAGS = -KOMP,fast_GP2=2
@@ -11,7 +18,6 @@
 #
 #CC = ecc
 #CC = icc
-#CC = omcc
 #CFLAGS = -O3 -ip -openmp
 #CFLAGS = -Wall -O0 -openmp
 #CFLAGS =  -openmp
@@ -56,11 +62,11 @@
 #
 # open64 compilers
 #CC = opencc
-#CFLAGS = -O3 -openmp
+#CFLAGS = -mp -Ofast -lm
 
 #Pathscale compilers
 #CC = pathcc
-#CFLAGS = -O3 -openmp -lm
+#CFLAGS = -mp -Ofast -lm
 
 ifdef testfile
 TESTFILE = $(testfile)
@@ -109,5 +115,5 @@ clean:
 
 run:main 
 	-rm -f test.log 
-	(OMP_NUM_THREADS=2; export OMP_NUM_THREADS; ./main)
+	(OMP_NUM_THREADS=$(NUM_THREADS); export OMP_NUM_THREADS; ./main)
 
