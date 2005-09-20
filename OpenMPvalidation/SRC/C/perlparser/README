@@ -26,7 +26,7 @@ names of the tests (one test per line) an run the runtest.pl script with the fil
 	#	>	./runtest.pl testlist
 
 With the testsuite there come three testlists: One containing all tests, one with the tests 
-for version 2.0 of OpenMP and one with the tests for version 2.5 of OpenMP.
+for version 1.0 of OpenMP and one with the tests for version 2.0/2.5 of OpenMP.
 If you dont't want to test the directives in orphaned mode you can use the -norphan option.
 You also can use the runtest.pl script eather to compile all tests or run compiled tests
 e.g. for cross compilation on other platforms. For this there are the options -norun and 
