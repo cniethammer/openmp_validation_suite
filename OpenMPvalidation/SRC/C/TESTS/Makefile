@@ -3,7 +3,7 @@
 # change NUM_THREADS to desired value
 
 # the number of threads this validation suite will use
-NUM_THREADS= 5
+NUM_THREADS= 2
 
 # Fujitsu Compilers:
 #CC = fcc
@@ -18,7 +18,7 @@ NUM_THREADS= 5
 #
 #CC = ecc
 #CC = icc
-#CFLAGS = -O3 -ip -openmp
+#CFLAGS = -O3 -ipo -openmp
 #CFLAGS = -Wall -O0 -openmp
 #CFLAGS =  -openmp
 
