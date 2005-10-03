@@ -3,7 +3,7 @@
 #change NUM_THREADS to the proper one on your machine
 #
 
-NUM_THREADS=4
+NUM_THREADS=2
 #SUN Fortran Compiler:
 #FC=f90
 #FFLAGS=-xopenmp -O3
