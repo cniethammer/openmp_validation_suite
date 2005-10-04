@@ -64,7 +64,7 @@
      &  failed," failed and ",success," successful with ",
      &  crosschecked,"cross checked"
         write(*,*)
-     &  "For detailled inforamtion on the tests see the logfile ",
+     &  "For detailled inforamtion on the tests see test.log",
      &  logFileName
 
         end program main
