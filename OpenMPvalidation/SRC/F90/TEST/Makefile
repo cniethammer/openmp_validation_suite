@@ -40,6 +40,11 @@ NUM_THREADS=2
 #FFLAGS=  -Ofast -mp
 #FLINKFLAGS=-Ofast -mp
 
+#ORC Compiler
+#FC=orf90
+#FFLAGS= -mp
+#FLINKFLAGS= -mp
+
 ifdef testfile
 TESTFILE = $(testfile)
 endif
@@ -47,7 +52,7 @@ endif
 ifdef TESTFILE
 TEST_FILENAME = $(TESTFILE)
 else
-TEST_FILENAME = OMP1_TEST
+TEST_FILENAME = ALL_TEST
 endif
 
 .PHONEY:print_help
@@ -63,10 +68,12 @@ print_help:
 	@echo "     gmake clean "
 	@echo "----------------------------------"
 	@echo "filename may be one of the following:"
-	@echo "OMP1_TES - execute omp version 1 tests"
+	@echo "OMP1_TEST - execute omp version 1 tests"
 	@echo "OMP2_TEST - execute omp version 2 tests"
+	@echo "SCHED_TEST     - execute omp schedule tests"
+	@echo "ALL_TEST      - execute all above tests"
 	@echo "CUSTOM_TEST - execute customized tests"
-	@echo "the default filename is OMP1_TEST"
+	@echo "the default filename is ALL_TEST"
 
 default:print_help
 

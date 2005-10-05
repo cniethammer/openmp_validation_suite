@@ -13,8 +13,8 @@ Basic usage
 
 Flexible usage:
 	gmake clean
-	gmake run testfile=OMP1_TEST | OMP2_TEST | CUSTOME_TEST
- 	gmake run will use OMP1_TEST by default 
+	gmake run testfile=OMP1_TEST | OMP2_TEST | CUSTOME_TEST|..
+ 	gmake run will use ALL_TEST by default 
 
 	CUSTOME_TEST can be changed with any test names from ALL_TEST.
 
