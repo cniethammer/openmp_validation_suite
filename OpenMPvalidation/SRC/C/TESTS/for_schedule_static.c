@@ -52,7 +52,7 @@ check_for_schedule_static (FILE * logFile)
 	tid = omp_get_thread_num ();
 
 #pragma omp for schedule(static,chunk_size)
-	for (i = 0; i < CFSMAX_SIZE - 1; i++)
+	for (i = 0; i < CFSMAX_SIZE; i++)
 	  {
 	    tids[i] = tid;
 	  }
@@ -115,7 +115,7 @@ crosscheck_for_schedule_static (FILE * logFile)
 	tid = omp_get_thread_num ();
 
 #pragma omp for 
-	for (i = 0; i < CFSMAX_SIZE - 1; i++)
+	for (i = 0; i < CFSMAX_SIZE; i++)
 	  {
 	    tids[i] = tid;
 	  }
