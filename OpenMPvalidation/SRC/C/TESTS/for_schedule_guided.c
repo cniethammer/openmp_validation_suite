@@ -1,3 +1,20 @@
+/*
+* Test for guided scheduling
+* Ensure threads get chunks interleavely first
+* Then judge the chunk sizes are decreasing until to a stable value
+* Modifed by Chunhua Liao
+* For example, 100 iteration on 2 threads, chunksize 7
+* one line for each dispatch, 0/1 means thread id 
+*0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0  24
+*1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1              18
+*0 0 0 0 0 0 0 0 0 0 0 0 0 0                      14
+*1 1 1 1 1 1 1 1 1 1                              10
+*0 0 0 0 0 0 0 0                                   8
+*1 1 1 1 1 1 1                                     7
+*0 0 0 0 0 0 0                                     7
+*1 1 1 1 1 1 1                                     7
+*0 0 0 0 0                                         5
+*/
 #include <stdio.h>
 #include <omp.h>
 #include <unistd.h>
@@ -6,9 +23,7 @@
 #include "omp_testsuite.h"
 #include "omp_my_sleep.h"
 
-#define NUMBER_OF_THREADS 10
-#define CFSMAX_SIZE 1000
-#define CFDMAX_SIZE 1000000
+#define CFSMAX_SIZE 150  /*choose small iteration space for small sync. overhead*/
 #define MAX_TIME 5
 #define SLEEPTIME 0.5
 
@@ -16,12 +31,16 @@ int
 check_for_schedule_guided (FILE * logFile)
 {
   int threads;
-  int tids[CFSMAX_SIZE + 1];
-  int i, m, tmp;
-  int *chunksizes;
-  int result = 1;
+  const int chunk_size = 7;
+  int tids[CFSMAX_SIZE];
+  int i,  *tmp;
+  int flag=0;
+  int result = 0;
   int notout = 1;
   int maxiter = 0;
+  int count = 0;
+  int tmp_count = 0;
+  int tid;
 
 #pragma omp parallel
   {
@@ -43,14 +62,11 @@ check_for_schedule_guided (FILE * logFile)
 
 */
 
-#pragma omp parallel shared(tids)
+#pragma omp parallel shared(tids,maxiter) private(tid,count)
   {
-    int count = 0.;
-    int tid;
     tid = omp_get_thread_num ();
 
-
-#pragma omp for nowait schedule(guided,1)
+#pragma omp for nowait schedule(guided,chunk_size)
     for (i = 0; i < CFSMAX_SIZE; ++i)
       {
 	/*printf(" notout=%d, count= %d\n",notout,count); */
@@ -70,10 +86,10 @@ check_for_schedule_guided (FILE * logFile)
 	   b) we are at the end of the loop (first thread finished                           and set notout=0 OR
 	   c) timeout arrived */
 
+#pragma omp flush(maxiter,notout)
 	while (notout && (count < MAX_TIME) && (maxiter == i))
 	  {
 	    /*printf("Thread Nr. %d sleeping\n",tid); */
-#pragma omp flush(maxiter,notout)
 	    my_sleep (SLEEPTIME);
 	    count += SLEEPTIME;
 	  }
@@ -85,81 +101,83 @@ check_for_schedule_guided (FILE * logFile)
 #pragma omp flush(notout)
   }				/* end omp parallel */
 
-  m = 1;
-  tmp = tids[0];
-
-  {
-    int global_chunknr = 0;
-    int local_chunknr[NUMBER_OF_THREADS];
-    int openwork = CFSMAX_SIZE;
-    int expected_chunk_size;
-
-    for (i = 0; i < NUMBER_OF_THREADS; i++)
-      local_chunknr[i] = 0;
-
-    tids[CFSMAX_SIZE] = -1;
-
-
+ count = 0;
+/*
+printf("debug--------\n");
+    for (i = 0; i < CFSMAX_SIZE; ++i)
+	printf("%d ",tids[i]);
+printf("\nEnd debug--------\n");
+*/
     /*fprintf(logFile,"# global_chunknr thread local_chunknr chunksize\n"); */
-    for (i = 1; i <= CFSMAX_SIZE; ++i)
+    for (i = 0; i < CFSMAX_SIZE - 1; ++i)
       {
-	if (tmp == tids[i])
+	if (tids[i] != tids[i + 1])
 	  {
-	    m++;
+	    count++;
+	  }
+      }
+
+    tmp = (int *) malloc((count + 1)* sizeof (int));
+   tmp_count=0;
+   tmp[0]=1;
+/*calculate the chunksize for each dispatch*/
+    for (i = 0; i < CFSMAX_SIZE - 1; ++i)
+      {
+	if (tids[i] == tids[i + 1])
+	  {
+	    tmp[tmp_count]++;
 	  }
 	else
 	  {
-	    fprintf (logFile, "%d\t%d\t%d\t%d\n", global_chunknr, tmp,
-		     local_chunknr[tmp], m);
-	    global_chunknr++;
-	    local_chunknr[tmp]++;
-	    tmp = tids[i];
-	    m = 1;
+	   tmp_count ++;
+           tmp[tmp_count]=1;
 	  }
       }
-    chunksizes = (int *) malloc (global_chunknr * sizeof (int));
-    global_chunknr = 0;
+/*
+printf("Debug2----\n");
+     for (i=0;i<=tmp_count;i++)
+     printf("%d ",tmp[i]);
+printf("\nEndDebug2----\n");
+*/
+/*Check if chunk sizes are decreased until equals to the specified one,
+ ignore the last dispatch for possible smaller remainder*/
 
-    m = 1;
-    tmp = tids[0];
-    for (i = 1; i <= CFSMAX_SIZE; ++i)
+
+  flag=0;
+    for (i = 0; i < count-1; i++)
       {
-	if (tmp == tids[i])
-	  {
-	    m++;
-	  }
-	else
-	  {
-	    chunksizes[global_chunknr] = m;
-	    global_chunknr++;
-	    local_chunknr[tmp]++;
-	    tmp = tids[i];
-	    m = 1;
-	  }
+       if ((i>0)&&(tmp[i]==tmp[i+1])) flag=1; 
+/*set flag to indicate the Chunk sizes should be the same from now on*/
+       if(flag==0){
+ 	if (tmp[i]<=tmp[i+1]) {
+		result++;
+		fprintf(logFile,"chunk size from %d to %d not decreased.\n",
+		i,i+1);
+		}
+         }
+       else if (tmp[i]!=tmp[i+1]) {
+		result++;
+		fprintf(logFile,"chunk size not maintained.\n");
+		}
       }
 
-    for (i = 0; i < global_chunknr; i++)
-      {
-	if (expected_chunk_size > 2)
-	  expected_chunk_size = openwork / threads;
-	result = result && (abs (chunksizes[i] - expected_chunk_size) < 2);
-	openwork -= chunksizes[i];
-      }
-  }
-
-  return result;
+  return (result==0);
 }
 
 int
 crosscheck_for_schedule_guided (FILE * logFile)
 {
-  int threads;
-  int tids[CFSMAX_SIZE + 1];
-  int i, m, tmp;
-  int *chunksizes;
-  int result = 1;
+   int threads;
+  const int chunk_size = 7;
+  int tids[CFSMAX_SIZE];
+  int i,  *tmp;
+  int flag=0;
+  int result = 0;
   int notout = 1;
   int maxiter = 0;
+  int count = 0;
+  int tmp_count = 0;
+  int tid;
 
 #pragma omp parallel
   {
@@ -181,14 +199,11 @@ crosscheck_for_schedule_guided (FILE * logFile)
 
 */
 
-#pragma omp parallel shared(tids)
+#pragma omp parallel shared(tids,maxiter) private(tid,count)
   {
-    int count = 0.;
-    int tid;
     tid = omp_get_thread_num ();
 
-
-#pragma omp for nowait
+#pragma omp for nowait schedule(static,chunk_size)
     for (i = 0; i < CFSMAX_SIZE; ++i)
       {
 	/*printf(" notout=%d, count= %d\n",notout,count); */
@@ -208,10 +223,10 @@ crosscheck_for_schedule_guided (FILE * logFile)
 	   b) we are at the end of the loop (first thread finished                           and set notout=0 OR
 	   c) timeout arrived */
 
+#pragma omp flush(maxiter,notout)
 	while (notout && (count < MAX_TIME) && (maxiter == i))
 	  {
 	    /*printf("Thread Nr. %d sleeping\n",tid); */
-#pragma omp flush(maxiter,notout)
 	    my_sleep (SLEEPTIME);
 	    count += SLEEPTIME;
 	  }
@@ -223,67 +238,64 @@ crosscheck_for_schedule_guided (FILE * logFile)
 #pragma omp flush(notout)
   }				/* end omp parallel */
 
-  m = 1;
-  tmp = tids[0];
-
-  {
-    int global_chunknr = 0;
-    int local_chunknr[NUMBER_OF_THREADS];
-    int openwork = CFSMAX_SIZE;
-    int expected_chunk_size;
-
-    for (i = 0; i < NUMBER_OF_THREADS; i++)
-      local_chunknr[i] = 0;
-
-    tids[CFSMAX_SIZE] = -1;
-
-
+ count = 0;
+/*
+printf("debug--------\n");
+    for (i = 0; i < CFSMAX_SIZE; ++i)
+	printf("%d ",tids[i]);
+printf("\nEnd debug--------\n");
+*/
     /*fprintf(logFile,"# global_chunknr thread local_chunknr chunksize\n"); */
-    for (i = 1; i <= CFSMAX_SIZE; ++i)
+    for (i = 0; i < CFSMAX_SIZE - 1; ++i)
       {
-	if (tmp == tids[i])
+	if (tids[i] != tids[i + 1])
 	  {
-	    m++;
+	    count++;
+	  }
+      }
+
+    tmp = (int *) malloc((count + 1)* sizeof (int));
+   tmp_count=0;
+   tmp[0]=1;
+/*calculate the chunksize for each dispatch*/
+    for (i = 0; i < CFSMAX_SIZE - 1; ++i)
+      {
+	if (tids[i] == tids[i + 1])
+	  {
+	    tmp[tmp_count]++;
 	  }
 	else
 	  {
-	    fprintf (logFile, "%d\t%d\t%d\t%d\n", global_chunknr, tmp,
-		     local_chunknr[tmp], m);
-	    global_chunknr++;
-	    local_chunknr[tmp]++;
-	    tmp = tids[i];
-	    m = 1;
+	   tmp_count ++;
+           tmp[tmp_count]=1;
 	  }
       }
-    chunksizes = (int *) malloc (global_chunknr * sizeof (int));
-    global_chunknr = 0;
-
-    m = 1;
-    tmp = tids[0];
-    for (i = 1; i <= CFSMAX_SIZE; ++i)
+/*
+printf("Debug2----\n");
+     for (i=0;i<=tmp_count;i++)
+     printf("%d ",tmp[i]);
+printf("\nEndDebug2----\n");
+*/
+/*Check if chunk sizes are decreased until equals to the specified one,
+ ignore the last dispatch for possible smaller remainder*/
+  flag=0;
+    for (i = 0; i < count-1; i++)
       {
-	if (tmp == tids[i])
-	  {
-	    m++;
-	  }
-	else
-	  {
-	    chunksizes[global_chunknr] = m;
-	    global_chunknr++;
-	    local_chunknr[tmp]++;
-	    tmp = tids[i];
-	    m = 1;
-	  }
+       if ((i>0)&&(tmp[i]==tmp[i+1])) flag=1; 
+/*set flag to indicate the Chunk sizes should be the same from now on*/
+       if(flag==0){
+ 	if (tmp[i]<=tmp[i+1]) {
+		result++;
+		fprintf(logFile,"chunk size from %d to %d not decreased.\n",
+		i,i+1);
+		}
+         }
+       else if (tmp[i]!=tmp[i+1]) {
+		result++;
+		fprintf(logFile,"chunk size not maintained.\n");
+		}
       }
 
-    for (i = 0; i < global_chunknr; i++)
-      {
-	if (expected_chunk_size > 2)
-	  expected_chunk_size = openwork / threads;
-	result = result && (abs (chunksizes[i] - expected_chunk_size) < 2);
-	openwork -= chunksizes[i];
-      }
-  }
+  return (result==0);
 
-  return result;
 }
