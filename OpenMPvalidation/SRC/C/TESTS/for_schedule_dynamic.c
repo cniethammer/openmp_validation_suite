@@ -1,3 +1,11 @@
+/*
+* Test for dynamic scheduling with chunk size
+* Method: caculate how many times the iteration space is dispatched
+*         and judge if each dispatch has the requested chunk size
+*         unless it is the last one.
+* It is possible for two adjacent chunks are assigned to the same thread
+* Modifyied by Chunhua Liao
+*/
 #include <stdio.h>
 #include <omp.h>
 #include <unistd.h>
@@ -6,33 +14,26 @@
 #include "omp_testsuite.h"
 #include "omp_my_sleep.h"
 
-#define NUMBER_OF_THREADS 10
-#define CFSMAX_SIZE 1000
-#define CFDMAX_SIZE 1000000
-#define MAX_TIME 5
-#define SLEEPTIME 0.5
-
-
+#define CFDMAX_SIZE 100
 
 int
 check_for_schedule_dynamic (FILE * logFile)
 {
-  const int chunk_size = 10;
+  const int chunk_size = 7;
   int tid;
   int tids[CFDMAX_SIZE];
   int count = 0;
-  int tmp_count = 0;
-  int *tmp;
+  int tmp_count = 0; /*dispatch times*/
+  int *tmp;  /*store chunk size for each dispatch*/
   int i;
-  int result = 1;
+  int result = 0;
 
-#pragma omp parallel private(tid) shared(tids,count)
+#pragma omp parallel private(tid) shared(tids)
   {				/* begin of parallel */
 
     tid = omp_get_thread_num ();
 #pragma omp for schedule(dynamic,chunk_size)
-
-    for (i = 0; i < CFDMAX_SIZE; ++i)
+    for (i = 0; i < CFDMAX_SIZE; i++)
       {
 	tids[i] = tid;
       }
@@ -67,51 +68,51 @@ check_for_schedule_dynamic (FILE * logFile)
 	  tmp[tmp_count]++;
 	}
     }
-
+/*
+printf("debug----\n");
+    for (i = 0; i < CFDMAX_SIZE; ++i)
+	printf("%d ",tids[i]);
+printf("debug----\n");
+*/
 /* is dynamic statement working? */
-
-  for (i = 0; i < count + 1; ++i)
+  for (i = 0; i < count; i++)
     {
-      if (tmp[i] != chunk_size)
+      if ((tmp[i]%chunk_size)!=0) 
+/*it is possible for 2 adjacent chunks assigned to a same thread*/
 	{
-	  result += ((tmp[i] / chunk_size) - 1);
+         result++;
+  fprintf(logFile,"The intermediate dispatch has wrong chunksize.\n");
+	  /*result += ((tmp[i] / chunk_size) - 1);*/
 	}
     }
+  if ((tmp[count]%chunk_size)!=(CFDMAX_SIZE%chunk_size))
+   { 
+   result++;
+  fprintf(logFile,"the last dispatch has wrong chunksize.\n");
+   }
   /* for (int i=0;i<count+1;++i) printf("%d\t:=\t%d\n",i+1,tmp[i]); */
-  if ((tmp[0] != CFDMAX_SIZE) && (result > 1))
-    {
-      fprintf (logFile,
-	       "Seems to work. (Treads got %d times chunks \"twice\" by a total of %d chunks)\n",
-	       result, CFDMAX_SIZE / chunk_size);
-      return 1;
-    }
-  else
-    {
-      fprintf (logFile, "Test negativ.\n");
-      return 0;
-    }
+  return (result==0);
 }
 
 
 int
 crosscheck_for_schedule_dynamic (FILE * logFile)
 {
-  const int chunk_size = 10;
+  const int chunk_size = 7;
   int tid;
   int tids[CFDMAX_SIZE];
   int count = 0;
-  int tmp_count = 0;
-  int *tmp;
+  int tmp_count = 0; /*dispatch times*/
+  int *tmp;  /*store chunk size for each dispatch*/
   int i;
-  int result = 1;
+  int result = 0;
 
-#pragma omp parallel private(tid) shared(tids,count)
+#pragma omp parallel private(tid) shared(tids)
   {				/* begin of parallel */
 
     tid = omp_get_thread_num ();
 #pragma omp for
-
-    for (i = 0; i < CFDMAX_SIZE; ++i)
+    for (i = 0; i < CFDMAX_SIZE; i++)
       {
 	tids[i] = tid;
       }
@@ -146,25 +147,29 @@ crosscheck_for_schedule_dynamic (FILE * logFile)
 	  tmp[tmp_count]++;
 	}
     }
-
+/*
+printf("debug----\n");
+    for (i = 0; i < CFDMAX_SIZE; ++i)
+	printf("%d ",tids[i]);
+printf("debug----\n");
+*/
 /* is dynamic statement working? */
-
-  for (i = 0; i < count + 1; ++i)
+  for (i = 0; i < count; i++)
     {
-      if (tmp[i] != chunk_size)
+      if ((tmp[i]%chunk_size)!=0) 
+/*it is possible for 2 adjacent chunks assigned to a same thread*/
 	{
-	  result += ((tmp[i] / chunk_size) - 1);
+         result++;
+  fprintf(logFile,"The intermediate dispatch has wrong chunksize.\n");
+	  /*result += ((tmp[i] / chunk_size) - 1);*/
 	}
     }
+  if ((tmp[count]%chunk_size)!=(CFDMAX_SIZE%chunk_size))
+   { 
+   result++;
+  fprintf(logFile,"the last dispatch has wrong chunksize.\n");
+   }
   /* for (int i=0;i<count+1;++i) printf("%d\t:=\t%d\n",i+1,tmp[i]); */
-  if ((tmp[0] != CFDMAX_SIZE) && (result > 1))
-    {
-      /*fprintf(logFile,"Seems to work. (Treads got %d times chunks \"twice\" by a total of %d chunks)\n",result,CFDMAX_SIZE/chunk_size); */
-      return 1;
-    }
-  else
-    {
-      /*fprintf(logFile,"Test negativ.\n"); */
-      return 0;
-    }
+  return (result==0);
+
 }
