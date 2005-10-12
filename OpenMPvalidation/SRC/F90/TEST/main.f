@@ -53,9 +53,8 @@
      &  failed," failed and ",success," successful with ",
      &  crosschecked,"cross checked"
         write(1,*)
-     &  "For detailled inforamtion on the tests see the logfile ",
+     &  "For detailled inforamtion on the tests see the logfile:",
      &  logFileName
-
 
         close(1)
         write(*,*)
@@ -64,8 +63,7 @@
      &  failed," failed and ",success," successful with ",
      &  crosschecked,"cross checked"
         write(*,*)
-     &  "For detailled inforamtion on the tests see test.log",
+     &  "For detailled inforamtion on the tests see the logfile:",
      &  logFileName
-
         end program main
 
