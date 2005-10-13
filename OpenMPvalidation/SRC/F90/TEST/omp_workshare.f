@@ -9,12 +9,14 @@
 ! thread and then wrongfully repeated several times.
 !
 ! TODO:Do we need test for WHERE and FORALL?
+! A simple test for WHERE and FORALL is added by Zhenying Liu
 !********************************************************************
         integer function chk_omp_workshare()
         implicit none
-        integer scalar0,scalar1,scalar2,scalar3,result
-        integer scalar02,scalar12,scalar22,scalar32
-        integer, DIMENSION(1000)::AA,BB
+        integer scalar0,scalar1,scalar2,scalar3,result,i
+        integer scalar02,scalar12,scalar22,scalar32,count
+        integer, DIMENSION(1000)::AA,BB,CC
+        real, DIMENSION(1000)::DD,FF
 
         result=0
         scalar0=0
@@ -25,9 +27,16 @@
         scalar22=0
         scalar3=0
         scalar32=0
+ 
+        count = 0
 
         AA=0
         BB=0
+
+        do i=1,1000
+          CC(i) = i
+          FF(i) = 1.0/i
+        end do
 
 !$OMP PARALLEL
 !$OMP   WORKSHARE
@@ -50,6 +59,10 @@
 !$OMP PARALLEL
         scalar3=scalar3+1
 !$OMP END PARALLEL
+
+        WHERE ( CC .ne. 0 ) DD = 1.0/CC
+
+        FORALL (I=1:1000) CC(i) = -i
 
 !$OMP   END WORKSHARE
 !$OMP END PARALLEL
@@ -82,6 +95,27 @@
            write(1,*) "PARALLEL inside WORKSHARE has some problem"
            result = result +1
        endif
+       do i=1,1000
+         if ( abs( DD(i)- FF(i)) .gt. 1.0E-4 ) then
+	    count = count + 1
+         end if
+       end do
+       if ( count .ne. 0 ) then
+           result = result + 1
+           write(1,*) "WHERE has some problem"
+       end if
+
+       count = 0
+       do i=1,1000
+         if ( CC(i) .ne. -i ) then
+            count = count + 1
+         end if
+       end do
+       if ( count .ne. 0 ) then
+           result = result + 1
+           write(1,*) "FORALL has some problem"
+       end if
+
 
 !if anything is wrong, set return value to 0
        if (result==0) then
@@ -99,9 +133,10 @@
 
         integer function crschk_omp_workshare()
         implicit none
-        integer scalar0,scalar1,scalar2,scalar3,result
-        integer scalar02,scalar12,scalar22,scalar32
-        integer, DIMENSION(1000)::AA,BB
+        integer scalar0,scalar1,scalar2,scalar3,result,i
+        integer scalar02,scalar12,scalar22,scalar32,count
+        integer, DIMENSION(1000)::AA,BB,CC
+        real, DIMENSION(1000)::DD,FF
 
         result=0
         scalar0=0
@@ -113,8 +148,15 @@
         scalar3=0
         scalar32=0
 
+        count = 0
+
         AA=0
         BB=0
+
+        do i=1,1000
+          CC(i) = i
+          FF(i) = 1.0/i
+        end do
 
 !$OMP PARALLEL
 !!$OMP   WORKSHARE
@@ -138,6 +180,10 @@
         scalar3=scalar3+1
 !$OMP END PARALLEL
 
+        WHERE ( CC .ne. 0 ) DD = 1.0/CC
+
+        FORALL (I=1:1000) CC(i) = -i
+
 !!$OMP   WORKSHARE
 !$OMP END PARALLEL
 
@@ -150,25 +196,45 @@
 
 !      write (1,*) "ck:sum of AA is",SUM(AA)," sum of BB is ",sum(BB)
        if (SUM(AA)/=SUM(BB)) then
-            write(1,*) "Array assignment has some problem"
+!            write(1,*) "Array assignment has some problem"
             result=result +1
        endif
        if (scalar0/=scalar02) then
-          write(1,*) "Scalar assignment has some problem"
+!          write(1,*) "Scalar assignment has some problem"
           result = result +1
        endif
        if (scalar1/=scalar12) then
-          write(1,*) "Atomic inside WORKSHARE has some problem"
+!          write(1,*) "Atomic inside WORKSHARE has some problem"
          result = result +1
        endif
        if (scalar2/=scalar22) then
-          write(1,*) "CRITICAL inside WORKSHARE has some problem"
+!          write(1,*) "CRITICAL inside WORKSHARE has some problem"
          result = result +1
        endif
        if (scalar3/=scalar32) then
-           write(1,*) "PARALLEL inside WORKSHARE has some problem"
+!           write(1,*) "PARALLEL inside WORKSHARE has some problem"
            result = result +1
        endif
+       do i=1,1000
+         if ( abs( DD(i)- FF(i)) .gt. 1.0E-4 ) then
+            count = count + 1
+         end if
+       end do
+       if ( count .ne. 0 ) then
+            result=result +1
+!            write(1,*) "WHERE has some problem"
+       end if
+
+       count = 0
+       do i=1,1000
+         if ( CC(i) .ne. -i ) then
+            count = count + 1
+         end if
+       end do
+       if ( count .ne. 0 ) then
+           result = result + 1
+!           write(1,*) "FORALL has some problem"
+       end if
 
 !if anything is wrong, set return value to 0
        if (result==0) then
