@@ -83,7 +83,7 @@
            result = result +1
        endif
 
-!if anything is wrong, set result to 0
+!if anything is wrong, set return value to 0
        if (result==0) then
          chk_omp_workshare = 1
        else
@@ -170,7 +170,7 @@
            result = result +1
        endif
 
-!if anything is wrong, set result to 0
+!if anything is wrong, set return value to 0
        if (result==0) then
          crschk_omp_workshare = 1
        else
