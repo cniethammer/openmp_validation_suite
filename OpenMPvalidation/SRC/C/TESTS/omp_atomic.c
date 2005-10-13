@@ -1,3 +1,8 @@
+/***** We checked the operations of 
+****** ++, --, +, -, *, /, &, |, << and >> for atomic directives.
+****** especially we checked both integer and double precision for
+****** +, -, /.  It is revised by Zhenying Liu of University of Houston.
+*****/
 #include <stdio.h>
 #include <math.h>
 #include "omp_testsuite.h"
@@ -25,7 +30,7 @@ check_omp_atomic (FILE * logFile)
   int exclusiv_bit_or = 0;
   int logics[LOOPCOUNT];
   int i;
-  double dpt;
+  double dpt, div;
   int x;
   int result = 0;
 
@@ -139,9 +144,47 @@ check_omp_atomic (FILE * logFile)
 	       product, known_product);
     }
 
+   product = KNOWN_PRODUCT;
+#pragma omp parallel
+  {
+#pragma omp for
+    for (i = 1; i <= MAX_FACTOR; i++)
+      {
+#pragma omp atomic
+        product /= i;
+      }
+  }
+
+  if (product != 1)
+    {
+      result++;
+      fprintf (logFile,
+               "Error in division with integers: Result was %d instead of 1\n",
+               product );
+    }
+
+  div = 5.0E+5;
+#pragma omp parallel
+  {
+#pragma omp for
+    for (i = 1; i <= MAX_FACTOR; i++)
+      {
+#pragma omp atomic
+        div /= i;
+      }
+  }
+
+  if ( fabs(div-0.137787) >= 1.0E-4 )
+    {
+      result++;
+      fprintf (logFile,
+               "Error in division with double: Result was %f instead of 0.137787\n", div);
+    }
+
+
   x = 0;
 
-#pragma omp parallel
+#pragma OMP PARallel
   {
 #pragma omp for 
     for (i = 0; i < LOOPCOUNT; ++i)
@@ -347,7 +390,7 @@ crosscheck_omp_atomic (FILE * logFile)
   int exclusiv_bit_or = 0;
   int logics[LOOPCOUNT];
   int i;
-  double dpt;
+  double dpt, div;
   int x;
   int result = 0;
 
@@ -455,6 +498,44 @@ crosscheck_omp_atomic (FILE * logFile)
 	       "Error in Product with integers: Result was %d instead of %d\n",
 	       product, known_product);
     }
+
+   product = KNOWN_PRODUCT;
+#pragma omp parallel
+  {
+#pragma omp for
+    for (i = 1; i <= MAX_FACTOR; i++)
+      {
+        product /= i;
+      }
+  }
+
+  if (product != 1)
+    {
+      result++;
+/*      fprintf (logFile,
+               "Error in division with integers: Result was %d instead of 1\n",
+               product );
+*/
+    }
+
+  div = 5.0E+5;
+#pragma omp parallel
+  {
+#pragma omp for
+    for (i = 1; i <= MAX_FACTOR; i++)
+      {
+        div /= i;
+      }
+  }
+
+  if ( fabs(div-0.137787) >= 1.0E-4 )
+    {
+      result++;
+/*      fprintf (logFile,
+               "Error in division with double: Result was %f instead of 0.137787\n", div);
+*/
+    }
+
 
   x = 0;
 
