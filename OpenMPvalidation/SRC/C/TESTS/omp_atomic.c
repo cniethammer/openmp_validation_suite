@@ -184,7 +184,7 @@ check_omp_atomic (FILE * logFile)
 
   x = 0;
 
-#pragma OMP PARallel
+#pragma omp parallel
   {
 #pragma omp for 
     for (i = 0; i < LOOPCOUNT; ++i)
