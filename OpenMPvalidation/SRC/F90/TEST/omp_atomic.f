@@ -1,16 +1,17 @@
 !********************************************************************
 ! Functions: chk_omp_atomic
+! change "character*20" into "character (LEN=20)::"
+! get rid of the "tab" key by Zhenying Liu, on Oct. 16, 2005.
 !********************************************************************
 
         integer function chk_omp_atomic()
         implicit none
-        integer chk_omp_atomic
         integer sum, sum2, known_sum, i, i2,diff
         integer product,known_product,int_const
         integer MAX_FACTOR
         double precision dsum,dknown_sum,dt,dpt
         double precision rounding_error, ddiff
-	integer double_DIGITS
+        integer double_DIGITS
         logical logic_and, logic_or, logic_eqv,logic_neqv
         integer bit_and, bit_or
         integer exclusiv_bit_or
@@ -19,20 +20,20 @@
         integer result
         include "omp_testsuite.f"
         logical logics(LOOPCOUNT)
-	integer int_array(LOOPCOUNT)
+        integer int_array(LOOPCOUNT)
         double precision d_array(LOOPCOUNT)
-	parameter (int_const=10,known_product=3628800)
+        parameter (int_const=10,known_product=3628800)
         parameter (double_DIGITS=20,MAX_FACTOR=10)
-	parameter (rounding_error=1.E-6)
+        parameter (rounding_error=1.E-2)
         dt = 1./3.
-	known_sum = (LOOPCOUNT * (LOOPCOUNT + 1)) / 2
+        known_sum = (LOOPCOUNT * (LOOPCOUNT + 1)) / 2
         product = 1
         sum2 = 0
         sum = 0
         dsum = 0.
         result =0 
-        logic_and = .t.
-        logic_or = .f.
+        logic_and = .true.
+        logic_or = .false.
         bit_and = 1
         bit_or = 0
         exclusiv_bit_or = 0
@@ -45,11 +46,11 @@
 !$omp end do
 !$omp end parallel
 
-       	if (known_sum .ne. sum) then
+       if (known_sum .ne. sum) then
              result = result + 1
         write(1,*) "Error in sum with integers: Result was ",
      &   sum,"instead of ", known_sum
-	end if
+        end if
 
         diff = (LOOPCOUNT * (LOOPCOUNT + 1)) / 2
 
@@ -71,30 +72,30 @@
         end if
 
 !... Test for doubles
-	dsum =0.
-	dpt = 1
+        dsum =0.
+        dpt = 1
 
-	do i=1, DOUBLE_DIGITS
+        do i=1, DOUBLE_DIGITS
           dpt= dpt * dt
-	end do
+        end do
         dknown_sum = (1-dpt)/(1-dt)
 !$omp parallel
 !$omp do 
         do i=0,DOUBLE_DIGITS-1
 !$omp atomic
               dsum = dsum + dt**i
-	end do
+        end do
 !$omp end do
 !$omp end parallel
 
  
-	if(dsum .ne. dknown_sum .and. 
+        if(dsum .ne. dknown_sum .and. 
      &     abs(dsum - dknown_sum) .gt. rounding_error ) then
            result = result + 1
            write(1,*) "Error in sum with doubles: Result was ",
      &       dsum,"instead of ",dknown_sum,"(Difference: ",
      &       dsum - dknown_sum,")"
-	end if
+        end if
         dpt = 1
 
 
@@ -131,10 +132,10 @@
            result = result + 1
            write(1,*) "Error in Product with integers: Result was ",
      &       product," instead of",known_product 
-	end if
+        end if
 
         do i=1,LOOPCOUNT
-          logics(i) = .t.
+          logics(i) = .true.
         end do
 
 !$omp parallel
@@ -184,7 +185,7 @@
 
         if (logic_or) then
           result = result + 1
-	  write(1,*) "Error in logic OR part 1"
+          write(1,*) "Error in logic OR part 1"
         end if
 
         logic_or = .false.
@@ -222,7 +223,7 @@
 
         if (.not. logic_eqv) then
           result = result + 1
-	  write(1,*) "Error in logic EQV part 1"
+          write(1,*) "Error in logic EQV part 1"
         end if
 
         logic_eqv = .true.
@@ -260,7 +261,7 @@
 
         if (logic_neqv) then
           result = result + 1
-	  write(1,*) "Error in logic NEQV part 1"
+          write(1,*) "Error in logic NEQV part 1"
         end if
 
         logic_neqv = .false.
@@ -290,7 +291,7 @@
 !... pair of bits in each of I and J. 
 !$omp atomic
          bit_and = iand(bit_and,int_array(i))
-	end do
+        end do
 !$omp end do
 !$omp end parallel
 
@@ -474,7 +475,7 @@
         end if
 
         if ( result .eq. 0 ) then
-	   chk_omp_atomic=  1
+           chk_omp_atomic=  1
         else
            chk_omp_atomic=  0
         end if
@@ -484,13 +485,12 @@
 
         integer function crschk_omp_atomic()
         implicit none
-        integer crschk_omp_atomic
         integer sum, sum2, known_sum, i, i2,diff
         integer product,known_product,int_const
         integer MAX_FACTOR
         double precision dsum,dknown_sum,dt,dpt
         double precision rounding_error, ddiff
-	integer double_DIGITS
+        integer double_DIGITS
         logical logic_and, logic_or, logic_eqv,logic_neqv
         integer bit_and, bit_or
         integer exclusiv_bit_or
@@ -499,20 +499,20 @@
         integer result
         include "omp_testsuite.f"
         logical logics(LOOPCOUNT)
-	integer int_array(LOOPCOUNT)
+        integer int_array(LOOPCOUNT)
         double precision d_array(LOOPCOUNT)
-	parameter (int_const=10,known_product=3628800)
+        parameter (int_const=10,known_product=3628800)
         parameter (DOUBLE_DIGITS=20,MAX_FACTOR=10)
-	parameter (rounding_error=1.E-6)
+        parameter (rounding_error=1.E-2)
         dt = 1./3.
-	known_sum = (LOOPCOUNT * (LOOPCOUNT + 1)) / 2
+        known_sum = (LOOPCOUNT * (LOOPCOUNT + 1)) / 2
         product = 1
         sum2 = 0
         sum = 0
         dsum = 0.
         result =0 
-        logic_and = .t.
-        logic_or = .f.
+        logic_and = .true.
+        logic_or = .false.
         bit_and = 1
         bit_or = 0
         exclusiv_bit_or = 0
@@ -525,9 +525,9 @@
 !$omp end do
 !$omp end parallel
 
-       	if (known_sum .ne. sum) then
+       if (known_sum .ne. sum) then
              result = result + 1
-	end if
+        end if
 
         diff = (LOOPCOUNT * (LOOPCOUNT + 1)) / 2
 
@@ -549,30 +549,30 @@
         end if
 
 !... Test for doubles
-	dsum =0.
-	dpt = 1
+       dsum =0.
+        dpt = 1
 
-	do i=1, DOUBLE_DIGITS
+       do i=1, DOUBLE_DIGITS
           dpt= dpt * dt
-	end do
+       end do
         dknown_sum = (1-dpt)/(1-dt)
 !$omp parallel
 !$omp do 
         do i=0,DOUBLE_DIGITS-1
 !$omp atomic
               dsum = dsum + dt**i
-	end do
+        end do
 !$omp end do
 !$omp end parallel
 
  
-	if(dsum .ne. dknown_sum .or. 
+         if(dsum .ne. dknown_sum .or. 
      &     abs(dsum - dknown_sum) .gt. rounding_error ) then
            result = result + 1
 !           write(1,*) "Error in sum with doubles: Result was ",
 !     &       dsum,"instead of ",dknown_sum,"(Difference: ",
 !     &       dsum - dknown_sum,")"
-	end if
+         end if
         dpt = 1
 
 
@@ -610,10 +610,10 @@
            result = result + 1
 !           write(1,*) "Error in Product with integers: Result was ",
 !     &       product," instead of",known_product 
-	end if
+        end if
 
         do i=1,LOOPCOUNT
-          logics(i) = .t.
+          logics(i) = .true.
         end do
 
 !$omp parallel
@@ -773,7 +773,7 @@
 !... pair of bits in each of I and J. 
 !$omp atomic
          bit_and = iand(bit_and,int_array(i))
-	end do
+        end do
 !$omp end do
 !$omp end parallel
 
@@ -957,7 +957,7 @@
         end if
 
         if ( result .eq. 0 ) then
-	   crschk_omp_atomic =  1
+         crschk_omp_atomic =  1
         else
            crschk_omp_atomic =  0
         end if
