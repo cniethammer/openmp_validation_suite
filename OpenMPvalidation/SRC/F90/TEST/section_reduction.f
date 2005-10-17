@@ -4,13 +4,12 @@
 
         integer function chk_section_reduction()
         implicit none
-        integer chk_section_reduction
         integer sum, sum2, known_sum, i, i2,diff
         integer product,known_product,int_const
         integer MAX_FACTOR
         double precision dsum,dknown_sum,dt,dpt
         double precision rounding_error, ddiff
-	integer DOUBLE_DIGITS
+        integer DOUBLE_DIGITS
         logical logic_and, logic_or, logic_eqv,logic_neqv
         integer bit_and, bit_or
         integer exclusiv_bit_or
@@ -19,20 +18,20 @@
         integer result
         include "omp_testsuite.f"
         logical logics(LOOPCOUNT)
-	integer int_array(LOOPCOUNT)
+        integer int_array(LOOPCOUNT)
         double precision d_array(LOOPCOUNT)
-	parameter (int_const=10,known_product=3628800)
+        parameter (int_const=10,known_product=3628800)
         parameter (DOUBLE_DIGITS=20,MAX_FACTOR=10)
-	parameter (rounding_error=1.E-6)
+        parameter (rounding_error=1.E-6)
         dt = 1./3.
-	known_sum = (LOOPCOUNT * (LOOPCOUNT + 1)) / 2
+        known_sum = (LOOPCOUNT * (LOOPCOUNT + 1)) / 2
         product = 1
         sum2 = 0
         sum = 0
         dsum = 0.
         result =0 
-        logic_and = .t.
-        logic_or = .f.
+        logic_and = .true.
+        logic_or = .false.
         bit_and = 1
         bit_or = 0
         exclusiv_bit_or = 0
@@ -53,11 +52,11 @@
 !$omp end sections
 !$omp end parallel
 
-       	if (known_sum .ne. sum) then
+       if (known_sum .ne. sum) then
              result = result + 1
         write(1,*) "Error in sum with integers: Result was ",
      &   sum,"instead of ", known_sum
-	end if
+        end if
 
         diff = (LOOPCOUNT * (LOOPCOUNT + 1)) / 2
 
@@ -87,19 +86,19 @@
         end if
 
 !... Test for doubles
-	dsum =0.
-	dpt = 1
+        dsum =0.
+        dpt = 1
 
-	do i=1, DOUBLE_DIGITS
+        do i=1, DOUBLE_DIGITS
           dpt= dpt * dt
-	end do
+        end do
         dknown_sum = (1-dpt)/(1-dt)
 !$omp parallel
 !$omp sections reduction(+:dsum)
 !$omp section
         do i=0,6
               dsum = dsum + dt**i
-	end do
+        end do
 !$omp section
         do i=7,12
               dsum = dsum + dt**i
@@ -112,13 +111,13 @@
 !$omp end parallel
 
  
-	if(dsum .ne. dknown_sum .and. 
+         if(dsum .ne. dknown_sum .and. 
      &     abs(dsum - dknown_sum) .gt. rounding_error ) then
            result = result + 1
            write(1,*) "Error in sum with doubles: Result was ",
      &       dsum,"instead of ",dknown_sum,"(Difference: ",
      &       dsum - dknown_sum,")"
-	end if
+         end if
         dpt = 1
 
 
@@ -171,10 +170,10 @@
            result = result + 1
            write(1,*) "Error in Product with integers: Result was ",
      &       product," instead of",known_product 
-	end if
+        end if
 
         do i=1,LOOPCOUNT
-          logics(i) = .t.
+          logics(i) = .true.
         end do
 
 !$omp parallel
@@ -248,7 +247,7 @@
 
         if (logic_or) then
           result = result + 1
-	  write(1,*) "Error in logic OR part 1"
+          write(1,*) "Error in logic OR part 1"
         end if
 
         logic_or = .false.
@@ -302,7 +301,7 @@
 
         if (.not. logic_eqv) then
           result = result + 1
-	  write(1,*) "Error in logic EQV part 1"
+          write(1,*) "Error in logic EQV part 1"
         end if
 
         logic_eqv = .true.
@@ -341,40 +340,40 @@
 !$omp sections reduction(.neqv.:logic_neqv)
 !$omp section
         do i = 1, 300
-           logic_neqv = logic_neqv .or. logics(i)
+           logic_neqv = logic_neqv .neqv. logics(i)
         end do
 !$omp section
         do i = 301, 700
-           logic_neqv = logic_neqv .or. logics(i)
+           logic_neqv = logic_neqv .neqv. logics(i)
         end do
 !$omp section
         do i = 701, LOOPCOUNT
-           logic_neqv = logic_neqv .or. logics(i)
+           logic_neqv = logic_neqv .neqv. logics(i)
         end do
 !$omp end sections
 !$omp end parallel
 
         if (logic_neqv) then
           result = result + 1
-	  write(1,*) "Error in logic NEQV part 1"
+          write(1,*) "Error in logic NEQV part 1"
         end if
 
         logic_neqv = .false.
         logics(LOOPCOUNT/2) = .true.
 
 !$omp parallel
-!$omp sections reduction(.or.:logic_neqv)
+!$omp sections reduction(.neqv.:logic_neqv)
 !$omp section
         do i=1,300
-           logic_neqv = logic_neqv .or. logics(i)
+           logic_neqv = logic_neqv .neqv. logics(i)
         end do
 !$omp section
         do i=301,700
-           logic_neqv = logic_neqv .or. logics(i)
+           logic_neqv = logic_neqv .neqv. logics(i)
         end do
 !$omp section
         do i=701,LOOPCOUNT
-           logic_neqv = logic_neqv .or. logics(i)
+           logic_neqv = logic_neqv .neqv. logics(i)
         end do
 !$omp end sections
 !$omp end parallel
@@ -394,7 +393,7 @@
 !$omp section
         do i=1, 300
          bit_and = iand(bit_and,int_array(i))
-	end do
+        end do
 !$omp section
         do i=301, 700
          bit_and = iand(bit_and,int_array(i))
@@ -658,7 +657,7 @@
         end if
 
         if ( result .eq. 0 ) then
-	   chk_section_reduction =  1
+           chk_section_reduction =  1
         else
            chk_section_reduction =  0
         end if
@@ -670,13 +669,12 @@
 
         integer function crschk_section_reduction()
         implicit none
-        integer crschk_section_reduction
         integer sum, sum2, known_sum, i, i2,diff
         integer product,known_product,int_const
         integer MAX_FACTOR
         double precision dsum,dknown_sum,dt,dpt
         double precision rounding_error, ddiff
-	integer DOUBLE_DIGITS
+        integer DOUBLE_DIGITS
         logical logic_and, logic_or, logic_eqv,logic_neqv
         integer bit_and, bit_or
         integer exclusiv_bit_or
@@ -685,20 +683,20 @@
         integer result
         include "omp_testsuite.f"
         logical logics(LOOPCOUNT)
-	integer int_array(LOOPCOUNT)
+        integer int_array(LOOPCOUNT)
         double precision d_array(LOOPCOUNT)
-	parameter (int_const=10,known_product=3628800)
+        parameter (int_const=10,known_product=3628800)
         parameter (DOUBLE_DIGITS=20,MAX_FACTOR=10)
-	parameter (rounding_error=1.E-6)
+        parameter (rounding_error=1.E-6)
         dt = 1./3.
-	known_sum = (LOOPCOUNT * (LOOPCOUNT + 1)) / 2
+        known_sum = (LOOPCOUNT * (LOOPCOUNT + 1)) / 2
         product = 1
         sum2 = 0
         sum = 0
         dsum = 0.
         result =0 
-        logic_and = .t.
-        logic_or = .f.
+        logic_and = .true.
+        logic_or = .false.
         bit_and = 1
         bit_or = 0
         exclusiv_bit_or = 0
@@ -719,9 +717,9 @@
 !$omp end sections
 !$omp end parallel
 
-       	if (known_sum .ne. sum) then
+       if (known_sum .ne. sum) then
              result = result + 1
-	end if
+        end if
 
         diff = (LOOPCOUNT * (LOOPCOUNT + 1)) / 2
 
@@ -751,19 +749,19 @@
         end if
 
 !... Test for doubles
-	dsum =0.
-	dpt = 1
+        dsum =0.
+        dpt = 1
 
-	do i=1, DOUBLE_DIGITS
+        do i=1, DOUBLE_DIGITS
           dpt= dpt * dt
-	end do
+        end do
         dknown_sum = (1-dpt)/(1-dt)
 !$omp parallel
 !$omp sections
 !$omp section
         do i=0,6
               dsum = dsum + dt**i
-	end do
+        end do
 !$omp section
         do i=7,12
               dsum = dsum + dt**i
@@ -776,13 +774,13 @@
 !$omp end parallel
 
  
-	if(dsum .ne. dknown_sum .or. 
+         if(dsum .ne. dknown_sum .or. 
      &     abs(dsum - dknown_sum) .gt. rounding_error ) then
            result = result + 1
 !           write(1,*) "Error in sum with doubles: Result was ",
 !     &       dsum,"instead of ",dknown_sum,"(Difference: ",
 !     &       dsum - dknown_sum,")"
-	end if
+        end if
         dpt = 1
 
 
@@ -836,10 +834,10 @@
            result = result + 1
 !           write(1,*) "Error in Product with integers: Result was ",
 !     &       product," instead of",known_product 
-	end if
+        end if
 
         do i=1,LOOPCOUNT
-          logics(i) = .t.
+          logics(i) = .true.
         end do
 
 !$omp parallel
@@ -1009,15 +1007,15 @@
 !$omp sections
 !$omp section
         do i = 1, 300
-           logic_neqv = logic_neqv .or. logics(i)
+           logic_neqv = logic_neqv .neqv. logics(i)
         end do
 !$omp section
         do i = 301, 700
-           logic_neqv = logic_neqv .or. logics(i)
+           logic_neqv = logic_neqv .neqv. logics(i)
         end do
 !$omp section
         do i = 701, LOOPCOUNT
-           logic_neqv = logic_neqv .or. logics(i)
+           logic_neqv = logic_neqv .neqv. logics(i)
         end do
 !$omp end sections
 !$omp end parallel
@@ -1034,15 +1032,15 @@
 !$omp sections
 !$omp section
         do i=1,300
-           logic_neqv = logic_neqv .or. logics(i)
+           logic_neqv = logic_neqv .neqv. logics(i)
         end do
 !$omp section
         do i=301,700
-           logic_neqv = logic_neqv .or. logics(i)
+           logic_neqv = logic_neqv .neqv. logics(i)
         end do
 !$omp section
         do i=701,LOOPCOUNT
-           logic_neqv = logic_neqv .or. logics(i)
+           logic_neqv = logic_neqv .neqv. logics(i)
         end do
 !$omp end sections
 !$omp end parallel
@@ -1061,7 +1059,7 @@
 !$omp section
         do i=1, 300
          bit_and = iand(bit_and,int_array(i))
-	end do
+        end do
 !$omp section
         do i=301, 700
          bit_and = iand(bit_and,int_array(i))
@@ -1323,7 +1321,7 @@
         end if
 
         if ( result .eq. 0 ) then
-	   crschk_section_reduction =  1
+           crschk_section_reduction =  1
         else
            crschk_section_reduction =  0
         end if
