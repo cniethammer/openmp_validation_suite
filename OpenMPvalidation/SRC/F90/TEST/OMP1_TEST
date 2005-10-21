@@ -1,4 +1,5 @@
 has_openmp
+omp_nested
 omp_get_num_threads
 omp_in_parallel
 do_ordered
