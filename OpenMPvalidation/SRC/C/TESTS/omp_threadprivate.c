@@ -1,4 +1,10 @@
-
+/*
+*
+* threadprivate is tested in 2 ways
+* 1. The global variable declared as threadprivate should have local copy 
+*    for each  thread.  Otherwise race condition for wrong result
+* 2. if the value of local copy is retained for two adjacent parallel region
+*/
 #include "omp_testsuite.h"
 #include <stdlib.h>
 #include <stdio.h>
