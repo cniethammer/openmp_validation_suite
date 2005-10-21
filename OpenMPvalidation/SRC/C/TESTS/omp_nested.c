@@ -10,14 +10,20 @@ By Chunhua Liao, University of Houston
 int check_omp_nested( FILE *logFile)
 {
 int counter =0 ;
+
 #ifdef _OPENMP
    omp_set_nested(1);
 #endif
-#pragma omp parallel 
+
+#pragma omp parallel shared(counter)
 {
+#pragma omp critical
   counter ++;
 #pragma omp parallel
+ {
+#pragma omp critical
   counter --;
+ }
 }
   return (counter!=0);
 }
@@ -25,13 +31,19 @@ int counter =0 ;
 int crosscheck_omp_nested( FILE *logFile)
 {
 int counter =0 ;
-#pragma omp parallel
+#ifdef _OPENMP
+   omp_set_nested(0);
+#endif
+
+#pragma omp parallel shared(counter)
 {
+#pragma omp critical
   counter ++;
-/*
   #pragma omp parallel
-*/
+ {
+  #pragma omp critical
   counter --;
+ }
 }
   return (counter!=0);
 }
