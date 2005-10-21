@@ -49,6 +49,7 @@ How to add a new test:
 It becomes much easier to add a new test than before:
 * add test functions check_mytest_abc() and crosscheck_mytest_abc() 
 	in a file named mytest_abc.c
+* add function definitions into omp_testsuite.h
 * add the name into any test set file in a new line:
   for example: add it into CUSTOM_TEST in a new line: mytest_abc
 * To run the new test:
