@@ -11,6 +11,7 @@ omp_for_reduction
 omp_for_schedule_dynamic
 omp_for_schedule_guided
 omp_for_schedule_static
+omp_for_nowait
 omp_get_num_threads
 omp_get_wtick
 omp_get_wtime
@@ -33,6 +34,7 @@ omp_section_firstprivate
 omp_section_lastprivate
 omp_section_private
 omp_sections_reduction
+omp_sections_nowait
 omp_single_copyprivate
 omp_single_nowait
 omp_single_private
