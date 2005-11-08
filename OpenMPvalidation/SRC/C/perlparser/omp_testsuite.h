@@ -97,7 +97,15 @@ int test_omp_test_nest_lock(FILE * logfile);  /* Test for omp_test_nest_lock */
 int crosstest_omp_test_nest_lock(FILE * logfile);  /* Crosstest for omp_test_nest_lock */
 int test_omp_threadprivate(FILE * logfile);  /* Test for omp threadprivate */
 int crosstest_omp_threadprivate(FILE * logfile);  /* Crosstest for omp threadprivate */
+int test_omp_for_private(FILE * logfile);  /* Test for omp for private */
+int crosstest_omp_for_private(FILE * logfile);  /* Crosstest for omp for private */
+int test_omp_sections_nowait(FILE * logfile);  /* Test for omp parallel sections nowait */
+int crosstest_omp_sections_nowait(FILE * logfile);  /* Crosstest for omp parallel sections nowait */
+int test_omp_for_nowait(FILE * logfile);  /* Test for omp parallel for nowait */
+int crosstest_omp_for_nowait(FILE * logfile);  /* Crosstest for omp parallel for nowait */
 int test_omp_get_wtick(FILE * logfile);  /* Test for omp_get_wtick */
 int crosstest_omp_get_wtick(FILE * logfile);  /* Crosstest for omp_get_wtick */
+int test_omp_sections_nowait(FILE * logfile);  /* Test for omp parallel sections nowait */
+int crosstest_omp_sections_nowait(FILE * logfile);  /* Crosstest for omp parallel sections nowait */
 
 #endif
