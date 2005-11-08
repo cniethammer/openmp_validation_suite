@@ -107,5 +107,7 @@ int test_omp_get_wtick(FILE * logfile);  /* Test for omp_get_wtick */
 int crosstest_omp_get_wtick(FILE * logfile);  /* Crosstest for omp_get_wtick */
 int test_omp_sections_nowait(FILE * logfile);  /* Test for omp parallel sections nowait */
 int crosstest_omp_sections_nowait(FILE * logfile);  /* Crosstest for omp parallel sections nowait */
+int test_omp_for_nowait(FILE * logfile);  /* Test for omp parallel for nowait */
+int crosstest_omp_for_nowait(FILE * logfile);  /* Crosstest for omp parallel for nowait */
 
 #endif

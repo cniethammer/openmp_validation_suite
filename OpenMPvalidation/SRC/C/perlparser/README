@@ -20,8 +20,10 @@ inputfile, or you can compile the tests by your own using the ompts_parser.pl sc
 
 	A) Using the runtest script.
 
-Using the runtest.pl script is rather easy: You only have to generate a file containing the 
-names of the tests (one test per line) an run the runtest.pl script with the filename.
+Using the runtest.pl script is rather easy. You can use the the testsuite only after two steps:
+1.)	Modify the Makefile to your wishes coosing your comiler and the necessary compiler flags.
+2.) Generate a file containing the names of the tests (one test per line) or use one of the 
+	existingan lists and run the runtest.pl script with the filename.
 
 	#	>	./runtest.pl testlist
 
