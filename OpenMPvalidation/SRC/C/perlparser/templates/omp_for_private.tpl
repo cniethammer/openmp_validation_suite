@@ -6,7 +6,6 @@
 <ompts:testcode>
 #include <stdio.h>
 #include <math.h>
-
 #include "omp_testsuite.h"
 
 /* Utility function do spend some time in a loop */

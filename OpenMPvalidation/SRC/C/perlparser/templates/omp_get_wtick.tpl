@@ -12,6 +12,7 @@ int <ompts:testcode:functionname>omp_get_wtick</ompts:testcode:functionname>(FIL
     <ompts:orphan:vars>
 	double tick;
     </ompts:orphan:vars>
+    tick = -1.;
 
     <ompts:orphan>
 	<ompts:check>tick = omp_get_wtick ();</ompts:check>
