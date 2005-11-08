@@ -97,19 +97,7 @@ int test_omp_test_nest_lock(FILE * logfile);  /* Test for omp_test_nest_lock */
 int crosstest_omp_test_nest_lock(FILE * logfile);  /* Crosstest for omp_test_nest_lock */
 int test_omp_threadprivate(FILE * logfile);  /* Test for omp threadprivate */
 int crosstest_omp_threadprivate(FILE * logfile);  /* Crosstest for omp threadprivate */
-int test_omp_section_private(FILE * logfile);  /* Test for omp section private */
-int crosstest_omp_section_private(FILE * logfile);  /* Crosstest for omp section private */
-int test_omp_atomic(FILE * logfile);  /* Test for omp atomic */
-int crosstest_omp_atomic(FILE * logfile);  /* Crosstest for omp atomic */
-int test_omp_critical(FILE * logfile);  /* Test for omp critical */
-int crosstest_omp_critical(FILE * logfile);  /* Crosstest for omp critical */
-int test_omp_for_firstprivate(FILE * logfile);  /* Test for omp for firstprivate */
-int crosstest_omp_for_firstprivate(FILE * logfile);  /* Crosstest for omp for firstprivate */
-int test_omp_for_lastprivate(FILE * logfile);  /* Test for omp for lastprivate */
-int crosstest_omp_for_lastprivate(FILE * logfile);  /* Crosstest for omp for lastprivate */
-int test_omp_for_ordered(FILE * logfile);  /* Test for omp for ordered */
-int crosstest_omp_for_ordered(FILE * logfile);  /* Crosstest for omp for ordered */
-int test_omp_for_private(FILE * logfile);  /* Test for omp for private */
-int crosstest_omp_for_private(FILE * logfile);  /* Crosstest for omp for private */
+int test_omp_get_wtick(FILE * logfile);  /* Test for omp_get_wtick */
+int crosstest_omp_get_wtick(FILE * logfile);  /* Crosstest for omp_get_wtick */
 
 #endif

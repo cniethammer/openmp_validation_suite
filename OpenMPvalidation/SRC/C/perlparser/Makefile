@@ -14,7 +14,7 @@ CC = icc
 #CC = omcc
 #CFLAGS = -O3 -ip -openmp
 #CFLAGS = -Wall -O0 -openmp
-CFLAGS =  -openmp
+CFLAGS =  -openmp -lm
 
 # Omni compilers:
 #
