@@ -129,3 +129,7 @@ guaranteed to happen.
 
 * The validation process may abort or hang-up if there is severe link or runtime error for one test. Delete the problematic test(s) from the test file and run the validation process again for remaining tests. Our next version using perl to build independent excutables for each test will address this problem.
 
+                           V.   Contact and support
+Contact:    http://www.cs.uh.edu/~openuh
+Bug report: http://spanner.hpctools.uh.edu/bugzilla/
+
