@@ -21,8 +21,8 @@ check_omp_time (FILE * logFile)
   end = omp_get_wtime ();
   measured_time = end - start;
   fprintf (logFile, "work took %f sec. time. \n", measured_time);
-  return (measured_time > 0.99 * wait_time)
-    && (measured_time < 1.01 * wait_time);
+  return (measured_time > 0.9 * wait_time)
+    && (measured_time < 1.1 * wait_time);
 }
 
 /*int omp_crosscheck_time(FILE * logFile)
@@ -39,6 +39,6 @@ crosscheck_omp_time (FILE * logFile)
   /*end=omp_get_wtime(); */
   measured_time = end - start;
   fprintf (logFile, "work took %f sec. time. \n", measured_time);
-  return (measured_time > 0.99 * wait_time)
-    && (measured_time < 1.01 * wait_time);
+  return (measured_time > 0.9 * wait_time)
+    && (measured_time < 1.1 * wait_time);
 }

@@ -74,12 +74,12 @@
            end if
            tids(i) = tid
           end do
-!$omp end do
+!$omp end do nowait ! bug 161,Liao
 
           notout = 0
 
 !$omp flush(notout)
-!$omp end parallel
+!$omp end parallel 
 
        count = 0
 

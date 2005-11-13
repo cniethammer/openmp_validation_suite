@@ -1,6 +1,11 @@
-# Make file for the OpenMP validation suite C version
-# uncomment the desired compiler and compilation flags
-# change NUM_THREADS to desired value
+#
+# By Chunhua Liao
+# University of Houston
+#
+#-------------------------------------------------
+#Set the desired compiler and options
+#change NUM_THREADS to the proper one on your machine
+#-------------------------------------------------
 
 # the number of threads this validation suite will use
 NUM_THREADS= 2
@@ -8,11 +13,13 @@ NUM_THREADS= 2
 # Fujitsu Compilers:
 #CC = fcc
 #CFLAGS = -KOMP,fast_GP2=2
-
+#CLINKFLAGS = $(CFLAGS)
+#
 # PGI compilers
 #
 #CC = pgcc
 #CFLAGS = -fast -mp 
+#CLINKFLAGS = $(CFLAGS)
 
 # Intel compilers:
 #
@@ -21,56 +28,66 @@ NUM_THREADS= 2
 #CFLAGS = -O3 -ipo -openmp
 #CFLAGS = -Wall -O0 -openmp
 #CFLAGS =  -openmp
+#CLINKFLAGS = $(CFLAGS)
 
 # Omni compilers:
 #
 #CC = ompcc
 #CFLAGS = -O3 -lm 
+#CLINKFLAGS = $(CFLAGS)
 
 # Assure compilers:
 #
 #CC = assurec
 #CFLAGS = -O3 -WApname=project -DUSE_ASSURE=1
+#CLINKFLAGS = $(CFLAGS)
 
 # NEC:
 #
 #CC = c++ 
 #CC = sxc++ 
 #CFLAGS = -Popenmp
+#CLINKFLAGS = $(CFLAGS)
 
 #
 # Hitachi:
 #
 #CC = xcc 
 #CFLAGS = -O4 -pvec +Op -parallel -omp
+#CLINKFLAGS = $(CFLAGS)
 #
 # SGI:
 #
 #
 #CC = cc
 #CFLAGS = -mp -lm 
+#CLINKFLAGS = $(CFLAGS)
 
 # IBM compilers:
 #CC = xlc_r
 #CFLAGS = -qsmp=omp -lm
+#CLINKFLAGS = $(CFLAGS)
 #
 
 # SUN compilers
 #CC = cc
 #CFLAGS = -xopenmp -lm
-
+#CLINKFLAGS = $(CFLAGS)
 #
 # open64 compilers
 #CC = opencc
 #CFLAGS = -mp -Ofast -lm
+#CLINKFLAGS = $(CFLAGS)
 
 # ORC compilers
 #CC = orcc
 #CFLAGS = -mp
+#CLINKFLAGS = $(CFLAGS)
 
 #Pathscale compilers
 #CC = pathcc
 #CFLAGS = -mp -Ofast -lm
+#CLINKFLAGS = $(CFLAGS)
 
 ifdef testfile
 TESTFILE = $(testfile)
@@ -84,25 +101,21 @@ endif
 
 .PHONEY:print_help
 print_help:
-	@echo "----------------------------------"
-	@echo "Edit Makefile for proper compiler command and options"
-	@echo "usage: "
-	@echo "      gmake test TESTFILE=filename"
-	@echo "Or    gmake test                 "
-	@echo " Then:							"
-	@echo "      gmake run                  "
-	@echo " Clean up:                       "
-	@echo "      gmake clean                "
-	@echo "----------------------------------"
-	@echo "filename may be one of the following:"
-	@echo "OMP1_TEST      - execute omp version 1 tests"
-	@echo "OMP2_TEST      - execute omp version 2 tests"
-	@echo "SCHED_TEST     - execute omp schedule tests"
-	@echo "ALL_TEST      - execute all above tests"
-	@echo "CUSTOM_TEST    - execute customized tests"
-	@echo "the default filename is ALL_TEST"
-
-default:print_help
+	@echo "--------------------------------------------------------"
+	@echo "1. Edit Makefile for proper compiler command and options"
+	@echo "--------------------------------------------------------"
+	@echo "2. Run tests: "
+	@echo "     gmake run"
+	@echo "     gmake run TESTFILE=filename"
+	@echo "where filename may be one of the following:"
+	@echo "   OMP1_TEST - execute omp version 1 tests"
+	@echo "   OMP2_TEST - execute omp version 2 tests"
+	@echo "   ALL_TEST  - execute all above tests(the default one)"
+	@echo "   CUSTOM_TEST - execute a configurable subset of the tests"
+	@echo "--------------------------------------------------------"
+	@echo "3. Clean up first before any new exectuion:"
+	@echo "     gmake clean "
+	@echo "--------------------------------------------------------"
 
 .PHONY: test
 test:main
@@ -114,12 +127,12 @@ feasible_test.h:
 
 #compile main.c and link with other objects to get  executables
 main:feasible_test.h
-	$(CC) $(CFLAGS) -o main main.c *.o
+	$(CC) $(CFLAGS) $(CLINKFLAGS) -o main main.c *.o
 	
 clean:
 	rm -f *.o failed.compilation feasible_test.h main test.log *~ 
 
-run:main 
+run:clean main 
 	-rm -f test.log 
 	(OMP_NUM_THREADS=$(NUM_THREADS); export OMP_NUM_THREADS; ./main)
 

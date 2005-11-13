@@ -107,8 +107,9 @@ main (int argc, char **argv)
       i++;
     }
   printf
-    ("\n\n Performed a total of %d tests, %d failed and %d successful with %d cross checked\nFor detailled inforamtion on the tests see the logfile (%s)",
+    ("\n\n Performed a total of %d tests, %d failed and %d successful with %d cross checked\nFor detailled inforamtion on the tests see the logfile: (%s).\n",
      i, failed, success, crosschecked, logFileName);
+  printf ("Also check failed.compilation for tests which did not pass the compilation.\n");
   fprintf (logFile,
 	   "\n\n Performed a total of %d tests, %d failed and %d successful with %d cross checked\n",
 	   i, failed, success, crosschecked);
