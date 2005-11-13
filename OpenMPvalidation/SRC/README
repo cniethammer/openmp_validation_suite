@@ -1,4 +1,6 @@
-User guide for OpenMP Validation Suite
+                           OpenMP Validation Suite  v 1.0
+     High Performance Computing Center Stuttgart & University of Houston
+                                                    Nov. 2005
 
 There are 43 tests for OpenMP C and 44 tests for Fortran 90(workshare is the extra.)
 
@@ -6,6 +8,7 @@ I.   Directories of Our OpenMP Validation Suite
 II.  How to Compile and Run Tests
 III. Understand the Results
 IV.  Known issues and workaround 
+V.   Contact and support
 
             I. Directories of Our OpenMP Validation Suite
 
@@ -125,5 +128,6 @@ guaranteed to happen.
 * long execution time for do_schedule_guided test: we use inter-thread synchronization for each iteration to be scheduled.  
 
 * The validation process may abort or hang-up if there is severe link or runtime error for one test. Delete the problematic test(s) from the test file and run the validation process again for remaining tests. Our next version using perl to build independent excutables for each test will address this problem.
+
 
 
