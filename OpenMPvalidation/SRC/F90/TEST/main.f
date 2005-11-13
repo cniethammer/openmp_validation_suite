@@ -39,7 +39,7 @@
         open (1, FILE = Logfilename)
 
         write(*,*)
-     &  "######## OpenMP Validation Suite V 0.93 ######"
+     &  "######## OpenMP Validation Suite V 1.0 ######"
         write(*,*) "## Repetitions: ",N,
      &  "                       ####"
         write(*,*) "## Loop Count : ",LOOPCOUNT,
