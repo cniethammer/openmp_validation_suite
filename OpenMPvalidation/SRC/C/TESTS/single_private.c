@@ -23,13 +23,14 @@ check_single_private (FILE * logFile)
 	  nr_threads_in_single++;
 #pragma omp flush
 	  myit++;
-	  nr_threads_in_single--;
+/*	  nr_threads_in_single--; */
 	  myresult = myresult + nr_threads_in_single;
 	}			/* end of single */
       }				/* end of for  */
 #pragma omp critical
     {
-      result += myresult;
+/*      result += myresult; */
+      result += nr_threads_in_single;
       nr_iterations += myit;
     }
   }				/* end of parallel */
@@ -58,13 +59,13 @@ crosscheck_single_private (FILE * logFile)
 	  nr_threads_in_single++;
 #pragma omp flush
 	  myit++;
-	  nr_threads_in_single--;
+/*	  nr_threads_in_single--; */
 	  myresult = myresult + nr_threads_in_single;
 	}			/* end of single */
       }				/* end of for  */
 #pragma omp critical
     {
-      result += myresult;
+      result += nr_threads_in_single;
       nr_iterations += myit;
     }
   }				/* end of parallel */
