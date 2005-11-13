@@ -133,3 +133,12 @@ guaranteed to happen.
 Contact:    http://www.cs.uh.edu/~openuh
 Bug report: http://spanner.hpctools.uh.edu/bugzilla/
 
+Contributors:
+* High Performance Computing Center Stuttgart:Matthias S. Mueller, Christoph Niethammer, Pavel Neytchev
+* University of Houston: Barbara Chapman, Yi Wen, Zhenying Liu, Chunhua Liao
+
+Publications: 
+* Matthias S. Müller, Pavel Neytchev. "An OpenMP Validation Suite",   Fifth European Workshop on OpenMP , Aachen University, Germany, September 22-26, 2003.
+
+* Matthias Muller, Christoph Niethammer, Barbara Chapman, Yi Wen, Zhenying Liu. "Validation OpenMP 2.5 for Fortran and C/C++". Proceedings of the 6th European Workshop on OpenMP, (EWOMP 2004). pp. 91-96. Stockholm, Sweden. October 18 . 19, 2004.
+
