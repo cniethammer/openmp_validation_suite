@@ -123,22 +123,32 @@ guaranteed to happen.
 
 * Some 'make' commands cannot handle the Makefile, please use 'gmake' instead.
 
-* 0% certainty for omp_flush test:  inconsistency between cache and memory is difficult to be observed. So the cross_check for flush still pass usually.
+* 0% certainty for omp_flush test:  inconsistency between cache and memory is
+ difficult to be observed. So the cross_check for flush still pass usually.
 
-* very long execution time for do_schedule_guided test: we use inter-thread synchronization for each iteration to be scheduled.  
+* very long execution time for do_schedule_guided test: we use inter-thread 
+synchronization for each iteration to be scheduled.  
 
-* The validation process may abort or hang-up if there is severe link or runtime error for one test. Delete the problematic test(s) from the test file and run the validation process again for remaining tests. Our next version using perl to build independent excutables for each test will address this problem.
+* The validation process may abort if there is severe link or runtime error
+ for one test. Delete the problematic test(s) from the test file and run the 
+validation process again for remaining tests. Our next version using perl to
+ build independent excutables for each test will address this problem.
 
                            V.   Contact and support
 Contact:    http://www.cs.uh.edu/~openuh
 Bug report: http://spanner.hpctools.uh.edu/bugzilla/
 
 Contributors:
-* High Performance Computing Center Stuttgart:Matthias S. Mueller, Christoph Niethammer, Pavel Neytchev
-* University of Houston: Barbara Chapman, Yi Wen, Zhenying Liu, Chunhua Liao
+* High Performance Computing Center Stuttgart:
+       Matthias S. Mueller, Christoph Niethammer, Pavel Neytchev
+* University of Houston: 
+       Barbara Chapman, Yi Wen, Zhenying Liu, Chunhua Liao
 
 Publications: 
-* Matthias S. Müller, Pavel Neytchev. "An OpenMP Validation Suite",   Fifth European Workshop on OpenMP , Aachen University, Germany, September 22-26, 2003.
+* Matthias S. Müller, Pavel Neytchev. "An OpenMP Validation Suite",   Fifth
+ European Workshop on OpenMP , Aachen University, Germany, September 22-26, 2003.
 
-* Matthias Muller, Christoph Niethammer, Barbara Chapman, Yi Wen, Zhenying Liu. "Validation OpenMP 2.5 for Fortran and C/C++". Proceedings of the 6th European Workshop on OpenMP, (EWOMP 2004). pp. 91-96. Stockholm, Sweden. October 18 . 19, 2004.
+* Matthias Muller, Christoph Niethammer, Barbara Chapman, Yi Wen, Zhenying Liu. 
+"Validation OpenMP 2.5 for Fortran and C/C++". Proceedings of the 6th European
+ Workshop on OpenMP, (EWOMP 2004). pp. 91-96. Stockholm, Sweden. October 18 . 19, 2004.
 
