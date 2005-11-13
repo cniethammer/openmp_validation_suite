@@ -81,7 +81,6 @@
         character*20 logfile
         integer CFDMAX_SIZE
         integer omp_get_thread_num,omp_get_num_threads
-        character*20 logfile
         integer chunk_size
         integer threads
         integer count, tmp_count
