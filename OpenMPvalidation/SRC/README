@@ -1,5 +1,6 @@
 User guide for OpenMP Validation Suite
 
+There are 43 tests for OpenMP C and 44 tests for Fortran 90(workshare is the extra.)
 
 I.   Directories of Our OpenMP Validation Suite
 II.  How to Compile and Run Tests
@@ -111,8 +112,9 @@ It is normal to have less than 100% certainty because a race condition is not
 guaranteed to happen. 
 
 * Results
+   Failed the compilation: failed tests in logfile: failed.compilation
    Failed due to any wrong result from Check_X()
-   Successful with a certainty
+   Successful with a certainty: always right result for Check_X()
 
                       IV. Known issues and workaround 
 
