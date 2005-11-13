@@ -36,7 +36,7 @@ main (int argc, char **argv)
 
   logFile = fopen (logFileName, "a");
 
-  printf ("######## OpenMP Validation Suite V 0.93 ######\n");
+  printf ("######## OpenMP Validation Suite V 1.0 ######\n");
   printf ("## Repetitions: %3d                       ####\n", N);
   printf ("## Loop Count : %6d                    ####\n", LOOPCOUNT);
   printf ("##############################################\n");
