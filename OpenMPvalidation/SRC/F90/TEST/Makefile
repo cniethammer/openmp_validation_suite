@@ -8,6 +8,12 @@
 #-------------------------------------------------
 
 NUM_THREADS=2
+#OpenUH Compiler
+#FC=uhf90
+#FFLAGS= -mp -Ofast -lm
+#FLINKFLAGS=-mp -Ofast -lm
+#
+
 #SUN Fortran Compiler:
 #FC=f90
 #FFLAGS=-xopenmp -O3 -g
@@ -38,6 +44,11 @@ NUM_THREADS=2
 #FC=pathf90
 #FFLAGS= -mp -Ofast -lm
 #FLINKFLAGS=-mp -Ofast -lm
+#
+#NEC Compiler
+#FC=sxf90
+#FFLAGS= -Popenmp
+#FLINKFLAGS=-Popenmp
 #
 #Open64 Compiler
 #FC=openf90
