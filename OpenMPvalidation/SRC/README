@@ -86,6 +86,10 @@ use gmake and bash to perform the test.
    - To remove all the binaries, type
        gmake clean
 
+   - To only run the generated test after compilation, type
+       export OMP_NUM_THREADS=2
+       ./main
+
                  III. Understanding the Results
 
 A test for an OpenMP construct x or some legal combinations 
@@ -120,7 +124,7 @@ guaranteed to happen.
    Failed due to any wrong result from Check_X()
    Successful with a certainty: always right result for Check_X()
 
-                      IV. Known Issues and Workaround 
+                      IV. Known Issues and Workarounds 
 
 * Some 'make' commands cannot handle the Makefile, please use 'gmake' instead.
 
