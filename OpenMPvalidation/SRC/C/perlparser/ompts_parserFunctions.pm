@@ -80,10 +80,10 @@ sub delete_tags
 # subroutines for generating "orpahned" tests 					
 ################################################################################
 
-# SCALAR create_orph_functions( $prefix, $code )
+# SCALAR create_orph_cfunctions( $prefix, $code )
 # returns a string containing the definitions of the functions for the 
 # orphan regions.
-sub create_orph_functions
+sub create_orph_cfunctions
 {
 	my ($prefix,$code,@defs);
 	($prefix,$code) = @_;
@@ -103,10 +103,37 @@ sub create_orph_functions
 	return $functionsrc;
 }
 
+# SCALAR create_orph_fortranfunctions( $prefix, $code )
+# returns a string containing the definitions of the functions for the 
+# orphan regions.
+sub create_orph_fortranfunctions
+{
+	my ($prefix,$code,@defs);
+	($prefix,$code) = @_;
+	@defs = get_tag_values('ompts:orphan',$code);
+	@orphvarsdefs = get_tag_values('ompts:orphan:vars',$code);
+	foreach (@varsdef) {
+		if (not /[ \n]*/){ $orphvarsdefs = join("\n",$orphvarsdef,$_);}
+	}
+	($functionname) = get_tag_values('ompts:testcode:functionname',$code);
+	my ( @result,$functionsrc, $i);
+	$functionsrc =  "\n! Definitions of the orphan functions\n";
+	$i = 1;
+	foreach $_(@defs)
+	{
+		$functionsrc .= "\nSUBROUTINE orph$i\_$prefix\_$functionname {";
+		$functionsrc .= "$orphanvarsdefs.\n";
+		$functionsrc .= $_;
+		$functionsrc .= "\n}\n";
+		$i++;
+	}
+	$functionsrc .= "END SUBROUTINE\n! End of definition\n";
+	return $functionsrc;
+}
 
-# LIST orphan_regions2functions( $prefix, @code )
-# replaces orphan regions by functioncalls.
-sub orphan_regions2functions
+# LIST orphan_regions2cfunctions( $prefix, @code )
+# replaces orphan regions by functioncalls in C/C++.
+sub orphan_regions2cfunctions
 {
 	my ( $prefix, @code, $i, $functionname);
 	($prefix, @code) = @_;
@@ -117,6 +144,25 @@ sub orphan_regions2functions
 		while( /\<ompts\:orphan\>(.*)\<\/ompts\:orphan\>/s)
 		{
 			s#\<ompts\:orphan\>(.*?)\<\/ompts\:orphan\>#orph$i\_$prefix\_$functionname(logFile);#s;
+			$i++;
+		}
+	}
+	return @code;
+}
+
+# LIST orphan_regions2fortranfunctions( $prefix, @code )
+# replaces orphan regions by functioncalls in fortran
+sub orphan_regions2fortranfunctions
+{
+	my ( $prefix, @code, $i, $functionname);
+	($prefix, @code) = @_;
+	$i = 1;
+	($functionname) = get_tag_values('ompts:testcode:functionname',$code);
+	foreach $_(@code)
+	{
+		while( /\<ompts\:orphan\>(.*)\<\/ompts\:orphan\>/s)
+		{
+			s#\<ompts\:orphan\>(.*?)\<\/ompts\:orphan\>#CALL orph$i\_$prefix\_$functionname;#s;
 			$i++;
 		}
 	}
