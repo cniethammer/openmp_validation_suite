@@ -78,7 +78,7 @@ foreach $testtype (@testtypes)
     ($directive) = get_tag_values('ompts:directive',$src);
     ($functionname) = get_tag_values('ompts:testcode:functionname',$src);
 
-    open(OUTFILE,">$orphanprefix$testtype_$functionname.$extension") or die("Could not create the output file for $directive");
+    open(OUTFILE,">".$orphanprefix.$testtype."_".$functionname.".".$extension) or die("Could not create the output file for $directive");
 
 # Creating the source for the test:
     ($code) = get_tag_values('ompts:testcode',$src);
@@ -88,16 +88,19 @@ foreach $testtype (@testtypes)
     {
 # Get the global variables:
       @defs = get_tag_values("ompts:orphan:vars",$code);
+      $orphvarsdef = "";
       foreach $_ (@defs)
       {
-	if(not /[ \n]*/){ $orphvarsdef = join("\n",$orphvarsdef,$_); } 
+	#print $_;
+	if(not /^[ ]*$/gs) { $orphvarsdef = join("\n",$orphvarsdef,$_); } 
+	#print "OK\n".$orphvarsdef; 
       }
       if($language eq "fortran")
       {
 # Generate the orphan subroutines:
 	$orphfuncs = create_orph_fortranfuncs("$testtype_", $code);
 # Repla:e orphan regions by functioncalls:
-	($code) = orphan_regions2functions( "$testtype_", ($code) );
+	($code) = orphan_regions2fortranfunctions( "$testtype_", ($code) );
 	($code) = enlarge_tags('ompts:orphan:vars','','',($code));
       }
       elsif($language eq "c")
@@ -105,9 +108,9 @@ foreach $testtype (@testtypes)
 # Generate predeclarations for orpahn functions:
 	$orphfuncsdefs = orph_functions_declarations("$testtype_",$code);
 # Generate the orphan functions:
-	$orphfuncs = create_orph_functions("$testtype_",$code);
+	$orphfuncs = create_orph_cfunctions("$testtype_",$code);
 # Repla:e orphan regions by functioncalls:
-	($code) = orphan_regions2functions( "$testtype_", ($code) );
+	($code) = orphan_regions2cfunctions( "$testtype_", ($code) );
 # Deleting the former declarations of the variables in the orphan regions:
 	($code) = delete_tags('ompts:orphan:vars',($code));
 # Put all together:

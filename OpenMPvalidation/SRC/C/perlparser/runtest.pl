@@ -102,9 +102,9 @@ while(<TEST>){
 	    $failed = "-";
 	    $crossresult = "-";
 	    if( ($i==0) || (($orphanedtest==0) && !($norphan)) ){
-		$cmd="./ompts_parser.pl ".$template." -test".$orphanflag;
+		$cmd="./ompts_parser.pl ".$template." -test".$orphanflag." -lang=c";
 		system($cmd);
-		$cmd="./ompts_parser.pl ".$template." -crosstest".$orphanflag;
+		$cmd="./ompts_parser.pl ".$template." -crosstest".$orphanflag." -lang=c";
 		system($cmd);
 
 		# Compile:
