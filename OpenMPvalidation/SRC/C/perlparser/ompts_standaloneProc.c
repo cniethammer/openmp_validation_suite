@@ -4,7 +4,7 @@ int main()
 	int failed=0, success=0;
 	int N=REPETITIONS;
 	static FILE * logFile;
-	static const char * logFileName = "<testfunctionname></testfunctionname>.log";
+	static const char * logFileName = "c<ompts:crosscheck>cross</ompts:crosscheck><testfunctionname></testfunctionname>.log";
 
 
 	logFile = fopen(logFileName,"w+");
@@ -22,6 +22,7 @@ int main()
 	fprintf(logFile,"Testing <directive></directive>\n\n");
 
 	for(i=0;i<N;i++){
+		fprintf (logFile, "\n\n%d. run of <testfunctionname></testfunctionname> out of %d\n\n",i+1,N);
 		if(<testfunctionname></testfunctionname>(logFile)){
 			fprintf(logFile,"Test succesfull.\n");
 			success++;

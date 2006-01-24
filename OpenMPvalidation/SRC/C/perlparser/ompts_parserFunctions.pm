@@ -111,9 +111,9 @@ sub create_orph_fortranfunctions
 	my ($prefix,$code,@defs);
 	($prefix,$code) = @_;
 	@defs = get_tag_values('ompts:orphan',$code);
-	@orphvarsdefs = get_tag_values('ompts:orphan:vars',$code);
+	($orphanvarsdefs) = get_tag_values('ompts:orphan:vars',$code);
 	foreach (@varsdef) {
-		if (not /[ \n]*/){ $orphvarsdefs = join("\n",$orphvarsdef,$_);}
+		if (not /[^ \n$]*/){ $orphanvarsdefs = join("\n",$orphanvarsdef,$_);}
 	}
 	($functionname) = get_tag_values('ompts:testcode:functionname',$code);
 	my ( @result,$functionsrc, $i);
@@ -121,13 +121,14 @@ sub create_orph_fortranfunctions
 	$i = 1;
 	foreach $_(@defs)
 	{
-		$functionsrc .= "\nSUBROUTINE orph$i\_$prefix\_$functionname {";
-		$functionsrc .= "$orphanvarsdefs.\n";
+		$functionsrc .= "\n      SUBROUTINE orph$i\_$prefix\_$functionname\n      ";
+        $functionsrc .= "include \"omp_testsuite.f\"\n";
+		$functionsrc .= $orphanvarsdefs."\n";
 		$functionsrc .= $_;
-		$functionsrc .= "\n}\n";
+		$functionsrc .= "\n";
 		$i++;
 	}
-	$functionsrc .= "END SUBROUTINE\n! End of definition\n";
+	$functionsrc .= "      END SUBROUTINE\n! End of definition\n";
 	return $functionsrc;
 }
 
@@ -162,7 +163,7 @@ sub orphan_regions2fortranfunctions
 	{
 		while( /\<ompts\:orphan\>(.*)\<\/ompts\:orphan\>/s)
 		{
-			s#\<ompts\:orphan\>(.*?)\<\/ompts\:orphan\>#CALL orph$i\_$prefix\_$functionname;#s;
+			s#\<ompts\:orphan\>(.*?)\<\/ompts\:orphan\>#      CALL orph$i\_$prefix\_$functionname;#s;
 			$i++;
 		}
 	}

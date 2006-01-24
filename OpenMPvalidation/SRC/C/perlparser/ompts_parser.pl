@@ -46,7 +46,7 @@ if($crosstest){push(@testtypes,"crosstest");
 }
 # preparations and checks for language
 if($language eq"c") { $extension = "c";}
-elsif($language eq "fortran") { $extension = "f";}
+elsif($language eq "fortran" or $language eq "f") { $language = "f"; $extension = "f";}
 else { die "You must specify a valid language!"; }
     
 
@@ -63,7 +63,7 @@ foreach $srcfile (@sourcefiles)
 
 # Extracting the source for the mainprogramm and saving it in $mainprocsrc
 if($language eq "c") { $mainprocsrc = "ompts_standaloneProc.c"; }
-elsif($language eq "fortran") { $mainprocsrc = "ompts_standaloneProc.f"; } 
+elsif($language eq "f") { $mainprocsrc = "ompts_standaloneProc.f"; } 
 open(MAINPROC,$mainprocsrc) or die "Could not open the sourcefile for the main program $mainprocsrc";
 while(<MAINPROC>){
 	$mainproc .= $_;
@@ -78,10 +78,12 @@ foreach $testtype (@testtypes)
     ($directive) = get_tag_values('ompts:directive',$src);
     ($functionname) = get_tag_values('ompts:testcode:functionname',$src);
 
-    open(OUTFILE,">".$orphanprefix.$testtype."_".$functionname.".".$extension) or die("Could not create the output file for $directive");
+    open(OUTFILE,">".$language.$orphanprefix.$testtype."_".$functionname.".".$extension) or die("Could not create the output file for $directive");
 
 # Creating the source for the test:
     ($code) = get_tag_values('ompts:testcode',$src);
+# Putting together the functions and the mainprogramm:
+    $code .= $mainproc;
 
 # Make modifications for the orphaned testversion if necessary:
     if($orphan)
@@ -95,13 +97,15 @@ foreach $testtype (@testtypes)
 	if(not /^[ ]*$/gs) { $orphvarsdef = join("\n",$orphvarsdef,$_); } 
 	#print "OK\n".$orphvarsdef; 
       }
-      if($language eq "fortran")
+      if($language eq "f")
       {
 # Generate the orphan subroutines:
-	$orphfuncs = create_orph_fortranfuncs("$testtype_", $code);
+	$orphfuncs = create_orph_fortranfunctions("$testtype_", $code);
 # Repla:e orphan regions by functioncalls:
 	($code) = orphan_regions2fortranfunctions( "$testtype_", ($code) );
 	($code) = enlarge_tags('ompts:orphan:vars','','',($code));
+# Put all together:
+	$code = $code . $orphfuncs;
       }
       elsif($language eq "c")
       {
@@ -133,8 +137,6 @@ foreach $testtype (@testtypes)
       ($code) = enlarge_tags('ompts:crosscheck','','',($code));
       ($code) = delete_tags('ompts:check',($code));		
     }
-# Putting together the functions and the mainprogramm:
-    $code .= $mainproc;
 # Making some final modifications:
     ($code) = replace_tags('testfunctionname',$testtype."_".$functionname,($code));
     ($code) = replace_tags('directive',$directive,($code));

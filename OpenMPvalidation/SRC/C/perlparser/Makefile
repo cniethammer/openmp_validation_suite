@@ -5,16 +5,19 @@
 # PGI compilers
 #
 #CC = pgcc
-#CFLAGS = -fast -mp 
+#CFLAGS = -mp
+#CFLAGS = -mp -DVERBOSE
+#CFLAGS = -fast -mp
 
+#FC = pgf90
 # Intel compilers:
 #
 #CC = ecc
-CC = icc
+#CC = icc
 #CC = omcc
 #CFLAGS = -O3 -ip -openmp
 #CFLAGS = -Wall -O0 -openmp
-CFLAGS =  -openmp -lm
+#CFLAGS =  -openmp -lm -DVERBOSE
 
 # Omni compilers:
 #
@@ -61,11 +64,8 @@ CFLAGS =  -openmp -lm
 default: omp_testsuite.h
 	make test1
 
-
-
 omp_testsuite.h:
 	./ompts_makeHeader.pl
-
 
 test1:
 	./ompts_parser.pl templates/omp_for_ordered.tpl -test
@@ -75,4 +75,12 @@ test1:
 
 
 clean:
-	-rm orphaned* test_* crosstest_* *.out *.log 
+	-find . -name "[cf]test*" -maxdepth 1 -perm 700 -exec rm {} \;
+	-find . -name "[cf]crosstest*" -maxdepth 1 -perm 700 -exec rm {} \;
+	-find . -name "[cf]orphan*" -maxdepth 1 -perm 700 -exec rm {} \;
+	-rm [cf]test*.[cf] [cf]crosstest*.[cf] [cf]orphan*.[cf]
+
+cleanlogs:
+	-rm *.log *.out
+
+cleanall: clean cleanlogs	
