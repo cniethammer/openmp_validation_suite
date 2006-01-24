@@ -40,7 +40,7 @@ int <ompts:testcode:functionname>omp_for_nowait</ompts:testcode:functionname> (F
 			}
 		}
 		
-		fprinf (logFile, "Thread nr %d exited first for loop and enters the second.\", rank);
+		fprintf (logFile, "Thread nr %d exited first for loop and enters the second.\", rank);
 #pragma omp for
 		for (i = 0; i < LOOPCOUNT; i++) 
 		{

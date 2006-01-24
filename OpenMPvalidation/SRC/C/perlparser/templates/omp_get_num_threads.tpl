@@ -32,6 +32,7 @@ int <ompts:testcode:functionname>omp_get_num_threads</ompts:testcode:functionnam
 	}	/* end of single */
     }	/* end of parallel */
 
+	fprintf (logFile, "Counted %d threads. get_num_threads returned %d.\n", nthreads, nthreads_lib);
     return (nthreads == nthreads_lib);
 }
 </ompts:testcode>
