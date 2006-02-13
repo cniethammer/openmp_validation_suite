@@ -1,42 +1,26 @@
-!********************************************************************
-! Functions: chk_par_do_firstprivate
-!********************************************************************
-
-	integer function chk_par_do_firstprivate()
-        implicit none
-	integer sum,known_sum, i2, i
-	include "omp_testsuite.f"
-	sum =0
-	i2 = 3
-!$omp parallel do firstprivate(i2) reduction(+:sum)
-	do i=1, LOOPCOUNT
-	  sum = sum + ( i+ i2)
-	end do
+<ompts:test>
+<ompts:testdescription>Test which checks the omp parallel do firstprivate directive.</ompts:testdescription>
+<ompts:ompversion>2.0</ompts:ompversion>
+<ompts:directive>omp parallel for firstprivate</ompts:directive>
+<ompts:dependences>par do reduction,par do private</ompts:dependences>
+<ompts:testcode>
+      INTEGER FUNCTION <ompts:testcode:functionname>par_do_firstprivate</ompts:testcode:functionname>()
+        IMPLICIT NONE
+        INTEGER sum,known_sum, i2, i
+        INCLUDE "omp_testsuite.f"
+        sum =0
+        i2 = 3
+!$omp parallel do <ompts:check>firstprivate(i2)</ompts:check><ompts:crosscheck>private(i2)</ompts:crosscheck> reduction(+:sum)
+        DO i=1, LOOPCOUNT
+          sum = sum + ( i+ i2)
+        END DO
 !$omp end parallel do
-	known_sum = (LOOPCOUNT*(LOOPCOUNT+1))/2+3*LOOPCOUNT
-	if ( known_sum .eq. sum ) then
-	  chk_par_do_firstprivate = 1
-	else
-	  chk_par_do_firstprivate = 0
-	end if
-	end
-
-	integer function crschk_par_do_firstprivate()
-        implicit none
-	integer sum, known_sum, i2,i
-	include "omp_testsuite.f"
-	sum = 0
-	i2 = 3
-!$omp parallel do private(i2) reduction(+: sum)
-	do i=1, LOOPCOUNT	
-	  sum = sum + (i+ i2)
-	end do
-!$omp end parallel do
-	known_sum = (LOOPCOUNT*(LOOPCOUNT+1))/2+3*999
-	if ( known_sum .eq. sum ) then
-	  crschk_par_do_firstprivate = 1
-	else
-	  crschk_par_do_firstprivate = 0
-	end if
-	end 
-
+        known_sum = (LOOPCOUNT*(LOOPCOUNT+1))/2+3*LOOPCOUNT
+        IF ( known_sum .EQ. sum ) THEN
+          <testfunctionname></testfunctionname> = 1
+        ELSE
+          <testfunctionname></testfunctionname> = 0
+        END IF
+      END
+</ompts:testcode>
+</ompts:test>
