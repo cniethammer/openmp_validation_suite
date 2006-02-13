@@ -10,6 +10,7 @@
 #CFLAGS = -fast -mp
 
 #FC = pgf90
+#FFLAGS = -fast -mp
 # Intel compilers:
 #
 #CC = ecc
@@ -17,6 +18,7 @@
 #CC = omcc
 #CFLAGS = -O3 -ip -openmp
 #CFLAGS = -Wall -O0 -openmp
+#CFLAGS =  -openmp -lm
 #CFLAGS =  -openmp -lm -DVERBOSE
 
 # Omni compilers:
