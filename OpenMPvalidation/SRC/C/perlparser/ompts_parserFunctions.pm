@@ -126,9 +126,9 @@ sub create_orph_fortranfunctions
 		$functionsrc .= $orphanvarsdefs."\n";
 		$functionsrc .= $_;
 		$functionsrc .= "\n";
+		$functionsrc .= "      END SUBROUTINE\n! End of definition\n\n";
 		$i++;
 	}
-	$functionsrc .= "      END SUBROUTINE\n! End of definition\n";
 	return $functionsrc;
 }
 

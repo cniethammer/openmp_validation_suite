@@ -11,7 +11,7 @@
       INTEGER <testfunctionname></testfunctionname>
 
 
-      CHARACTER*20 logfilename
+      CHARACTER*30 logfilename
       INTEGER result 
 
       num_tests = 0
@@ -22,7 +22,7 @@
       failed = 0
       LOOPCOUNT = 10000
 
-      logfilename = "f<ompts:crosscheck>cross</ompts:crosscheck><testfunctionname></testfunctionname>.log"
+      logfilename = "f<testfunctionname></testfunctionname>.log"
 !      WRITE (*,*) "Enter logFilename:" 
 !      READ  (*,*) logfilename
 
@@ -38,6 +38,10 @@
       WRITE (1,*) "--------------------------------------------------"
       WRITE (1,*) "<directive></directive>"
       WRITE (1,*) "--------------------------------------------------"
+      WRITE (1,*) "\n"
+      WRITE (1,*) "testname: <testfunctionname></testfunctionname>"
+      WRITE (1,*) "(Crosstests should fail)"
+      WRITE (1,*) "\n"
       
       DO j = 1, N
         WRITE (1,*) "# Check: "
@@ -57,20 +61,11 @@
             success = success + 1
       ENDIF
       
-      IF (crossfailed .LT. 0) THEN
-            crosschecked = crosschecked + 1
-      ENDIF 
-            
       WRITE (1,*) "Result for <directive></directive>:"
       
       IF (result .EQ. 1) THEN
         WRITE (1,*) "Directiv worked without errors."
-        WRITE (1,*) "Crosschecks verified this result with", 100.0*
-     &crossfailed/N
-        WRITE (*,*) "<testfunctionname></testfunctionname>... verified 
-     &with", 100.0*crossfailed/N ,"% certainty."
       ELSE
         WRITE (1,*) "Directive failed the tests!"
-        WRITE (*,*) "check_has_openmp ... FAILED."
       ENDIF
       END PROGRAM 
