@@ -1,68 +1,48 @@
-        subroutine do_some_work3()
-        real i
-! Yi Wen modified here
-        intrinsic sqrt
-        double precision sum
-        include "omp_testsuite.f"
+<ompts:test>
+<ompts:testdescription>Test which checks the omp barrier directive. The test    creates several threads and sends one of them sleeping before setting a flag.  After the barrier the other ones do some littel work depending on the flag.</   ompts:testdescription>
+<ompts:ompversion>2.0</ompts:ompversion>
+<ompts:directive>omp barrier</ompts:directive>
+<ompts:testcode>
+
+      SUBROUTINE do_some_work3()
+        REAL i
+        INTRINSIC sqrt
+        DOUBLE PRECISION sum
+        INCLUDE "omp_testsuite.f"
         sum = 0.0
-        do i=0.0, 1000000-1, 1.0
-          sum = sum + sqrt(i)
-        end do
-        end
+        DO i=0.0, 1000000-1, 1.0
+          sum = sum + SQRT(i)
+        END DO
+      END
 
-!********************************************************************
-! Functions: chk_omp_barrier
-!********************************************************************
-
-        integer function chk_omp_barrier()
+      INTEGER FUNCTION <ompts:testcode:functionname>omp_barrier</ompts:testcode:functionname>()
 !        use omp_lib
-        implicit none
-        integer omp_get_thread_num
-        integer result1, result2, rank
+        IMPLICIT NONE
+        INTEGER omp_get_thread_num
+        INTEGER result1, result2, rank
         result1 = 0
         result2 = 0
-!Yi modified here 05042004: privatize rank by sementics
 !$omp parallel private(rank)
         rank = omp_get_thread_num()
-!        print *, "rank", rank
-        if ( rank .eq. 1 ) then
-!Yi modified here 05042004
-          call sleep(2)
+!        PRINT *, "rank", rank
+        IF ( rank .EQ. 1 ) THEN
+          CALL sleep(2)
           result2 = 3
-        end if
+        END IF
+        <ompts:orphan>
+        <ompts:check>
 !$omp barrier
-        if ( rank .eq. 0 ) then
+        </ompts:check>
+        </ompts:orphan>
+        IF ( rank .EQ. 0 ) THEN
           result1 = result2
-        end if
+        END IF
 !$omp end parallel
-        if ( result1 .eq. 3 ) then
-           chk_omp_barrier = 1
-        else
-           chk_omp_barrier = 0
-        end if
-        end
-        integer function crschk_omp_barrier()
-!        use omp_lib
-        implicit none
-        integer result1, result2, rank
-        integer omp_get_thread_num
-        result1 = 0
-        result2 = 0
-!Yi at 05042004 made the same modification as in chk_omp_barrier
-!$omp parallel private(rank)
-        rank = omp_get_thread_num()
-        if ( rank .eq. 1 ) then
-          call sleep(2)
-          result2 = 3
-        end if
-        if ( rank. eq. 0 ) then
-          result1 = result2
-        end if
-!$omp end parallel
-        if ( result1 .eq. 3 ) then
-           crschk_omp_barrier = 1
-        else
-           crschk_omp_barrier = 0
-        end if
-        end
-
+        IF ( result1 .EQ. 3 ) THEN
+           <testfunctionname></testfunctionname> = 1
+        ELSE
+           <testfunctionname></testfunctionname> = 0
+        END IF
+      END
+</ompts:testcode>
+</ompts:test>

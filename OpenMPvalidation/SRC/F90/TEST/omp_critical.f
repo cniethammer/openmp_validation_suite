@@ -1,47 +1,41 @@
-!********************************************************************
-! check and crosscheck CRITICAL, ATOMIC, BARRIER, FLUSH
+<ompts:test>
+<ompts:testdescription>Test which checks the omp critical directive by counting up a variable in a parallelized loop within a critical section.
+
+</ompts:testdescription>
+<ompts:ompversion>2.0</ompts:ompversion>
+<ompts:directive>omp critical</ompts:directive>
+<ompts:testcode>
 ! We use sleep in one thread to ensure the execution order of two threads
 ! which is not a good practice in OpenMP programming. Need to be fixed
 ! in future release.
 ! Functions: check_omp_critical
 !********************************************************************
 
-        integer function chk_omp_critical()
-        implicit none
-        integer i, sum, known_sum
+      INTEGER FUNCTION <ompts:testcode:functionname>omp_critical</ompts:testcode:functionname>()
+        IMPLICIT NONE
+        INTEGER i, sum, known_sum
         sum = 0
 !$omp parallel
 !$omp do
-        do i =0, 999
+        DO i = 0 , 999
+		<ompts:orphan>
+		<ompts:check>
 !$omp critical
+		</ompts:check>
            sum = sum + i
+		<ompts:check>
 !$omp end critical
-        end do
+		</ompts:check>
+		</ompts:orphan>
+        END DO
 !$omp end do
 !$omp end parallel
         known_sum = 999*1000/2
-        if ( known_sum .eq. sum ) then
-          chk_omp_critical = 1
-        else
-          chk_omp_critical = 0
-        end if
-        end
-        integer function crschk_omp_critical()
-        implicit none
-        integer i, sum, known_sum
-        sum = 0
-!$omp parallel
-!$omp do
-        do i=0, 999
-         sum = sum + i
-        end do
-!$omp end do
-!$omp end parallel
-        known_sum = 999 * 1000/2
-        if ( known_sum .eq. sum ) then
-           crschk_omp_critical = 1
-        else
-           crschk_omp_critical = 0
-        end if
-        end
-
+        IF ( known_sum .EQ. sum ) THEN
+          <testfunctionname></testfunctionname> = 1
+        ELSE
+          <testfunctionname></testfunctionname> = 0
+        END IF
+      END
+</ompts:testcode>
+</ompts:test>
