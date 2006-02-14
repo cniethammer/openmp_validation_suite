@@ -1,6 +1,8 @@
 !********************************************************************
 ! Functions: chk_omp_master_thread
 !********************************************************************
+<ompts:test>
+<omts:testdescription>Test which checks the correct implementation of the omp_master_thread</ompts:testdescription>
 
 	integer function chk_omp_master_thread()
         implicit none

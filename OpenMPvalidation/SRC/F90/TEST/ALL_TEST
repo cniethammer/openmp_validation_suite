@@ -1,6 +1,6 @@
 #has_openmp
 omp_nested
-omp_get_num_threads
+#omp_get_num_threads
 #omp_in_parallel
 #do_ordered
 do_reduction
@@ -30,7 +30,7 @@ omp_atomic
 #omp_flush
 omp_threadprivate
 #omp_copyin
-omp_lock
+#omp_lock
 omp_testlock
 omp_nest_lock
 omp_nest_testlock
