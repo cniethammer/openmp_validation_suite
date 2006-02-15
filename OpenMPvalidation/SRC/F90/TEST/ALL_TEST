@@ -25,10 +25,10 @@ par_section_firstprivate
 par_section_lastprivate
 #omp_master
 #omp_critical
-omp_atomic
+omp_atomic					?
 #omp_barrier
 #omp_flush
-omp_threadprivate
+#omp_threadprivate			?
 #omp_copyin
 #omp_lock
 omp_testlock
@@ -36,7 +36,7 @@ omp_nest_lock
 omp_nest_testlock
 omp_num_threads
 omp_workshare
-omp_time
+#omp_wtime
 omp_ticks_time
 single_copyprivate
 do_schedule_static
