@@ -130,7 +130,7 @@ while(<TEST>){
 		    print "Creating source out of templates ... \n";
 		    $cmd="make ".$language.$orphanname."test_".$testname." >> compile.log";
 		    system($cmd);
-		    $cmd="make ".$language.$orphanname."crosstest_".$testname." >> compile.log";
+		    $cmd="make ".$language.$orphanname."ctest_".$testname." >> compile.log";
 		    system($cmd);
 		}
 	    
@@ -152,7 +152,7 @@ while(<TEST>){
 			print "\n";
 		    } else {
 			# Run the crosstest
-			$cmd = "export OMP_NUM_THREADS=".$numthreads."; ./".$language.$orphanname."crosstest_".$testname."> ".$language.$orphanname."crosstest_".$testname.".out";
+			$cmd = "export OMP_NUM_THREADS=".$numthreads."; ./".$language.$orphanname."ctest_".$testname."> ".$language.$orphanname."crosstest_".$testname.".out";
 			$exit_status = system($cmd);
 			if ($exit_status){
 			    $crossresult = $exit_status >> 8;

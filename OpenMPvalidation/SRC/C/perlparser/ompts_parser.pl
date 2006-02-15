@@ -41,7 +41,7 @@ else { $orphanprefix = ""; }
 if($test){push(@testtypes,"test"); 
 # %checks['test']="check";
 }
-if($crosstest){push(@testtypes,"crosstest");
+if($crosstest){push(@testtypes,"ctest");
 # %checks['crosstest']="crosscheck";
 }
 # preparations and checks for language
@@ -132,7 +132,7 @@ foreach $testtype (@testtypes)
       ($code) = enlarge_tags('ompts:check','','',($code));
       ($code) = delete_tags('ompts:crosscheck',($code));		
     }
-    elsif($testtype eq "crosstest") {
+    elsif($testtype eq "ctest") {
 # Remove the marks for the crosstestcode and remove the code for the tests: 
       ($code) = enlarge_tags('ompts:crosscheck','','',($code));
       ($code) = delete_tags('ompts:check',($code));		

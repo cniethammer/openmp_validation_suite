@@ -65,7 +65,9 @@
       
       IF (result .EQ. 1) THEN
         WRITE (1,*) "Directiv worked without errors."
+        CALL EXIT (0)
       ELSE
         WRITE (1,*) "Directive failed the tests!"
+        CALL EXIT (failed)
       ENDIF
       END PROGRAM 
