@@ -98,7 +98,8 @@ print RESULTS "\n";
 # For each directive there is used a seperate line beginning with the name of 
 # the tested directive. It follows the result of the test, crosstest, orphaned
 # test and orphaned crosstest.
-while(<TEST>){
+TEST: while(<TEST>){
+    next TEST if /^\s*#/;
     $testname = $_;
     chomp($testname);
     print RESULTS "$testname\t";
