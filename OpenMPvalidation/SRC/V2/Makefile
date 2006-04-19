@@ -1,10 +1,14 @@
 # modify CC and CFLAGS for OpenMP c compilers
 # modify FC and FFLAGS for OpenMP Fortran compilers
 
+# basic usage:
+# 	make ctest
+# 	make ftest
+# 	make cleanall
+
 # Fujitsu Compilers:
 #CC = fcc
 #CFLAGS = -KOMP,fast_GP2=2
-
 #FC=frt
 #FFLAGS=-KOMP,fast_GP2=2 -w -Am -X9 -Fixed
 
@@ -106,6 +110,11 @@ default: omp_testsuite.h
 
 omp_testsuite.h:
 	./ompts_makeHeader.pl
+
+ctest:
+	./runtest.pl -lang=c -d=c testlist-c.txt
+ftest:
+	./runtest.pl -lang=fortran -d=fortran testlist-f.txt
 
 test1:
 	./ompts_parser.pl templates/omp_for_ordered.tpl -test
