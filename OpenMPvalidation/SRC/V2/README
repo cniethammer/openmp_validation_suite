@@ -88,10 +88,15 @@ after two steps of modifications:
     -f.txt testlists for c with -c.txt.
 
 And now you can run the testsuite either for fortran using
+      make ctest
+or for fortran
+      make ftest
 
+The two commands above equal to: 
 	#	>  ./runtest.pl -lang=fortran -d=fortran testlist-f.txt
 or for c
 	#	>  ./runtest.pl -lang=c -d=c testlist-c.txt
+
 
 The test results are summarized in results.txt while *.log keep details for 
 individual tests. There is also a file (compile.log) keeping compilation 
