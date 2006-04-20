@@ -64,7 +64,8 @@ if(!($maxthread)){ $maxthread = 2; }
 # Checking if given testfile exists
 die "The specified testlist does not exist." if(!(-e $testfile));
 # Checking if language was specified
-if($language eq "c") { $extension = "tpl"; }
+#if($language eq "c") { $extension = "tpl"; }
+if($language eq "c") { $extension = "c"; }
 elsif($language eq "fortran" or $language eq "f") { $language = "f"; $extension = "f"; }
 else { die "You must specify an valid language!\n"; }
 
