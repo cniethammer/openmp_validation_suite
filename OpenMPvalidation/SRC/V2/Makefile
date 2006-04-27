@@ -1,5 +1,16 @@
+# General Makefile containing all the necessary compiler flags for the tests
+
 # modify CC and CFLAGS for OpenMP c compilers
 # modify FC and FFLAGS for OpenMP Fortran compilers
+
+
+# Content:
+#########################################################
+ 
+# C-Flags
+# Fortran-Flags
+
+#########################################################
 
 # basic usage:
 # 	make ctest
@@ -26,11 +37,11 @@
 # Intel compilers:
 #
 #CC = ecc
-#CC = icc
+CC = icc
 #CC = omcc
 #CFLAGS = -O3 -ip -openmp
 #CFLAGS = -Wall -O0 -openmp
-#CFLAGS =  -openmp -lm
+CFLAGS =  -openmp -lm
 #CFLAGS =  -openmp -lm -DVERBOSE
 
 #FC = ifort
