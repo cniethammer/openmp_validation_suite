@@ -77,7 +77,7 @@ print "Compiling tests for language $language.\n";
 
 # generating an up to date header file using the ompts_makeHeader.pl script
 print "Generating headerfile ...\n";
-$cmd = "./ompts_makeHeader.pl $dir";
+$cmd = "./ompts_makeHeader.pl -f=ompts-$extension.conf -t=$dir";
 system($cmd);
 
 print "Reading testlist ...\n";
@@ -111,7 +111,7 @@ TEST: while(<TEST>){
 	    # Create templates:
 	    $template = $dir."/".$testname.".".$extension;
 
-	    $cmd="grep -q ompts:orphan ".$template;
+	    $cmd="grep ompts:orphan ".$template." > /dev/null";
 	    $orphanedtest=system($cmd);
 	    if( ($i==1) && ($orphanedtest==0) && !($norphan) ){
 		$orphanflag=" -orphan";
@@ -140,7 +140,7 @@ TEST: while(<TEST>){
 		# Run the tests:
 		if(!$norun){
 		    print "Running test using $numthreads threads ... ";
-		    $cmd = "export OMP_NUM_THREADS=".$numthreads."; ./".$language.$orphanname."test_".$testname."> ".$language.$orphanname."test_".$testname.".out";
+		    $cmd = "OMP_NUM_THREADS=".$numthreads."; export OMP_NUM_THREADS; ./".$language.$orphanname."test_".$testname."> ".$language.$orphanname."test_".$testname.".out";
 		    $exit_status = system($cmd);
 		    if ($exit_status){
 			print $testname.$orphanname." failed !!! " ;

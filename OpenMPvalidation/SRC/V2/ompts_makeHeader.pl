@@ -1,19 +1,20 @@
 #!/usr/bin/perl -w
 
-# ompts_makeHeader [options] [dirs]
+# ompts_makeHeader [options] -f=NAME -t=DIR
 #
 # Creats the headerfile for the OpenMP-Testsuite out of the templatefiles 
 # witch are in the default/explicitely specified dir and the settings in the
-# ompts.conf file in the main directory.
+# given config file. 
+# 
+# ATTENTION:
+#	At the moment it builts only a c-headerfile!
 #
-# dirs:
-# 	Specifies the dir with the templatefiles. Default is "./templates"
+# -f=FILENAME: Using file FILENAME as configfile
+# -t=DIR:	Directory holding the template files
 # 
-# options:
-# -f=FILENAME: Using file FILENAME as configfile instead of the default (ompts.conf)
+# options
 # -i=FILENAME: Include other Headerfile. The files to be included must be specified
-# after setting this option. (Not implemented yet.)
-# 
+# 	after setting this option. (Not implemented yet.)
 # -o=FILENAME: outputfilename (default is "omp_testsuite.h")
 
 $headerfile = "\/\* Global headerfile of the OpenMP Testsuite \*\/\n\n\/\* This file was created with the ompts_makeHeder.pl script using the following opions:\ *\/\n\/\* ";
@@ -28,21 +29,33 @@ else
 {
 	$headerfile .= "No options were specified";
 }
-
 $headerfile .=" \*\/\n\n\n";
 
 use Getopt::Long;
-GetOptions("-o=s" => \$outfile, "-f=s" =>\$configfile);
+GetOptions("-o=s" => \$outfile, "-f=s" =>\$configfile, "-t=s" => \$templatedir, "-i=s" => \$include);
+
+$include = "";
+
+
+# Getting and verifying the necessary options:
+if(!$configfile) {	
+	die "Config file name is missing.";
+}	
+else {
+    if (!(-e $configfile)) {
+	  die "Could not find config file $configfile.";
+	}
+}
+	
+if(!$templatedir) {	
+	die "Directoryname is missing.";
+}	
 
 if(!$outfile){
 	$outfile = "omp_testsuite.h";	# setting default value for the headerfile
 }
 
-if(!$configfile) {	
-	$configfile = "ompts.conf"; 	# setting default value for the configfile 
-}	
 
-$templatedir = "./templates";	# dir holding the templates
 
 #@includefiles;					# list holing extra includefiles specified by the user 
 
@@ -50,7 +63,7 @@ $templatedir = "./templates";	# dir holding the templates
 # generating the head of the includeguard:
 $headerfile .= "\#ifndef OMP_TESTSUITE_H\n\#define OMP_TESTSUITE_H\n\n";
 
-# inserting general settings out of ompts.conf:
+# inserting general settings out of the configfile:
 open(OMPTS_CONF,$configfile) or die "Could not open the global config file $configfile.";
 while(<OMPTS_CONF>){
 	$headerfile .= $_;
@@ -58,8 +71,8 @@ while(<OMPTS_CONF>){
 close(OMPTS_CONF);
 
 # searching the tests:
-opendir TEMPLATEDIR, "./templates" or die "Could not open dir.";
-@templates = grep /(.*)\.tpl/, readdir TEMPLATEDIR;
+opendir TEMPLATEDIR, $templatedir or die "Could not open dir $templatedir.";
+@templates = grep /(.*)\.c/, readdir TEMPLATEDIR;
 closedir TEMPLATEDIR;
 
 # inserting the function declarations:
