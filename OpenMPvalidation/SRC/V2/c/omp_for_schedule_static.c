@@ -25,8 +25,8 @@ int <ompts:testcode:functionname>omp_for_schedule_static</ompts:testcode:functio
     <ompts:orphan:vars>
 	int * tids;
 	int notout;
-	int maxiter;
-	const int chunk_size;
+      int maxiter;
+      int chunk_size;
     </ompts:orphan:vars>
     int counter = 0;
     int tmp_count=1;
@@ -36,7 +36,7 @@ int <ompts:testcode:functionname>omp_for_schedule_static</ompts:testcode:functio
     tids = (int *) malloc (sizeof (int) * CFSMAX_SIZE);
     notout = 1;
     maxiter = 0;
-    const int chunk_size = 7;
+    int chunk_size = 7;
 
 #pragma omp parallel shared(tids,counter)
     {	/* begin of parallel*/
