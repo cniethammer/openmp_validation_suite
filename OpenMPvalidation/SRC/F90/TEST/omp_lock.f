@@ -1,57 +1,84 @@
-<ompts:test>
-<ompts:testdescription>Test which checks the omp_set_lock  and the omp_unset_lock function by counting the threads entering and exiting a single region with locks.</ompts:testdescription>
-<ompts:ompversion>2.0</ompts:ompversion>
-<ompts:directive>omp_lock</ompts:directive>
-<ompts:dependences>omp flush</ompts:dependences>
-<ompts:testcode>
-      INTEGER FUNCTION <ompts:testcode:functionname>omp_lock</ompts:testcode:functionname>()
-        USE omp_lib
-        IMPLICIT NONE
-        INTEGER result
-        INTEGER nr_threads_in_single
-        INTEGER nr_iterations
-        INTEGER i
+!***************************************************************************
+!   omp_chk_locks.f: an implementation for checking if compilers
+!   implement OMP lock functions correctly
+!***************************************************************************
+      integer function chk_omp_lock()
+      USE omp_lib
+                implicit none
+                integer result
 !lock variable
-		<ompts:orphan:vars>
-        INTEGER (KIND=OMP_LOCK_KIND) :: lock
-        COMMON /orphvars/ lock
-		</ompts:orphan:vars>
+      INTEGER (KIND=OMP_LOCK_KIND) :: lck
+!      INTEGER lck
+      integer nr_threads_in_single
 !result is:
-!  0 -- if the test fails
-!  1 -- if the test succeeds
-        INCLUDE "omp_testsuite.f"
-        CALL omp_init_lock(lock)
-        nr_iterations=0
-        nr_threads_in_single=0
-        result=0
-!$omp parallel shared(lock,nr_threads_in_single,nr_iterations,result)
+!      0 -- if the test fails
+!      1 -- if the test succeeds
+      integer nr_iterations
+      integer i
+      include "omp_testsuite.f"
+      call omp_init_lock(lck)
+      nr_iterations=0
+      nr_threads_in_single=0
+      result=0
+!$omp parallel shared(lck,nr_threads_in_single,nr_iterations,result)
 !$omp do
-        DO i=1,LOOPCOUNT
-		  <ompts:orphan>
-		  <ompts:check>
-          CALL omp_set_lock(lock)
-		  </ompts:check>
-		  </ompts:orphan>
+      do i=1,LOOPCOUNT
+           call omp_set_lock(lck)
 !$omp flush
-          nr_threads_in_single=nr_threads_in_single+1
+           nr_threads_in_single=nr_threads_in_single+1
 !$omp flush
-          nr_iterations=nr_iterations+1
-          nr_threads_in_single=nr_threads_in_single-1
-          result=result+nr_threads_in_single
-		  <ompts:orphan>
-		  <ompts:check>
-          CALL omp_unset_lock(lock)
-		  </ompts:check>
-		  </ompts:orphan>
-        END DO
+           nr_iterations=nr_iterations+1
+           nr_threads_in_single=nr_threads_in_single-1
+           result=result+nr_threads_in_single
+           call omp_unset_lock(lck)
+      enddo
 !$omp end do
 !$omp end parallel
-        CALL omp_destroy_lock(lock)
-        IF(result.EQ.0 .AND. nr_iterations .EQ. LOOPCOUNT) THEN
-              <testfunctionname></testfunctionname>=1
-        ELSE
-              <testfunctionname></testfunctionname>=0
-        ENDIf
-      END
-</ompts:testcode>
-</ompts:test>
+      call omp_destroy_lock(lck)
+      if(result.eq.0 .and. nr_iterations .eq. LOOPCOUNT) then
+            chk_omp_lock=1
+      else
+            chk_omp_lock=0
+      endif
+      end
+
+      integer function crschk_omp_lock()
+      USE omp_lib
+                implicit none
+!result is:
+!      0 -- if the test fails
+!      1 -- if the test succeeds
+      integer nr_threads_in_single
+                integer result
+      INTEGER (KIND=OMP_LOCK_KIND) :: lck
+!      INTEGER lck
+      integer nr_iterations
+      integer i
+      include "omp_testsuite.f"
+      nr_iterations=0
+      nr_threads_in_single=0
+      call omp_init_lock(lck)
+
+      result=0
+!$omp parallel shared(lck,nr_threads_in_single,nr_iterations,result)
+!$omp do
+      do i=1,LOOPCOUNT
+!$omp flush
+      nr_threads_in_single=nr_threads_in_single+1
+!$omp flush
+      nr_iterations=nr_iterations+1
+      nr_threads_in_single=nr_threads_in_single-1
+      result=result+nr_threads_in_single
+      enddo
+!$omp end do
+!$omp end parallel
+      call omp_destroy_lock(lck)
+      if(result.eq.0 .and. nr_iterations .eq. LOOPCOUNT) then
+!                     print *, "cross ckeck : 1"
+            crschk_omp_lock=1
+      else
+!                     print *, "cross ckeck : 0"
+            crschk_omp_lock=0
+      endif
+      end
+
