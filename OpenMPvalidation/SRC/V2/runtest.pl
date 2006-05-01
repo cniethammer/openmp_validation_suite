@@ -74,6 +74,18 @@ print "Running tests with maximal $maxthread threads.\n";
 print "Using testlist $testfile for input.\n";
 print "Using dir $dir to search testtemplates.\n";
 print "Compiling tests for language $language.\n";
+# printing information in logfile
+$logfilename = "ompts.log";
+open(GLOBALLOG,">$logfilename") or die "Error: Could not create  $logfilename\n";
+my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime time;
+$year += 1900;
+print GLOBALLOG "Running tests with maximal $maxthread threads.\n";
+print GLOBALLOG "Using testlist $testfile for input.\n";
+print GLOBALLOG "Using dir $dir to search testtemplates.\n";
+print GLOBALLOG "Compiling tests for language $language.\n";
+print GLOBALLOG "Test startet on $mday.$mon.$year at $hour:$min\n\n";
+$cmd = "make print_compile_options >> $logfilename";
+system($cmd);
 
 # generating an up to date header file using the ompts_makeHeader.pl script
 print "Generating headerfile ...\n";
@@ -85,6 +97,8 @@ print "Reading testlist ...\n";
 open(TEST,$testfile) or die "Error: Could not open  $testfile\n";
 # opening the results file in write mode and add the first line (tableheader)
 open(RESULTS,">$results") or die "Error: Could not create  $results\n";
+
+
 print RESULTS "\\ Number of Threads\t";
 for($j=2; $j <= $maxthread; $j++){
     print RESULTS "$j\t\t\t\t";

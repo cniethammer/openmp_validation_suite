@@ -7,15 +7,24 @@
 # Content:
 #########################################################
  
-# C-Flags
-# Fortran-Flags
+# 1. basic usage
+# 2. Compiler selection and Flags
 
 #########################################################
 
-# basic usage:
-# 	make ctest
-# 	make ftest
-# 	make cleanall
+
+#########################################################
+# 1. basic usage
+#########################################################
+# 	make ctest		generate c test "ctest"
+# 	make ftest		generate fortran test "ftest"
+#	make clean		removes all sources and binaries
+# 	make cleanall	removes sources,binaries and logfiles
+
+
+#########################################################
+# 2. Compiler selection and Flags
+#########################################################
 
 # Fujitsu Compilers:
 #CC = fcc
@@ -23,8 +32,8 @@
 #FC=frt
 #FFLAGS=-KOMP,fast_GP2=2 -w -Am -X9 -Fixed
 
+
 # PGI compilers
-#
 #CC = pgcc
 #CFLAGS = -mp
 #CFLAGS = -mp -DVERBOSE
@@ -34,8 +43,8 @@
 #FFLAGS = -fast -mp
 #FFLAGS = -mp -g
 
+
 # Intel compilers:
-#
 #CC = ecc
 CC = icc
 #CC = omcc
@@ -47,20 +56,19 @@ CFLAGS =  -openmp -lm
 #FC = ifort
 #FFLAGS = -openmp -lm
 
+
 # Omni compilers:
-#
 #CC = ompcc
 #CFLAGS = -O3 -lm 
 
+
 # Assure compilers:
-#
 #CC = assurec
 #CFLAGS = -O3 -WApname=project -DUSE_ASSURE=1
 #FC =
 #FFLAGS =
 
 # NEC:
-#
 #CC = c++ 
 #CC = sxc++ 
 #CFLAGS = -Popenmp
@@ -68,31 +76,30 @@ CFLAGS =  -openmp -lm
 #FC=sxf90
 #FFLAGS= -Popenmp
 
-#
+
 # Hitachi:
-#
 #CC = xcc 
 #CFLAGS = -O4 -pvec +Op -parallel -omp
 #FC =
 #FFLAGS =
 
-#
+
 # SGI:
-#
-#
 #CC = cc
 #CFLAGS = -mp -lm 
 #FC =
 #FFLAGS =
 
+
 # IBM compilers:
 #CC = xlc_r
 #CFLAGS = -qsmp=omp -lm
 
+
 #FC=xlf90_r
 #FFLAGS=-qsmp=omp -qfixed=132 -qlanglvl=extended
 
-#
+
 # SUN compilers
 #CC = cc
 #CFLAGS = -fast -xopenmp -lm
@@ -100,7 +107,7 @@ CFLAGS =  -openmp -lm
 #FC =f90
 #FFLAGS = -xopenmp -fast -lm
 
-#
+
 # open64 compilers
 # remark: -I. was a workaround because the installation came without omp.h file
 #CC = opencc
@@ -108,12 +115,18 @@ CFLAGS =  -openmp -lm
 #FC =
 #FFLAGS =
 
+
 #Pathscale Compiler
 #CC = pathcc
 #CFLAGS = -mp -Ofast -lm
 
 #FC=pathf90
 #FFLAGS= -mp -Ofast -lm
+
+
+
+
+
 
 
 default: omp_testsuite.h
@@ -126,6 +139,16 @@ ctest:
 	./runtest.pl -lang=c -d=c testlist-c.txt
 ftest:
 	./runtest.pl -lang=fortran -d=fortran testlist-f.txt
+
+print_compile_options:
+	@echo "C compiler: $(CC)"
+	$(CC) --version
+	@echo "CFLAGS: $(CFLAGS)"
+	@echo ""
+	@echo ""
+	@echo "Fortran compiler: $(FC)"
+	$(FC) --version
+	@echo "FFLAGS: $(FFLAGS)"
 
 test1:
 	./ompts_parser.pl templates/omp_for_ordered.tpl -test
@@ -144,4 +167,7 @@ clean:
 cleanlogs:
 	-rm *.log *.out
 
-cleanall: clean cleanlogs	
+cleanresults:
+	-rm results.txt
+
+cleanall: clean cleanlogs cleanresults

@@ -1,3 +1,5 @@
+# List containing the tests of the OpenMPValidaion Suite available to check
+# the fortan implementation.
 do_firstprivate
 do_lastprivate
 do_ordered

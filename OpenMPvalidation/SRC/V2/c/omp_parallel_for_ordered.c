@@ -8,6 +8,9 @@
 #include "omp_testsuite.h"
 
 static int last_i = 0;
+int i;
+
+#pragma omp threadprivate(i)
 
 /*! 
   Utility function: returns true if the passed argument is larger than 
@@ -24,7 +27,6 @@ int <ompts:testcode:functionname>omp_parallel_for_ordered</ompts:testcode:functi
 	<ompts:orphan:vars>
 	int sum;
 	int is_larger;
-	int i;
 	</ompts:orphan:vars>
 
 	int known_sum;

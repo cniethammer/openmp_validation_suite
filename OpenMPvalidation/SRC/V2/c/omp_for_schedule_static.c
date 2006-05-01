@@ -32,11 +32,11 @@ int <ompts:testcode:functionname>omp_for_schedule_static</ompts:testcode:functio
     int tmp_count=1;
     int lastthreadsstarttid = -1;
     int result = 0;
+    chunk_size = 7;
 
     tids = (int *) malloc (sizeof (int) * CFSMAX_SIZE);
     notout = 1;
     maxiter = 0;
-    int chunk_size = 7;
 
 #pragma omp parallel shared(tids,counter)
     {	/* begin of parallel*/

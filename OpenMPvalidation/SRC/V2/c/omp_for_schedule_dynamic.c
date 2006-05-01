@@ -22,7 +22,6 @@ const int chunk_size = 10;
 int <ompts:testcode:functionname>omp_for_schedule_dynamic</ompts:testcode:functionname> (FILE * logFile)
 {
 <ompts:orphan:vars>
-    int tid;
     int *tids;
 </ompts:orphan:vars>
 
@@ -35,13 +34,14 @@ int <ompts:testcode:functionname>omp_for_schedule_dynamic</ompts:testcode:functi
 
     tids = tidsArray;
 
-#pragma omp parallel private(tid) shared(tids,count)
+#pragma omp parallel shared(tids,count)
     { /* begin of parallel*/
 
-	tid = omp_get_thread_num ();
 	{	/* begin of orphaned block */
 	<ompts:orphan>
 	    int j;
+		int tid;
+		tid = omp_get_thread_num ();
 #pragma omp for <ompts:check>schedule(dynamic,chunk_size)</ompts:check>
 	    for (j = 0; j < CFDMAX_SIZE; ++j)
 	    {

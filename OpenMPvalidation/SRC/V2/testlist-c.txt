@@ -1,3 +1,5 @@
+# List containing the tests of the OpenMPValidaion Suite available to check
+# the c implementation.
 has_openmp
 omp_atomic
 omp_barrier
