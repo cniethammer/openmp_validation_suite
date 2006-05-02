@@ -14,11 +14,12 @@ static int sum0 = 0;
 static int myvalue = 0;
 <ompts:check>#pragma omp threadprivate(myvalue)</ompts:check>
 
+
 int <ompts:testcode:functionname>omp_threadprivate</ompts:testcode:functionname>(FILE * logFile)
 {
 	int sum = 0;
 	int known_sum;
-	int i;
+	int i; 
 	int iter;
 	int *data;
 	int size;

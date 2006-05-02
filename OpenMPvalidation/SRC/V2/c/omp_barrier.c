@@ -28,7 +28,7 @@ int <ompts:testcode:functionname>omp_barrier</ompts:testcode:functionname> (FILE
 	    my_sleep (1.);
 	    result2 = 3;
 	}
-	<ompts:check>#pragma omp barrier</ompts:check>
+<ompts:check>#pragma omp barrier</ompts:check>
 	if (rank == 0) {
 	    result1 = result2;
 	}
