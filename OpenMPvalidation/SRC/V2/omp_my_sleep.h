@@ -1,3 +1,6 @@
+#ifndef MY_SLEEP_H
+#define MY_SLEEP_H
+
 #include <stdio.h>
 #include<stdlib.h>
 #include<unistd.h>
@@ -28,3 +31,5 @@ static void my_sleep(double sleeptime){
     real = (double)tv.tv_sec + ((double)tv.tv_usec/1000000.0);
   }
 }
+
+#endif

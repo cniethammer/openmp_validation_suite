@@ -87,10 +87,12 @@ print GLOBALLOG "Test startet on $mday.$mon.$year at $hour:$min\n\n";
 $cmd = "make print_compile_options >> $logfilename";
 system($cmd);
 
-# generating an up to date header file using the ompts_makeHeader.pl script
-print "Generating headerfile ...\n";
-$cmd = "./ompts_makeHeader.pl -f=ompts-$extension.conf -t=$dir";
-system($cmd);
+# generating an up to date header file using the ompts_makeHeader.pl script if compiling for c
+if ($language == "") {
+  print "Generating headerfile ...\n";
+  $cmd = "./ompts_makeHeader.pl -f=ompts-$extension.conf -t=$dir";
+  system($cmd);
+}
 
 print "Reading testlist ...\n";
 # opening testlist

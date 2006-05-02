@@ -10,6 +10,8 @@
 #include <stdio.h>
 #include <omp.h>
 
+#include "omp_testsuite.h"
+
 #define LOOPCOUNT 1000
 #define REPETITIONS 20
 
@@ -55,8 +57,6 @@ int test_omp_for_private(FILE * logfile);  /* Test for omp for private */
 int crosstest_omp_for_private(FILE * logfile);  /* Crosstest for omp for private */
 int test_omp_test_nest_lock(FILE * logfile);  /* Test for omp_test_nest_lock */
 int crosstest_omp_test_nest_lock(FILE * logfile);  /* Crosstest for omp_test_nest_lock */
-int test_omp_threadprivate(FILE * logfile);  /* Test for omp threadprivate */
-int crosstest_omp_threadprivate(FILE * logfile);  /* Crosstest for omp threadprivate */
 int test_omp_parallel_for_reduction(FILE * logfile);  /* Test for omp parallel for reduction */
 int crosstest_omp_parallel_for_reduction(FILE * logfile);  /* Crosstest for omp parallel for reduction */
 int test_omp_for_nowait(FILE * logfile);  /* Test for omp parallel for nowait */
@@ -85,8 +85,6 @@ int test_omp_parallel_for_private(FILE * logfile);  /* Test for omp parallel for
 int crosstest_omp_parallel_for_private(FILE * logfile);  /* Crosstest for omp parallel for private */
 int test_omp_atomic(FILE * logfile);  /* Test for omp atomic */
 int crosstest_omp_atomic(FILE * logfile);  /* Crosstest for omp atomic */
-int test_omp_barrier(FILE * logfile);  /* Test for omp barrier */
-int crosstest_omp_barrier(FILE * logfile);  /* Crosstest for omp barrier */
 int test_omp_parallel_sections_lastprivate(FILE * logfile);  /* Test for omp parallel sections lastprivate */
 int crosstest_omp_parallel_sections_lastprivate(FILE * logfile);  /* Crosstest for omp parallel sections lastprivate */
 int test_omp_in_parallel(FILE * logfile);  /* Test for omp_in_parallel */
@@ -95,11 +93,19 @@ int test_omp_section_private(FILE * logfile);  /* Test for omp section private *
 int crosstest_omp_section_private(FILE * logfile);  /* Crosstest for omp section private */
 int test_omp_single(FILE * logfile);  /* Test for omp single */
 int crosstest_omp_single(FILE * logfile);  /* Crosstest for omp single */
-int test_omp_for_schedule_dynamic(FILE * logfile);  /* Test for omp for schedule(dynamic) */
-int crosstest_omp_for_schedule_dynamic(FILE * logfile);  /* Crosstest for omp for schedule(dynamic) */
 int test_omp_for_ordered(FILE * logfile);  /* Test for omp for ordered */
 int crosstest_omp_for_ordered(FILE * logfile);  /* Crosstest for omp for ordered */
+int test_omp_for_schedule_dynamic(FILE * logfile);  /* Test for omp for schedule(dynamic) */
+int crosstest_omp_for_schedule_dynamic(FILE * logfile);  /* Crosstest for omp for schedule(dynamic) */
+int test_omp_barrier(FILE * logfile);  /* Test for omp barrier */
+int crosstest_omp_barrier(FILE * logfile);  /* Crosstest for omp barrier */
 int test_omp_parallel_for_ordered(FILE * logfile);  /* Test for omp parallel for ordered */
 int crosstest_omp_parallel_for_ordered(FILE * logfile);  /* Crosstest for omp parallel for ordered */
+int test_omp_threadprivate_for(FILE * logfile);  /* Test for omp threadprivate */
+int crosstest_omp_threadprivate_for(FILE * logfile);  /* Crosstest for omp threadprivate */
+int test_omp_threadprivate(FILE * logfile);  /* Test for omp threadprivate */
+int crosstest_omp_threadprivate(FILE * logfile);  /* Crosstest for omp threadprivate */
+int test_omp_parallel_default(FILE * logfile);  /* Test for omp parallel default */
+int crosstest_omp_parallel_default(FILE * logfile);  /* Crosstest for omp parallel default */
 
 #endif
