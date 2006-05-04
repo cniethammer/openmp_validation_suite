@@ -10,9 +10,6 @@
 #include "omp_testsuite.h"
 
 static int last_i = 0;
-int i;
-
-#pragma omp threadprivate(i)
 
 /* Utility function to check that i is increasing monotonically 
    with each call */
@@ -38,7 +35,7 @@ int <ompts:testcode:functionname>omp_for_ordered</ompts:testcode:functionname> (
 #pragma omp parallel
     {
 	<ompts:orphan>
-	    /*int i;*/
+	    int i;
 	    int my_islarger = 1;
 #pragma omp for schedule(static,1) ordered
 	    for (i = 1; i < 100; i++)

@@ -14,7 +14,11 @@
 #define NUMBER_OF_THREADS 10
 #define CFSMAX_SIZE 50000
 #define MAX_TIME  0.005
+
+#ifdef SLEEPTIME
+#undef SLEEPTIME
 #define SLEEPTIME 0.0001
+#endif
 
 int <ompts:testcode:functionname>omp_for_schedule_guided</ompts:testcode:functionname> (FILE * logFile)
 {

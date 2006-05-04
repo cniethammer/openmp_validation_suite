@@ -15,7 +15,6 @@
 #define CFSMAX_SIZE 1000
 #define CFDMAX_SIZE 1000000
 #define MAX_TIME 5
-#define SLEEPTIME 0.5
 
 const int chunk_size = 10;
 
