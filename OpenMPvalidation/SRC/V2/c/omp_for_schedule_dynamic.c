@@ -40,15 +40,15 @@ int <ompts:testcode:functionname>omp_for_schedule_dynamic</ompts:testcode:functi
 	{	/* begin of orphaned block */
 	<ompts:orphan>
 	    int j;
-		int tid;
-		tid = omp_get_thread_num ();
+	    int tid;
+	    tid = omp_get_thread_num ();
 #pragma omp for <ompts:check>schedule(dynamic,chunk_size)</ompts:check>
 	    for (j = 0; j < CFDMAX_SIZE; ++j)
 	    {
 		  /* One thread should take a short timeout to increase the probability of 
 		   * dynamic distribution of the chunks. */
-		  if (i == 1) {
-			  my_sleep(SLEEPTIME)
+		  if (j == 1) {
+			  my_sleep(SLEEPTIME);
 		  }
 		  tids[j] = tid;
 	    }	/* end of for */
