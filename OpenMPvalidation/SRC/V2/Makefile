@@ -158,10 +158,10 @@ test1:
 
 
 clean:
-	-find . -name "[cf]test*" -maxdepth 1 -perm 700 -exec rm {} \;
-	-find . -name "[cf]crosstest*" -maxdepth 1 -perm 700 -exec rm {} \;
-	-find . -name "[cf]ctest*" -maxdepth 1 -perm 700 -exec rm {} \;
-	-find . -name "[cf]orphan*" -maxdepth 1 -perm 700 -exec rm {} \;
+	-find . -name "[cf]test*" -maxdepth 1 -perm +1 -exec rm {} \;
+	-find . -name "[cf]crosstest*" -maxdepth 1 -perm +1 -exec rm {} \;
+	-find . -name "[cf]ctest*" -maxdepth 1 -perm +1 -exec rm {} \;
+	-find . -name "[cf]orphan*" -maxdepth 1 -perm +1 -exec rm {} \;
 	-rm [cf]test*.[cf] [cf]crosstest*.[cf] [cf]ctest*.[cf] [cf]orphan*.[cf]
 
 cleanlogs:
