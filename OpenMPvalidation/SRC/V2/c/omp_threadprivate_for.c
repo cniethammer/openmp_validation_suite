@@ -13,8 +13,11 @@ static int i;
 
 int <ompts:testcode:functionname>omp_threadprivate_for</ompts:testcode:functionname>(FILE * logFile)
 {
-		int sum;
 		int known_sum;
+		int sum;
+		known_sum = (LOOPCOUNT * (LOOPCOUNT + 1)) / 2;
+		sum = 0;
+
 #pragma omp parallel
 	{
 		int sum0 = 0;
@@ -29,7 +32,6 @@ int <ompts:testcode:functionname>omp_threadprivate_for</ompts:testcode:functionn
 		} /*end of critical */
 	} /* end of parallel */    
 	
-	known_sum = (LOOPCOUNT * (LOOPCOUNT + 1)) / 2;
 	if (known_sum != sum ) {
 		fprintf (logFile, " known_sum = %d, sum = %d\n", known_sum, sum);
 	}

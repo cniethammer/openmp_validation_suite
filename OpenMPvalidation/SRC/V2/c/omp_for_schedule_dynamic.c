@@ -48,7 +48,7 @@ int <ompts:testcode:functionname>omp_for_schedule_dynamic</ompts:testcode:functi
 		  /* One thread should take a short timeout to increase the probability of 
 		   * dynamic distribution of the chunks. */
 		  if (i == 1) {
-			  my_sleep(0.1)
+			  my_sleep(SLEEPTIME)
 		  }
 		  tids[j] = tid;
 	    }	/* end of for */

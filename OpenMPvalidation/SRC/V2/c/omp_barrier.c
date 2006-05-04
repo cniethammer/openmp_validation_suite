@@ -25,7 +25,7 @@ int <ompts:testcode:functionname>omp_barrier</ompts:testcode:functionname> (FILE
 	int rank;
 	rank = omp_get_thread_num ();
 	if (rank == 1) {
-	    my_sleep (1.);
+	    my_sleep (SLEEPTIME);
 	    result2 = 3;
 	}
 <ompts:check>#pragma omp barrier</ompts:check>

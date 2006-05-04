@@ -9,13 +9,13 @@ int main()
 
 	logFile = fopen(logFileName,"w+");
 
-	printf("######## OpenMP Validation Suite V 0.94 ######\n");
+	printf("######## OpenMP Validation Suite V OMPTS_VERSION ######\n");
 	printf("## Repetitions: %3d                       ####\n",N);
 	printf("## Loop Count : %6d                    ####\n",LOOPCOUNT);
 	printf("##############################################\n");
 	printf("Testing <directive></directive>\n\n");
 
-	fprintf(logFile,"######## OpenMP Validation Suite V 0.94 ######\n");
+	fprintf(logFile,"######## OpenMP Validation Suite V OMPTS_VERSION ######\n");
 	fprintf(logFile,"## Repetitions: %3d                       ####\n",N);
 	fprintf(logFile,"## Loop Count : %6d                    ####\n",LOOPCOUNT);
 	fprintf(logFile,"##############################################\n");
