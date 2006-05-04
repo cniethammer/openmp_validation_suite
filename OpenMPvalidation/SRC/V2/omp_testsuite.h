@@ -10,8 +10,6 @@
 #include <stdio.h>
 #include <omp.h>
 
-#include "omp_testsuite.h"
-
 
 #define OMPTS_VERSION 2.0
 
