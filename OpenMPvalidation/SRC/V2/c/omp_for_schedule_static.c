@@ -12,7 +12,7 @@
 #include "omp_my_sleep.h"
 
 #define NUMBER_OF_THREADS 10
-#define CFSMAX_SIZE 100
+#define CFSMAX_SIZE 1000
 #define MAX_TIME 0.01
 
 #ifdef SLEEPTIME
