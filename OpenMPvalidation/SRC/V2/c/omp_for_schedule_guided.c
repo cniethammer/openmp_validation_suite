@@ -12,7 +12,7 @@
 #include "omp_my_sleep.h"
 
 #define NUMBER_OF_THREADS 10
-#define CFSMAX_SIZE 50000
+#define CFSMAX_SIZE 1000
 #define MAX_TIME  0.005
 
 #ifdef SLEEPTIME
@@ -58,48 +58,51 @@ int <ompts:testcode:functionname>omp_for_schedule_guided</ompts:testcode:functio
      *
 	 * Each thread will start immediately with the first chunk.
      */
-#pragma omp parallel shared(tids) 
-    {
-	<ompts:orphan>
-	    int tid;
-	    int j;
+#pragma omp parallel shared(tids)
+    {	/* begin of parallel */
+      <ompts:orphan>
+      double count;
+      int tid;
+      int j;
 
-	    tid = omp_get_thread_num ();
+      tid = omp_get_thread_num ();
 
-#pragma omp for nowait <ompts:check>schedule(guided,1)</ompts:check>
-	    for(j = 0; j < CFSMAX_SIZE; j++)
-		{
-		  int count = 0;
-		  /* fprintf (logFile, " notout = %d, count = %d\n", notout, count); */
+#pragma omp for nowait <ompts:check>schedule(guided)</ompts:check>
+      for(j = 0; j < CFSMAX_SIZE; ++j)
+      {
+	count = 0.;
 #pragma omp flush(maxiter)
-		  if (j > maxiter){
+	if (j > maxiter)
+	{
 #pragma omp critical
-			{
-			  maxiter = j;
-			}
-		  }
-
-		  /* if it is not our turn we wait 
-			 a) until another thread executed an iteration with a higher iteration count
-			 b) we are at the end of the loop (first thread finished and set notout = 0 OR
-			 c) timeout arrived */ 
-
-#pragma omp flush(maxiter)
-		  while (notout && (count < MAX_TIME) && (maxiter == j))
-		  {
-			/* fprintf (logFile, "Thread Nr. %d going to sleep and waking up other thread\n", tid); */
-            my_sleep (SLEEPTIME);
-			count += SLEEPTIME;
+	  {
+	    maxiter = j;
+	  }	/* end of critical */ 
+	}
+	/*printf ("thread %d sleeping\n", tid);*/
+	while (notout && (count < MAX_TIME) && (maxiter == j))
+	{
 #pragma omp flush(maxiter,notout)
-		  }
-		  /* fprintf (logFile, "Thread Nr. %d woke up and is working once begining with workNr. %d\n", tid,j); */
-		  tids[j] = tid;
-		} /* end omp for */
-	</ompts:orphan>	
+	  my_sleep (SLEEPTIME);
+	  count += SLEEPTIME;
+#ifdef VERBOSE
+	  printf(".");
+#endif
+	}
+#ifdef VERBOSE
+	if (count > 0.) printf(" waited %lf s\n", count);
+#endif
+	/*printf ("thread %d awake\n", tid);*/
+	tids[j] = tid;
+#ifdef VERBOSE
+	printf("%d finished by %d\n",j,tid);
+#endif
+      }	/* end of for */
 
-	notout = 0;
-#pragma omp flush(notout)
-    } /* end omp parallel */
+      notout = 0;
+#pragma omp flush(maxiter,notout)
+      </ompts:orphan>
+    }	/* end of parallel */
 
 /*******************************************************
  * evaluation of the values                            *
