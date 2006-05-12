@@ -11,7 +11,7 @@
 int <ompts:testcode:functionname>omp_parallel_sections_reduction</ompts:testcode:functionname>(FILE * logFile){
 	int sum=7;
 	int known_sum;	
-	double dpt,dsum=0;
+	double dpt=1,dsum=0;
 	double dknown_sum;
 	double dt=0.5;				/* base of geometric row for + and - test*/
 	double rounding_error= 1.E-5;
