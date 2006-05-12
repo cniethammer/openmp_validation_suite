@@ -171,7 +171,7 @@ TEST: while(<TEST>){
 			print "\n";
 		    } else {
 			# Run the crosstest
-			$cmd = "export OMP_NUM_THREADS=".$numthreads."; ./".$language.$orphanname."ctest_".$testname."> ".$language.$orphanname."crosstest_".$testname.".out";
+			$cmd = "OMP_NUM_THREADS=".$numthreads."; export OMP_NUM_THREADS; ./".$language.$orphanname."ctest_".$testname."> ".$language.$orphanname."crosstest_".$testname.".out";
 			$exit_status = system($cmd);
 			if ($exit_status){
 			    $crossresult = $exit_status >> 8;
