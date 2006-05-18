@@ -46,11 +46,11 @@
 
 # Intel compilers:
 #CC = ecc
-CC = icc
+#CC = icc
 #CC = omcc
 #CFLAGS = -O3 -ip -openmp
 #CFLAGS = -Wall -O0 -openmp
-CFLAGS =  -openmp -lm
+#CFLAGS =  -openmp -lm
 #CFLAGS =  -openmp -lm -DVERBOSE
 
 #FC = ifort

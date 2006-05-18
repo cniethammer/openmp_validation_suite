@@ -9,7 +9,7 @@ int main()
 
 	logFile = fopen(logFileName,"w+");
 
-	printf("######## OpenMP Validation Suite V OMPTS_VERSION ######\n");
+	printf("######## OpenMP Validation Suite V %s ######\n", OMPTS_VERSION );
 	printf("## Repetitions: %3d                       ####\n",N);
 	printf("## Loop Count : %6d                    ####\n",LOOPCOUNT);
 	printf("##############################################\n");
