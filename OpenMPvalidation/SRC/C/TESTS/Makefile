@@ -9,6 +9,11 @@
 
 # the number of threads this validation suite will use
 NUM_THREADS= 2
+# GCC 4.2 experimental
+#
+#CC = gcc
+#CFLAGS = -fopenmp
+#CLINKFLAGS = -fopenmp -lgomp -lm
 
 # Fujitsu Compilers:
 #CC = fcc
