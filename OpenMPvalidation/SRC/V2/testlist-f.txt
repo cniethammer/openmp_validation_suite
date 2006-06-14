@@ -32,7 +32,7 @@ par_do_lastprivate
 par_do_ordered
 par_do_private
 par_do_reduction
-par_sectionirstprivate
+par_section_firstprivate
 par_section_lastprivate
 par_section_private
 par_section_reduct
