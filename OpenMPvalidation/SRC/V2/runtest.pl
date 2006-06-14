@@ -146,7 +146,7 @@ TEST: while(<TEST>){
 
 		# Compile:
 		if(!$nocompile){
-		    print "Creating source out of templates ... \n";
+		    print "Creating source out of templates for $testname... \n";
 		    $cmd="make ".$language.$orphanname."test_".$testname." >> compile.log";
 		    system($cmd);
 		    $cmd="make ".$language.$orphanname."ctest_".$testname." >> compile.log";
