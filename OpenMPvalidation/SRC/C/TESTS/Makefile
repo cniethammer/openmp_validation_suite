@@ -9,6 +9,13 @@
 
 # the number of threads this validation suite will use
 NUM_THREADS= 2
+
+#LLNL Rose compiler
+#omniInstallPath=/home/liao6/opt/omni
+#CC = rose
+#CFLAGS =-D_OPENMP -I/home/liao6/OpenMPtranslation 
+#CLINKFLAGS  = -L$(omniInstallPath)/lib/openmp/lib -lompc -lpthread -lm
+
 # GCC 4.2 experimental
 #
 #CC = gcc
@@ -131,8 +138,10 @@ feasible_test.h:
 	 ./preCompilation $(TEST_FILENAME) $(CC) $(CFLAGS)
 
 #compile main.c and link with other objects to get  executables
-main:feasible_test.h
-	$(CC) $(CFLAGS) $(CLINKFLAGS) -o main main.c *.o
+main.o:feasible_test.h
+	$(CC) $(CFLAGS) -c main.c
+main:main.o 
+	$(CC) $(CFLAGS) -o main *.o $(CLINKFLAGS)
 	
 clean:
 	rm -f *.o failed.compilation feasible_test.h main test.log *~ 
