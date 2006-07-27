@@ -2,6 +2,7 @@
 # By Chunhua Liao
 # University of Houston
 #
+# Matthias Mueller, ZIH, Technische Universitaet Dresden
 #-------------------------------------------------
 #Set the desired compiler and options
 #change NUM_THREADS to the proper one on your machine
@@ -34,11 +35,11 @@ NUM_THREADS= 2
 #CLINKFLAGS = $(CFLAGS)
 
 # Intel compilers:
-#
+# first line of flags is tested
 #CC = ecc
 #CC = icc
-#CFLAGS = -O3 -ipo -openmp
 #CFLAGS = -Wall -O0 -openmp
+#CFLAGS = -O3 -ipo -openmp
 #CFLAGS =  -openmp
 #CLINKFLAGS = $(CFLAGS)
 
@@ -138,11 +139,12 @@ feasible_test.h:
 	 ./preCompilation $(TEST_FILENAME) $(CC) $(CFLAGS)
 
 #compile main.c and link with other objects to get  executables
+
 main.o:feasible_test.h
 	$(CC) $(CFLAGS) -c main.c
 main:main.o 
 	$(CC) $(CFLAGS) -o main *.o $(CLINKFLAGS)
-	
+
 clean:
 	rm -f *.o failed.compilation feasible_test.h main test.log *~ 
 

@@ -47,14 +47,15 @@ int <ompts:testcode:functionname>omp_for_ordered</ompts:testcode:functionname> (
 		}	/* end of ordered */
 	    }	/* end of for */
 #pragma omp critical
-	    {
-		is_larger = is_larger && my_islarger;
-	    }	/* end of critical */
-	</ompts:orphan>
-    }
-
-    known_sum=(99 * 100) / 2;
-    return ((known_sum == sum) && is_larger);
+		{
+			is_larger = is_larger && my_islarger;
+		}	/* end of critical */
+</ompts:orphan>
+	}/* end of parallel*/
+	known_sum=(99*100)/2;
+	fprintf(logFile," known_sum = %d , sum = %d \n",known_sum,sum);
+	fprintf(logFile," is_larger = %d \n",is_larger);
+	return (known_sum==sum) && is_larger;
 }
 </ompts:testcode>
 </ompts:test>
