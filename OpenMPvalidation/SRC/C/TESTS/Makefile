@@ -11,12 +11,6 @@
 # the number of threads this validation suite will use
 NUM_THREADS= 2
 
-#LLNL Rose compiler
-#omniInstallPath=/home/liao6/opt/omni
-#CC = rose
-#CFLAGS =-D_OPENMP -I/home/liao6/OpenMPtranslation 
-#CLINKFLAGS  = -L$(omniInstallPath)/lib/openmp/lib -lompc -lpthread -lm
-
 # GCC 4.2 experimental
 #
 #CC = gcc
