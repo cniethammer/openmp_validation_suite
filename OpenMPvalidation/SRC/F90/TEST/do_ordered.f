@@ -1,70 +1,90 @@
-<ompts:test>
-<ompts:directive>do ordered</ompts:directive>
-<ompts:version>2.0</ompts:version>
-<ompts:dependences>parallel private, critical</ompts:dependences>
-<ompts:testcode>
-      INTEGER FUNCTION i_islarger(i)
-        IMPLICIT NONE
-        INTEGER i, islarger
-        INTEGER last_i
-        COMMON /mycom/ last_i
-        IF ( i .GT. last_i) THEN
+!********************************************************************
+! Functions: chk_do_ordered
+!********************************************************************
+
+        integer function chk_i_islarger(i)
+        implicit none
+        integer i, islarger, last_i
+        common last_i
+        if ( i .gt. last_i) then
           islarger = 1
-        ELSE
+        else
           islarger = 0
-        END If
+        end if
         last_i = i
-        i_islarger = islarger
-      END
+        chk_i_islarger = islarger
+        end
 
-      INTEGER FUNCTION <ompts:testcode:functionname>do_ordered</ompts:testcode:functionname>()
-        IMPLICIT NONE
-        INTEGER known_sum, is_larger
-        INTEGER last_i
-        INTEGER i_islarger
-        COMMON /mycom/ last_i
-<ompts:orphan:vars>
-        INTEGER sum, i, my_islarger
-        COMMON /orphvars/ my_islarger, i, sum
-</ompts:orphan:vars>
-
+        integer function chk_do_ordered()
+        implicit none
+        integer sum, known_sum, i, my_islarger,is_larger,last_i
+        integer chk_i_islarger
+        common last_i
         sum = 0
         is_larger = 1
         last_i = 0
 !$omp parallel private(my_islarger)
         my_islarger = 1
 !$omp do schedule(static,1) ordered
-        DO i=1, 99
-<ompts:orphan>
-<ompts:check>
+        do i=1, 99
 !$omp ordered
-</ompts:check>
-          IF (i_islarger(i) .EQ. 1 .AND. my_islarger .EQ. 1) THEN
+          if ( chk_i_islarger(i) .eq. 1 .and. my_islarger .eq. 1) then
             my_islarger = 1
-          ELSE
+          else
             my_islarger = 0
-          END IF
+          end if
           sum = sum + i
-<ompts:check>
 !$omp end ordered
-</ompts:check>
-</ompts:orphan>
-        END DO
+        end do
 !$omp end do
 !$omp critical
-        IF (is_larger .EQ. 1 .AND. my_islarger .EQ. 1 ) THEN
+        if (is_larger .eq. 1 .and. my_islarger .eq. 1 ) then
           is_larger = 1
-        ELSE
+        else
           is_larger = 0
-        END IF
+        end if
 !$omp end critical
 !$omp end parallel
         known_sum = (99*100)/2
-        IF ( known_sum .EQ. sum .AND. is_larger .EQ. 1) THEN
-          <testfunctionname></testfunctionname> = 1
-        ELSE
-          <testfunctionname></testfunctionname> = 0
-        END IF
-      END
-</ompts:testcode>
-</ompts:test>
+        if ( known_sum .eq. sum .and. is_larger .eq. 1) then
+          chk_do_ordered = 1
+        else
+          chk_do_ordered = 0
+        end if
+        end
+
+        integer function crschk_do_ordered()
+        implicit none
+        integer sum, known_sum, i , my_islarger, is_larger, last_i
+        integer chk_i_islarger
+        common last_i
+        sum = 0
+        is_larger = 1
+        last_i = 0
+!$omp parallel private(my_islarger)
+        my_islarger = 1
+!$omp do schedule(static, 1)
+        do i=1, 99
+          if ( chk_i_islarger(i) .eq. 1 .and. my_islarger .eq. 1 ) then
+            my_islarger = 1
+          else
+            my_islarger = 0
+          end if
+        end do
+!$omp end do
+!$omp critical
+        if ( is_larger .eq. 1 .and. my_islarger .eq. 1 ) then
+          is_larger = 1
+        else
+          is_larger = 0
+        end if
+!$omp end critical
+!$omp end parallel
+        known_sum = (99*100)/2
+        if ( known_sum .eq. sum .and. is_larger .eq. 1 ) then
+          crschk_do_ordered = 1
+        else
+          crschk_do_ordered = 0
+        end if
+        end
+

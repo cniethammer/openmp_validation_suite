@@ -1,48 +1,68 @@
-<ompts:test>
-<ompts:testdescription></ompts:testdescription>
-<ompts:version>2.0</ompts:version>
-<ompts:directive>omp do firstprivate</ompts:directive>
-<ompts:dependences>omp parallel private, omp critical</ompts:dependences>
-<ompts:testcode>
-      integer function <ompts:testcode:functionname>do_firstprivate</ompts:testcode:functionname>()
+!********************************************************************
+! Functions: chk_do_firstprivate
+!********************************************************************
+      integer function chk_do_firstprivate()
       implicit none
-      integer sum, known_sum
+      integer sum, sum0, sum1, known_sum, i
       integer numthreads
       integer omp_get_num_threads
-<ompts:orphan:vars>
-      integer sum0, sum1, i
-      COMMON /orphvars/ sum0, sum1, i
-</ompts:orphan:vars>
-
       include "omp_testsuite.f"
       sum = 0
       sum0 = 12345 ! bug 162, Liao
       sum1 = 0
+!$omp parallel firstprivate(sum1)
+!$omp single
+      numthreads= omp_get_num_threads()
+!$omp end single
+!$omp do firstprivate(sum0)
+      do i=1,LOOPCOUNT
+        sum0 = sum0 + i
+        sum1 = sum0
+      end do
+!$omp end do
+!$omp critical
+      sum = sum + sum1
+!$omp end critical
+!$omp end parallel
+      known_sum =12345*numthreads+ (LOOPCOUNT*(LOOPCOUNT+1))/2
+      if ( known_sum .eq. sum ) then
+         chk_do_firstprivate = 1
+      else
+         chk_do_firstprivate = 0
+      end if
+      end
+
+        integer function crschk_do_firstprivate()
+        implicit none
+        integer sum, sum0, sum1, known_sum, i
+        integer numthreads
+        integer omp_get_num_threads
+        include "omp_testsuite.f"
+        sum = 0
+        sum0 = 12345
+        sum1 = 0
 
 !$omp parallel firstprivate(sum1)
 !$omp single
       numthreads= omp_get_num_threads()
 !$omp end single
 
-<ompts:orphan>
-!$omp do <ompts:check>firstprivate(sum0)</ompts:check><ompts:crosscheck>private (sum0)</ompts:crosscheck>
-      do i=1,LOOPCOUNT
-        sum0 = sum0 + i
-        sum1 = sum0
-      end do
+!$omp do private(sum0)
+        do i=1,LOOPCOUNT
+          sum0 = sum0 + i
+          sum1 = sum0
+        end do
 !$omp end do
-</ompts:orphan>
-
 !$omp critical
-      sum = sum + sum1
+        sum = sum + sum1
 !$omp end critical
 !$omp end parallel
-      known_sum=12345*numthreads+ (LOOPCOUNT*(LOOPCOUNT+1))/2
-      if ( known_sum .eq. sum ) then
-         <testfunctionname></testfunctionname> = 1
-      else
-         <testfunctionname></testfunctionname>= 0
-      end if
-      end
-</ompts:testcode>
-</ompts:test>
+!bug 162, by Liao
+        known_sum = 12345*numthreads+ (LOOPCOUNT*(LOOPCOUNT+1))/2
+        if ( known_sum .eq. sum ) then
+          crschk_do_firstprivate = 1
+        else
+          crschk_do_firstprivate = 0
+        end if
+        end
+

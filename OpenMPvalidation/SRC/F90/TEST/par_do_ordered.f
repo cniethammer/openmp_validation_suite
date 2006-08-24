@@ -1,62 +1,78 @@
-<ompts:test>
-<ompts:testdescription>Test which checks the omp parallel do ordered directive</ompts:testdescription>
-<ompts:ompversion>2.0</ompts:ompversion>
-<ompts:directive>omp parallel do ordered</ompts:directive>
-<ompts:dependences>par schedule stat</ompts:dependences>
-<ompts:testcode>
-! **********************************************************
-! Helper function is_larger
-! **********************************************************
-      INTEGER FUNCTION i_islarger2(i)
-        IMPLICIT NONE
-        INTEGER i
-        INTEGER last_i,islarger
-        COMMON /com/ last_i
-        INCLUDE "omp_testsuite.f"
+!********************************************************************
+! Functions: chk_par_do_ordered
+!********************************************************************
+
+	integer function chk_i_islarger2(i)
+        implicit none
+        integer i
+        common last_i
+	integer last_i,islarger
+        include "omp_testsuite.f"
 !        print *, "last_i",last_i, "i", i
 ! last_i is a global variable
-        IF ( i .GT. last_i ) THEN
-          islarger = 1
-        ELSE
-          islarger = 0
-        END IF
-        last_i = i
-        i_islarger2 = islarger
-      END FUNCTION
+	if ( i .gt. last_i ) then
+	  islarger = 1
+	else
+	  islarger = 0
+	end if
+	last_i = i
+	chk_i_islarger2 = islarger
+	end
 
-      INTEGER FUNCTION <ompts:testcode:functionname>par_do_ordered</ompts:testcode:functionname>()
-        IMPLICIT NONE
-        COMMON /com/ last_i
-        INTEGER sum, known_sum,i, is_larger,last_i
-        INTEGER i_islarger2
-        
-        sum=0
-        is_larger=1
-        last_i=0
+	integer function chk_par_do_ordered()
+        implicit none
+        common last_i
+	integer sum, known_sum,i, is_larger,last_i
+	integer chk_i_islarger2
+	
+	sum=0
+	is_larger=1
+	last_i=0
 !$omp parallel do schedule(static, 1) ordered
-        DO i=1, 99
-		<ompts:check>
+	do i=1, 99
 !$omp ordered
-		</ompts:check>
-        IF( i_islarger2(i) .EQ. 1 .AND. is_larger .EQ. 1 ) THEN  
-          is_larger = 1
-        ELSE
-          is_larger = 0
-        END IF
-        sum = sum + i
-		<ompts:check>
+	  if( chk_i_islarger2(i) .eq. 1 .and. is_larger .eq. 1 ) then	  
+	    is_larger = 1
+	  else
+	    is_larger = 0
+	  end if
+	  sum = sum + i
 !$omp end ordered
-		</ompts:check>
-        END DO
+	end do
 !$omp end parallel do
-        known_sum = (99*100)/2
+	known_sum = (99*100)/2
 !Yi Wen; Sun compiler will fail sometimes
 !        print *, "sum", sum, "ks", known_sum, "la", is_larger
-        IF ( known_sum .EQ. sum .AND. is_larger .EQ. 1 ) THEN
-           <testfunctionname></testfunctionname> = 1
-        ELSE
-           <testfunctionname></testfunctionname> = 0
-        END IF
-      END FUNCTION
-</ompts:testcode>
-</ompts:test>
+	if ( known_sum .eq. sum .and. is_larger .eq. 1 ) then
+	   chk_par_do_ordered = 1
+	else
+	   chk_par_do_ordered = 0
+	end if
+	end
+
+	integer function crschk_par_do_ordered()
+        implicit none
+	integer sum,known_sum, i, is_larger, last_i
+	integer chk_i_islarger2
+	common last_i
+	sum=0
+	is_larger=1
+	last_i=0
+!$omp parallel do schedule(static, 1) 
+	do i=1, 99
+	  if( chk_i_islarger2(i) .eq. 1 .and. is_larger .eq. 1) then
+            is_larger = 1
+          else
+            is_larger = 0
+          end if
+          sum = sum + i
+	end do
+!$omp end parallel do
+	known_sum = (99*100)/2
+	if ( known_sum .eq. sum .and. is_larger .eq. 1) then
+	   crschk_par_do_ordered = 1
+	else
+	   crschk_par_do_ordered = 0
+	end if
+	end 
+

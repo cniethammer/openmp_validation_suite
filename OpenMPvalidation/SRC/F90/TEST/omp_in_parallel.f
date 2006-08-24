@@ -1,40 +1,40 @@
-<ompts:test>
-<ompts:testdescription>Test which checks that omp_in_parallel returns false when called from a serial region and true when called within a parallel region.</ompts:testdescription>
-<ompts:ompversion>2.0</ompts:ompversion>
-<ompts:directive>omp_in_parallel</ompts:directive>
-<ompts:testcode>
-      INTEGER FUNCTION <ompts:testcode:functionname>omp_in_parallel</ompts:testcode:functionname>()
-!   checks that false is returned when called from serial region
-!   and true is returned when called within parallel region
-		<ompts:orphan:vars>
-        LOGICAL omp_in_parallel
-        LOGICAL serial, parallel
-        COMMON /orphvars/ serial, parallel
-		</ompts:orphan:vars>
+!*********************************************************************
+! Functions: chk_omp_in_parallel()
+!*********************************************************************
+
+        integer function chk_omp_in_parallel()
+C   checks that false is returned when called from serial region
+C     and true is returned when called within parallel region
+        logical serial, parallel, omp_in_parallel
         serial=.TRUE.
         parallel=.FALSE.
-
-		<ompts:orphan>
-		<ompts:check>
         serial=omp_in_parallel()
-		</ompts:check>
-		</ompts:orphan>
-
 !$omp parallel
 !$omp single
-		<ompts:orphan>
-		<ompts:check>
-        parallel=omp_in_parallel();
-		</ompts:check>
-		</ompts:orphan>
+      parallel=omp_in_parallel();
 !$omp end single
 !$omp end parallel
+      if( .not. serial .and. parallel ) then
+       chk_omp_in_parallel=1
+      else
+       chk_omp_in_parallel=0
+      end if
+      end
+      integer function crschk_omp_in_parallel()
 
-        IF ( (.NOT. serial) .AND. (parallel) ) THEN
-          <testfunctionname></testfunctionname>=1
-        ELSE
-          <testfunctionname></testfunctionname>=0
-        END IF
-      END FUNCTION
-</ompts:testcode>
-</ompts:test>
+        logical serial, parallel, omp_in_parallel
+        serial=.TRUE.
+        parallel=.FALSE.
+!       serial=omp_in_parallel()
+!$omp parallel
+!$omp single
+!      parallel=omp_in_parallel();
+!$omp end single
+!$omp end parallel
+      if( .not. serial .and. parallel ) then
+       crschk_omp_in_parallel=1
+      else
+       crschk_omp_in_parallel=0
+      end if
+      end
+

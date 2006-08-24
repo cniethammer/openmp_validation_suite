@@ -3,28 +3,28 @@
 ! change "character*20" into "character (LEN=20)::"
 ! get rid of the "tab" key by Zhenying Liu, on Oct. 16, 2005.
 !********************************************************************
-<ompts:testcosde>
-      INTEGER FUNCTION <ompts:testcode:functionname>omp_atomic</ompts:testcode:functionname>()
-        IMPLICIT NONE
-        INTEGER sum, sum2, known_sum, i, i2,diff
-        INTEGER product,known_product,int_const
-        INTEGER MAX_FACTOR
-        DOUBLE PRECISION dsum,dknown_sum,dt,dpt
-        DOUBLE PRECISION rounding_error, ddiff
-        INTEGER double_DIGITS
-        LOGICAL logic_and, logic_or, logic_eqv,logic_neqv
-        INTEGER bit_and, bit_or
-        INTEGER exclusiv_bit_or
-        INTEGER min_value, max_value
-        DOUBLE PRECISION dmin, dmax
-        INTEGER result
-        INCLUDE "omp_testsuite.f"
-        LOGICAL logics(LOOPCOUNT)
-        INTEGER int_array(LOOPCOUNT)
-        DOUBLE PRECISION d_array(LOOPCOUNT)
-        PARAMETER (int_const=10,known_product=3628800)
-        PARAMETER (double_DIGITS=20,MAX_FACTOR=10)
-        PARAMETER (rounding_error=1.E-2)
+
+        integer function chk_omp_atomic()
+        implicit none
+        integer sum, sum2, known_sum, i, i2,diff
+        integer product,known_product,int_const
+        integer MAX_FACTOR
+        double precision dsum,dknown_sum,dt,dpt
+        double precision rounding_error, ddiff
+        integer double_DIGITS
+        logical logic_and, logic_or, logic_eqv,logic_neqv
+        integer bit_and, bit_or
+        integer exclusiv_bit_or
+        integer min_value, max_value
+        double precision dmin, dmax
+        integer result
+        include "omp_testsuite.f"
+        logical logics(LOOPCOUNT)
+        integer int_array(LOOPCOUNT)
+        double precision d_array(LOOPCOUNT)
+        parameter (int_const=10,known_product=3628800)
+        parameter (double_DIGITS=20,MAX_FACTOR=10)
+        parameter (rounding_error=1.E-2)
         dt = 1./3.
         known_sum = (LOOPCOUNT * (LOOPCOUNT + 1)) / 2
         product = 1
@@ -39,367 +39,332 @@
         exclusiv_bit_or = 0
 !$omp parallel
 !$omp do 
-        DO i =1, LOOPCOUNT
-<ompts:check>
+        do i =1, LOOPCOUNT
 !$omp atomic
-</ompts:check>
           sum = sum + i
-        END DO
+        end do
 !$omp end do
 !$omp end parallel
 
-        IF (known_sum .NE. sum) THEN
+       if (known_sum .ne. sum) then
              result = result + 1
-        WRITE(1,*) "Error in sum with integers: Result was ",
+        write(1,*) "Error in sum with integers: Result was ",
      &   sum,"instead of ", known_sum
-        END If
+        end if
 
         diff = (LOOPCOUNT * (LOOPCOUNT + 1)) / 2
 
 
+
 !$omp parallel
 !$omp do 
-        DO i =1, LOOPCOUNT
-<ompts:check>
+        do i =1, LOOPCOUNT
 !$omp atomic
-</ompts:check>
           diff = diff - i
-        END DO
+        end do
 !$omp end do
 !$omp end parallel
   
-        IF ( diff .NE. 0 ) THEN
+        if ( diff .NE. 0 ) then
           result = result + 1
-        WRITE(1,*) "Error in difference with integers: Result was ",
-     &   diff,"instead of 0."
-        END IF
+        write(1,*) "Error in difference with integers: Result was ",
+     &   sum,"instead of 0."
+        end if
 
 !... Test for doubles
-        dsum = 0.
+        dsum =0.
         dpt = 1
 
-        DO i=1, DOUBLE_DIGITS
+        do i=1, DOUBLE_DIGITS
           dpt= dpt * dt
-        END DO
+        end do
         dknown_sum = (1-dpt)/(1-dt)
 !$omp parallel
 !$omp do 
-        DO i=0,DOUBLE_DIGITS-1
-<ompts:check>
+        do i=0,DOUBLE_DIGITS-1
 !$omp atomic
-</ompts:check>
               dsum = dsum + dt**i
-        END DO
+        end do
 !$omp end do
 !$omp end parallel
 
  
-        IF (dsum .NE. dknown_sum .AND. 
-     &     ABS(dsum - dknown_sum) .GT. rounding_error ) THEN
+        if(dsum .ne. dknown_sum .and. 
+     &     abs(dsum - dknown_sum) .gt. rounding_error ) then
            result = result + 1
-           WRITE(1,*) "Error in sum with doubles: Result was ",
+           write(1,*) "Error in sum with doubles: Result was ",
      &       dsum,"instead of ",dknown_sum,"(Difference: ",
      &       dsum - dknown_sum,")"
-        END IF
+        end if
         dpt = 1
 
-      
-        DO i=1, DOUBLE_DIGITS
-           dpt = dpt*dt
-        END DO
 
+      
+        do i=1, DOUBLE_DIGITS
+           dpt = dpt*dt
+        end do
         ddiff = ( 1-dpt)/(1-dt)
 !$omp parallel
 !$omp do 
-        DO i=0, DOUBLE_DIGITS-1
-<ompts:check>
+        do i=0, DOUBLE_DIGITS-1
 !$omp atomic
-</ompts:check>
           ddiff = ddiff - dt**i
-        END DO
+        end do
 !$omp end do
 !$omp end parallel
 
-        IF ( ABS(ddiff) .GT. rounding_error ) THEN
+        if ( abs(ddiff) .GT. rounding_error ) then
            result = result + 1
-           WRITE(1,*) "Error in Difference with doubles: Result was ",
+           write(1,*) "Error in Difference with doubles: Result was ",
      &       ddiff,"instead of 0.0"
-        END IF
+        end if
 
 !$omp parallel
 !$omp do 
-        DO i=1,MAX_FACTOR
-<ompts:check>
+        do i=1,MAX_FACTOR
 !$omp atomic
-</ompts:check>
            product = product * i
-        END DO
+        end do
 !$omp end do
 !$omp end parallel
 
-        IF (known_product .NE. product) THEN
+        if (known_product .NE. product) then
            result = result + 1
-           WRITE(1,*) "Error in Product with integers: Result was ",
+           write(1,*) "Error in Product with integers: Result was ",
      &       product," instead of",known_product 
-        END IF
+        end if
 
-        DO i=1,LOOPCOUNT
-          logics(i) = .TRUE.
-        END DO
+        do i=1,LOOPCOUNT
+          logics(i) = .true.
+        end do
 
 !$omp parallel
 !$omp do 
-        DO i=1,LOOPCOUNT
-<ompts:check>
+        do i=1,LOOPCOUNT
 !$omp atomic
-</ompts:check>
-          logic_and = logic_and .AND. logics(i)
-        END DO
+          logic_and = logic_and .and. logics(i)
+        end do
 !$omp end do
 !$omp end parallel
 
-        IF (.NOT. logic_and) THEN
+        if (.not. logic_and) then
           result = result + 1
-          WRITE(1,*) "Error in logic AND part 1"
-        END IF
+          write(1,*) "Error in logic AND part 1"
+        end if
 
 
-        logic_and = .TRUE.
-        logics(LOOPCOUNT/2) = .FALSE.
+        logic_and = .true.
+        logics(LOOPCOUNT/2) = .false.
 
 !$omp parallel
 !$omp do
-        DO i=1,LOOPCOUNT
-<ompts:check>
+        do i=1,LOOPCOUNT
 !$omp atomic
-</ompts:check>
-          logic_and = logic_and .AND. logics(i)
-        END DO
+          logic_and = logic_and .and. logics(i)
+        end do
 !$omp end do
 !$omp end parallel
 
-        IF (logic_and) THEN
+        if (logic_and) then
            result = result + 1
-           WRITE(1,*) "Error in logic AND pass 2"
-        END IF
+           write(1,*) "Error in logic AND pass 2"
+        end if
 
-        DO i=1, LOOPCOUNT
-         logics(i) = .FALSE.
-        END DO
-
-!$omp parallel
-!$omp do 
-        DO i = 1, LOOPCOUNT
-<ompts:check>
-!$omp atomic
-</ompts:check>
-           logic_or = logic_or .OR. logics(i)
-        END DO
-!$omp end do
-!$omp end parallel
-
-        IF (logic_or) THEN
-          result = result + 1
-          WRITE(1,*) "Error in logic OR part 1"
-        END IF
-
-        logic_or = .FALSE.
-        logics(LOOPCOUNT/2) = .TRUE.
+        do i=1, LOOPCOUNT
+         logics(i) = .false.
+        end do
 
 !$omp parallel
 !$omp do 
-        DO i=1,LOOPCOUNT
-<ompts:check>
+        do i = 1, LOOPCOUNT
 !$omp atomic
-</ompts:check>
-           logic_or = logic_or .OR. logics(i)
-        END DO
+           logic_or = logic_or .or. logics(i)
+        end do
 !$omp end do
 !$omp end parallel
 
-        IF ( .NOT. logic_or ) THEN
+        if (logic_or) then
           result = result + 1
-          WRITE(1,*) "Error in logic OR part 2"
-        END IF
+          write(1,*) "Error in logic OR part 1"
+        end if
+
+        logic_or = .false.
+        logics(LOOPCOUNT/2) = .true.
+
+!$omp parallel
+!$omp do 
+        do i=1,LOOPCOUNT
+!$omp atomic
+           logic_or = logic_or .or. logics(i)
+        end do
+!$omp end do
+!$omp end parallel
+
+        if ( .not. logic_or ) then
+          result = result + 1
+          write(1,*) "Error in logic OR part 2"
+        end if
 
 !... Test logic EQV, unique in Fortran
-        DO i=1, LOOPCOUNT
-         logics(i) = .TRUE.
-        END DO
+        do i=1, LOOPCOUNT
+         logics(i) = .true.
+        end do
 
-        logic_eqv = .TRUE.
-
-!$omp parallel
-!$omp do 
-        DO i = 1, LOOPCOUNT
-<ompts:check>
-!$omp atomic
-</ompts:check>
-           logic_eqv = logic_eqv .EQV. logics(i)
-        END DO
-!$omp end do
-!$omp end parallel
-
-        IF (.NOT. logic_eqv) THEN
-          result = result + 1
-          WRITE(1,*) "Error in logic EQV part 1"
-        END IF
-
-        logic_eqv = .TRUE.
-        logics(LOOPCOUNT/2) = .FALSE.
+        logic_eqv = .true.
 
 !$omp parallel
 !$omp do 
-        DO i=1,LOOPCOUNT
-<ompts:check>
+        do i = 1, LOOPCOUNT
 !$omp atomic
-</ompts:check>
-           logic_eqv = logic_eqv .EQV. logics(i)
-        END DO
+           logic_eqv = logic_eqv .eqv. logics(i)
+        end do
 !$omp end do
 !$omp end parallel
 
-        IF ( logic_eqv ) THEN
+        if (.not. logic_eqv) then
           result = result + 1
-          WRITE(1,*) "Error in logic EQV part 2"
-        END IF
+          write(1,*) "Error in logic EQV part 1"
+        end if
+
+        logic_eqv = .true.
+        logics(LOOPCOUNT/2) = .false.
+
+!$omp parallel
+!$omp do 
+        do i=1,LOOPCOUNT
+!$omp atomic
+           logic_eqv = logic_eqv .eqv. logics(i)
+        end do
+!$omp end do
+!$omp end parallel
+
+        if ( logic_eqv ) then
+          result = result + 1
+          write(1,*) "Error in logic EQV part 2"
+        end if
 
 !... Test logic NEQV, which is unique in Fortran
-        DO i=1, LOOPCOUNT
-         logics(i) = .FALSE.
-        END DO
+        do i=1, LOOPCOUNT
+         logics(i) = .false.
+        end do
 
-        logic_neqv = .FALSE.
+        logic_neqv = .false.
 
 !$omp parallel
 !$omp do 
-        DO i = 1, LOOPCOUNT
-<ompts:check>
+        do i = 1, LOOPCOUNT
 !$omp atomic
-</ompts:check>
-           logic_neqv = logic_neqv .OR. logics(i)
-        END DO
+           logic_neqv = logic_neqv .or. logics(i)
+        end do
 !$omp end do
 !$omp end parallel
 
-        IF (logic_neqv) THEN
+        if (logic_neqv) then
           result = result + 1
-          WRITE(1,*) "Error in logic NEQV part 1"
-        END IF
+          write(1,*) "Error in logic NEQV part 1"
+        end if
 
-        logic_neqv = .FALSE.
-        logics(LOOPCOUNT/2) = .TRUE.
+        logic_neqv = .false.
+        logics(LOOPCOUNT/2) = .true.
 
 !$omp parallel
 !$omp do 
-        DO i=1,LOOPCOUNT
-<ompts:check>
+        do i=1,LOOPCOUNT
 !$omp atomic
-</ompts:check>
-           logic_neqv = logic_neqv .OR. logics(i)
-        END DO
+           logic_neqv = logic_neqv .or. logics(i)
+        end do
 !$omp end do
 !$omp end parallel
 
-        IF ( .NOT. logic_neqv ) THEN
+        if ( .not. logic_neqv ) then
           result = result + 1
-          WRITE(1,*) "Error in logic NEQV part 2"
-        END IF
+          write(1,*) "Error in logic NEQV part 2"
+        end if
 
-        DO i=1, LOOPCOUNT
-          int_array(i) = 1
-        END DO
+        do i=1, LOOPCOUNT
+           int_array(i) = 1
+        end do
 !$omp parallel
 !$omp do 
-        DO i=1, LOOPCOUNT
+        do i=1, LOOPCOUNT
 !... iand(I,J): Returns value resulting from boolean AND of 
 !... pair of bits in each of I and J. 
-<ompts:check>
 !$omp atomic
-</ompts:check>
-          bit_and = IAND(bit_and,int_array(i))
-        END DO
+         bit_and = iand(bit_and,int_array(i))
+        end do
 !$omp end do
 !$omp end parallel
 
-        IF ( bit_and .LT. 1 ) THEN
+        if ( bit_and .lt. 1 ) then
           result = result + 1
-          WRITE(1,*) "Error in IAND part 1"
-        END If
+          write(1,*) "Error in IAND part 1"
+        end if
 
         bit_and = 1
         int_array(LOOPCOUNT/2) = 0
 
 !$omp parallel
 !$omp do 
-        DO i=1, LOOPCOUNT
-<ompts:check>
+        do i=1, LOOPCOUNT
 !$omp atomic
-</ompts:check>
-          bit_and = IAND ( bit_and, int_array(i) )
-        END DO
+          bit_and = Iand ( bit_and, int_array(i) )
+        end do
 !$omp end do
 !$omp end parallel
 
-        IF( bit_and .GE. 1) THEN
-          result = result + 1
-          WRITE(1,*) "Error in IAND part 2"
-        END IF
+        if( bit_and .ge. 1) then
+           result = result + 1
+          write(1,*) "Error in IAND part 2"
+        end if
 
-        DO i=1, LOOPCOUNT
-          int_array(i) = 0
-        END DO
+      do i=1, LOOPCOUNT
+        int_array(i) = 0
+      end do
 
 
 !$omp parallel
 !$omp do 
-        DO i=1, LOOPCOUNT
+        do i=1, LOOPCOUNT
 !... Ior(I,J): Returns value resulting from boolean OR of 
 !... pair of bits in each of I and J. 
-<ompts:check>
 !$omp atomic
-</ompts:check>
           bit_or = Ior(bit_or, int_array(i) )
-        END DO
+        end do
 !$omp end do
 !$omp end parallel
 
-        IF ( bit_or .GE. 1) THEN
-          result = result + 1
-          WRITE(1,*) "Error in Ior part 1"
-        END IF
+        if ( bit_or .ge. 1) then
+           result = result + 1
+          write(1,*) "Error in Ior part 1"
+        end if
 
 
         bit_or = 0
         int_array(LOOPCOUNT/2) = 1
 !$omp parallel
 !$omp do 
-        DO i=1, LOOPCOUNT
-<ompts:check>
+        do i=1, LOOPCOUNT
 !$omp atomic
-</ompts:check>
-          bit_or = IOR(bit_or, int_array(i) )
-        END DO
+          bit_or = Ior(bit_or, int_array(i) )
+        end do
 !$omp end do
 !$omp end parallel
 
-        IF ( bit_or .le. 0) THEN
-          result = result + 1
-          WRITE(1,*) "Error in Ior part 2"
-        END IF
+        if ( bit_or .le. 0) then
+           result = result + 1
+          write(1,*) "Error in Ior part 2"
+        end if
 
-        DO i=1, LOOPCOUNT
+        do i=1, LOOPCOUNT
           int_array(i) = 0
-        END DO
+        end do
 
 !$omp parallel
 !$omp do 
-        DO i = 1, LOOPCOUNT
-<ompts:check>
+        do i = 1, LOOPCOUNT
 !$omp atomic
-</ompts:check>
-            exclusiv_bit_or = IEOR(exclusiv_bit_or, int_array(i))
-        END DO
+            exclusiv_bit_or = ieor(exclusiv_bit_or, int_array(i))
+        end do
 !$omp end do
 !$omp end parallel
 
