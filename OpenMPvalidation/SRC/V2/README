@@ -1,7 +1,7 @@
  ============================================================================
 |                   OpenMP Validation Suite  V 2.0                           | 
 |  High Performance Computing Center Stuttgart & University of Houston       |
-|                              Feb. 2006                                     | 
+|                              Aug. 2006                                     | 
  ============================================================================
 
 
@@ -12,10 +12,12 @@ I.1.	  Aims and general function
 I.2. 	  Files and directories
 
 II	USAGE IV	MODIFYING AND CREATING OWN TESTS IV.1.	  Templates
-II.1.	  Using the runtest script.
+II.1.	  First run with make
+II.2	  Where to search for results
+II.3.	  Using the runtest script
 
 III	Adding and modifying tests
-III.1.	  the template structure 
+III.1.	  The template structure 
 III.2.	  Adding tests to the test lists
 
 ------------------------------------------------------------------------------
@@ -62,8 +64,8 @@ d fortran	directory containing the templates for the Fortran tests
   ompts_parser.pl	script for generating the source code out of the templates
   ompts_standaloneProc.c	framework for the c tests
   ompts_standaloneProc.f	framework for the Fortran tests
-  README	the readme file you've already found ;-)
-  runtest.pl	the frame program of the test suite
+  README		the README file you've already found ;-)
+  runtest.pl		the frame program of the test suite
   testlist-f.txt	test list containing the available tests for Fortran
   testlist-c.txt	test list containing the available tests for c
 
@@ -74,9 +76,57 @@ II.  USAGE
 ==============================================================================
 
 
-II.1. Using the runtest script.
+II.1. First run with make
+--------------------------
+
+
+You can do a thirst simple run of the testsuite only after one step of configuration:
+
+1.) Modify the Makefile to your wishes using the CC/FC and CFLAGS/FFLAGS variables
+
+And now you can run the testsuite either for a c compiler with
+
+>	make ctest 
+
+or for an fortran compiler with
+
+>	make ftest
+
+
+II.2. Where to search for results
+---------------------------------
+
+
+When running the testsuite the results will be shown on the screen.
+
+If you need the results for further purpose you can use the results.txt. The 
+results.txt files is a simple list containing the results for each directive
+in a single line. Each line starts with the name of the directive. Then follows
+the result of the test given in the percentage of the passed tests. If 100% of 
+the tests passed successfull the second number gives the result of the 
+corresponding crosstest. Otherwise there stands a "-".
+After the results of the normal test there follow these of the tests in orphaned 
+mode. If there were no orphaned tests available this is shown by a "-".
+
+If you run the testsuite with different numbers of threads (e.g. using the 
+runtest.pl script) the results are shown in blocks of 4 columns for each number
+of threads.
+
+If a test failes you can find more detailed information in the compile.log, 
+*.out and *.log files.
+While the compile.log file contains all compiler error messages for all tests the
+*.out and *.log files contain detailed inforamtion on the execution process of the
+single tests.
+In the *.out files there are listed all the results of the single executions of 
+the tests. In the *.log files there are error messages of the tests itself.
+
+
+II.3. Using the runtest script
 -------------------------------
 
+
+So for special purpose you can use the runtest.pl script, which allows a lot 
+more options for the execution process than the execution with make.
 
 Using the runtest.pl script is rather easy. You can use the the test suite only
 after two steps of modifications:
@@ -88,19 +138,16 @@ after two steps of modifications:
     with -f.txt while test lists for c with -c.txt.
 
 And now you can run the test suite either for Fortran using
-      make ctest
-or for Fortran
-      make ftest
-
-The two commands above equal to: 
 	#	>  ./runtest.pl -lang=fortran -d=fortran testlist-f.txt
 or for c
 	#	>  ./runtest.pl -lang=c -d=c testlist-c.txt
 
+With the --help option you can show the complete list of options and their
+explanations.
 
 The test results are summarized in results.txt while *.log keep details for 
 individual tests. There is also a file (compile.log) keeping compilation 
-information.
+information. (see section II.2 )
 
 With the test suite there come three test lists: One containing all tests, one
 with the tests for version 1.0 of OpenMP and one with the tests for version
@@ -110,9 +157,6 @@ If you don't want to test the directives in orphaned mode you can use the
 -norphan option. You also can use the runtest.pl script either to compile all
 tests or run compiled tests e.g. for cross compilation on other platforms. For
 this there are the options -norun and -nocompile.
-
-With the --help option you can show the complete list of options and their
-explanations.
 
 Happy testing!
 
