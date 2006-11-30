@@ -4,20 +4,20 @@
 <ompts:directive>omp do schedule(static)</ompts:directive>
 <ompts:dependences>omp do nowait,omp flush,omp critical,omp single</ompts:dependences>
 <ompts:testcode>
+
       INTEGER FUNCTION <ompts:testcode:functionname>do_schedule_static</ompts:testcode:functionname>(logfile)
         IMPLICIT NONE
-        INTEGER CFSMAX_SIZE
         INTEGER omp_get_thread_num,omp_get_num_threads
         CHARACTER*30 logfile
-        INTEGER chunk_size
         INTEGER threads
         INTEGER count
         INTEGER ii
         INTEGER result
-        PARAMETER (CFSMAX_SIZE = 1000)
 <ompts:orphan:vars>
-        INTEGER i,tids(0:CFSMAX_SIZE-1), tid
-        COMMON /orphvars/ i,tid,tids
+        INTEGER CFSMAX_SIZE
+        PARAMETER (CFSMAX_SIZE = 1000)
+        INTEGER i,tids(0:CFSMAX_SIZE-1), tid, chunk_size
+        COMMON /orphvars/ i,tid,tids,chunk_size
 </ompts:orphan:vars>
 
         chunk_size = 7
@@ -52,7 +52,6 @@
 
           DO i = 0, CFSMAX_SIZE-1
 !... round-robin for static chunk
-            ii = MOD( i/chunk_size,threads)
             IF (tids(i) .NE. ii ) THEN
               result = result + 1
               WRITE(1,*)"Iteration ",i,"should be assigned to ",
