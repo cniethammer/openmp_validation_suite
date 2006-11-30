@@ -14,12 +14,13 @@ static int sum1 = 789;
 int <ompts:testcode:functionname>omp_parallel_copyin</ompts:testcode:functionname>(FILE * logFile)
 {
     <ompts:orphan:vars>
-	int sum;
+	int sum, num_threads;
     </ompts:orphan:vars>
     int known_sum;
 
     sum = 0;
-    sum1 = 0;
+    sum1 = 7;
+    num_threads = 0;
 
 #pragma omp parallel <ompts:check>copyin(sum1)</ompts:check>
     {
@@ -34,10 +35,11 @@ int <ompts:testcode:functionname>omp_parallel_copyin</ompts:testcode:functionnam
 #pragma omp critical
 	{
 	    sum = sum + sum1;
+            num_threads++;
 	} /*end of critical*/
 	</ompts:orphan>
     } /* end of parallel*/    
-    known_sum = (999 * 1000) / 2;
+    known_sum = (999 * 1000) / 2 + 7 * num_threads;
     return (known_sum == sum);
 
 }
