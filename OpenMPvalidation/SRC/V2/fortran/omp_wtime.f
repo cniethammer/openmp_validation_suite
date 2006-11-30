@@ -4,8 +4,8 @@
 <ompts:directive>omp_get_wtime</ompts:directive>
 <ompts:testcode>
       INTEGER FUNCTION <ompts:testcode:functionname>omp_wtime</ompts:testcode:functionname>(fileunit)
-        IMPLICIT NONE
         USE omp_lib
+        IMPLICIT NONE
         DOUBLE PRECISION start
         DOUBLE PRECISION endtime
         DOUBLE PRECISION omp_get_wtime
@@ -17,17 +17,17 @@
         start = 0;
         endtime = 0;
 
-		<ompts:orphan>
-		<ompts:check>
+                <ompts:orphan>
+                <ompts:check>
         start=omp_get_wtime()
-		</ompts:check>
-		</ompts:orphan>
+                </ompts:check>
+                </ompts:orphan>
         CALL sleep(wait_time)
-		<ompts:orphan>
-		<ompts:check>
+                <ompts:orphan>
+                <ompts:check>
         endtime=omp_get_wtime()
-		</ompts:check>
-		</ompts:orphan>
+                </ompts:check>
+                </ompts:orphan>
         measured_time=endtime-start
 !        print *, "measureed time", measured_time
         WRITE(1,*) "work took",measured_time,"sec. time."
