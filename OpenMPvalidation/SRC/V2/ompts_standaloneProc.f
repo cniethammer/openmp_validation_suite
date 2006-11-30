@@ -36,7 +36,7 @@
       crossfailed=0
       result=1
       WRITE (1,*) "--------------------------------------------------"
-      WRITE (1,*) "<directive></directive>"
+      WRITE (1,*) "Testting <directive></directive>"
       WRITE (1,*) "--------------------------------------------------"
       WRITE (1,*) "\n"
       WRITE (1,*) "testname: <testfunctionname></testfunctionname>"
@@ -44,30 +44,23 @@
       WRITE (1,*) "\n"
       
       DO j = 1, N
-        WRITE (1,*) "# Check: "
-            
         temp =  <testfunctionname></testfunctionname>()
         IF (temp .EQ. 1) THEN
-          WRITE (1,*) "No errors occured during the", j, ". test."
+          WRITE (1,*)  j, ". test successfull."
+          success = success + 1
         ELSE
-          WRITE (1,*) "--> Erroros occured during the",j, ". test."
-          result = 0
+          WRITE (1,*) "Error: ",j, ". test failed."
+          failed = failed + 1
         ENDIF
       END DO
 
-      IF (result .EQ. 0 ) THEN
-            failed = failed + 1
-      ELSE
-            success = success + 1
-      ENDIF
       
-      WRITE (1,*) "Result for <directive></directive>:"
-      
-      IF (result .EQ. 1) THEN
+      IF (failed .EQ. 0) THEN
         WRITE (1,*) "Directiv worked without errors."
-        CALL EXIT (0)
+        result = 0
       ELSE
-        WRITE (1,*) "Directive failed the tests!"
-        CALL EXIT (failed)
+        WRITE (1,*) "Directive failed the test ", failed, " times."
+        result = failed * 100 / N
       ENDIF
+      CALL EXIT (result)
       END PROGRAM 
