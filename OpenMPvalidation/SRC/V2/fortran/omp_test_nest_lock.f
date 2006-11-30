@@ -23,22 +23,22 @@
         CALL OMP_INIT_NEST_LOCK(lock)
         result=0
 
-!$omp parallel shared(lck,nr_threads_in_single,nr_iterations,result)
+!$omp parallel shared(lock,nr_threads_in_single,nr_iterations,result)
 !$omp do
         DO i=1,LOOPCOUNT
-		  <ompts:check>
-          DO WHILE(OMP_TEST_NEST_LOCK(LCK) .EQ. 0)
+                  <ompts:check>
+          DO WHILE(OMP_TEST_NEST_LOCK(lock) .EQ. 0)
           END DO
-		  </ompts:check>
+                  </ompts:check>
 !$omp flush
           nr_threads_in_single=nr_threads_in_single+1
 !$omp flush
           nr_iterations=nr_iterations+1
           nr_threads_in_single=nr_threads_in_single-1
           result=result+nr_threads_in_single
-		  <ompts:check>
+                  <ompts:check>
           CALL OMP_UNSET_NEST_LOCK(lock)
-		  </ompts:check>
+                  </ompts:check>
         END DO
 !$omp end do
 !$omp end parallel

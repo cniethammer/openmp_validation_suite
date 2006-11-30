@@ -19,22 +19,22 @@
         CALL OMP_INIT_LOCK(lock)
         result=0
 
-!$omp parallel shared(lck,nr_threads_in_single,nr_iterations,result)
+!$omp parallel shared(lock,nr_threads_in_single,nr_iterations,result)
 !$omp do
         DO i=1,LOOPCOUNT
-		  <ompts:check>
+                  <ompts:check>
           DO WHILE (.NOT. OMP_TEST_LOCK(lock))
           END DO
-		  </ompts:check>
+                  </ompts:check>
 !$omp flush
           nr_threads_in_single=nr_threads_in_single+1
 !$omp flush
           nr_iterations=nr_iterations+1
           nr_threads_in_single=nr_threads_in_single-1
           result=result+nr_threads_in_single
-		  <ompts:check>
+                  <ompts:check>
           CALL OMP_UNSET_LOCK(lock)
-		  </ompts:check>
+                  </ompts:check>
         END DO
 !$omp end do
 !$omp end parallel
