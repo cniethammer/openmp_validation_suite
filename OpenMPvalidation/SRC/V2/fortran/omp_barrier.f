@@ -10,8 +10,9 @@
         DOUBLE PRECISION sum
         INCLUDE "omp_testsuite.f"
         sum = 0.0
-        DO i=0.0, 1000000-1, 1.0
-          sum = sum + SQRT(i)
+        DO WHILE (i < LOOPCOUNT-1)
+          sum = sum + sqrt(i)
+          i = i + 1
         END DO
       END
 
