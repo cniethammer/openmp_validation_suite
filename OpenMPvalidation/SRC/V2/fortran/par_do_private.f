@@ -4,19 +4,18 @@
 <ompts:directive>omp parallel do private</ompts:directive>
 <ompts:dependences>par do reduction,omp flush</ompts:dependences>
 <ompts:testcode>
-        subroutine do_some_work2()
-        implicit none
-        real i
-        double precision sum
-        intrinsic sqrt
-        include "omp_testsuite.f"
+      SUBROUTINE do_some_work2()
+        IMPLICIT NONE
+        REAL i
+        DOUBLE PRECISION sum
+        INTRINSIC sqrt
+        INCLUDE "omp_testsuite.f"
         sum = 0.0
-        do i=0, LOOPCOUNT,1.0
+        DO WHILE (i < LOOPCOUNT)
            sum = sum + sqrt(i)
-!          sum = sum + exp(i)
-!          sum = sum + sin(i)
-        end do
-        end
+           i = i + 1
+        END DO
+      END
 
 !********************************************************************
 

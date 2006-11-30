@@ -11,10 +11,13 @@
         DOUBLE PRECISION sum
 
         INCLUDE "omp_testsuite.f"
-        sum = 0.0
-        DO i=0.0, LOOPCOUNT-1,1.0
-          sum = sum + sqrt(i)
-        END DO
+        i=0.0
+        sum=0.0
+        DO WHILE (i <  LOOPCOUNT-1)
+          sum = sum + i
+          i = i + 1
+        ENDDO
+
       END
 
       INTEGER FUNCTION <ompts:testcode:functionname>do_private</ompts:testcode:functionname>()
