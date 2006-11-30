@@ -26,6 +26,15 @@
 # 2. Compiler selection and Flags
 #########################################################
 
+# GNU Compiler
+#
+#CC     = gcc
+#CFLAGS = -fopenmp -lm
+#CFLAGS = -fopenmp -lm -O3
+#FC     = gfortran
+#FFLAGS = -fopenmp -lm
+#FFLAGS = -fopenmp -lm -O3
+
 # Fujitsu Compilers:
 #CC = fcc
 #CFLAGS = -KOMP,fast_GP2=2
@@ -158,10 +167,10 @@ test1:
 
 
 clean:
-	-find . -name "[cf]test*" -maxdepth 1 -perm +111 -exec rm {} \;
-	-find . -name "[cf]crosstest*" -maxdepth 1 -perm +111 -exec rm {} \;
-	-find . -name "[cf]ctest*" -maxdepth 1 -perm +111 -exec rm {} \;
-	-find . -name "[cf]orphan*" -maxdepth 1 -perm +111 -exec rm {} \;
+	-find . -maxdepth 1 -name "[cf]test*" -perm +111 -exec rm {} \;
+	-find . -maxdepth 1 -name "[cf]crosstest*" -perm +111 -exec rm {} \;
+	-find . -maxdepth 1 -name "[cf]ctest*" -perm +111 -exec rm {} \;
+	-find . -maxdepth 1 -name "[cf]orphan*" -perm +111 -exec rm {} \;
 	-rm [cf]test*.[cf] [cf]crosstest*.[cf] [cf]ctest*.[cf] [cf]orphan*.[cf]
 
 cleanlogs:
