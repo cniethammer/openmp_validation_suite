@@ -19,15 +19,17 @@
       INTEGER FUNCTION <ompts:testcode:functionname>omp_barrier</ompts:testcode:functionname>()
 !        use omp_lib
         IMPLICIT NONE
+        INTEGER sleeptime
         INTEGER omp_get_thread_num
         INTEGER result1, result2, rank
         result1 = 0
         result2 = 0
+        sleeptime = 1
 !$omp parallel private(rank)
         rank = omp_get_thread_num()
 !        PRINT *, "rank", rank
         IF ( rank .EQ. 1 ) THEN
-          CALL sleep(2)
+          CALL sleep(sleeptime)
           result2 = 3
         END IF
         <ompts:orphan>
