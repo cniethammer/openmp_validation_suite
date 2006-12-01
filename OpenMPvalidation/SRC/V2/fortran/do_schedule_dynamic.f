@@ -4,22 +4,23 @@
 <ompts:directive>omp do schedule(dynamic)</ompts:directive>
 <ompts:dependences>omp flush,omp do nowait,omp critical,omp single</ompts:dependences>
 <ompts:testcode>
+
+
       INTEGER FUNCTION <ompts:testcode:functionname>do_schedule_dynamic</ompts:testcode:functionname>(logfile)
         IMPLICIT NONE
-        INTEGER CFDMAX_SIZE
         CHARACTER*30 logfile
         INTEGER omp_get_thread_num,omp_get_num_threads
-        INTEGER chunk_size
         INTEGER threads
         INTEGER count, tmp_count
         INTEGER,ALLOCATABLE:: tmp(:)
         INTEGER ii
         INTEGER result
-        PARAMETER (CFDMAX_SIZE = 1000)
 
 <ompts:orphan:vars>
-        INTEGER i,tids(0:CFDMAX_SIZE-1),tid
-        COMMON /orphvars/ i,tids,tid
+        INTEGER CFDMAX_SIZE
+        PARAMETER (CFDMAX_SIZE = 1000)
+        INTEGER i,tids(0:CFDMAX_SIZE-1),tid,chunk_size
+        COMMON /orphvars/ i,tids,tid,chunk_size
 </ompts:orphan:vars>
 
         chunk_size = 7
