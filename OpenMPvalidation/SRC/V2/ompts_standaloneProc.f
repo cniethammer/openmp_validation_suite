@@ -11,7 +11,7 @@
       INTEGER <testfunctionname></testfunctionname>
 
 
-      CHARACTER*30 logfilename
+      CHARACTER*50 logfilename
       INTEGER result 
 
       num_tests = 0
