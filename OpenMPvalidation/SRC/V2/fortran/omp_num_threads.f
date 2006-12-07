@@ -7,6 +7,8 @@
         IMPLICIT NONE
         INTEGER failed, i, max_threads, threads, nthreads
         INTEGER omp_get_num_threads
+        INTEGER tmp
+
         failed = 0
         max_threads = 0
          
@@ -22,8 +24,11 @@
           nthreads = 0
 !$omp parallel num_threads(threads) reduction(+:failed)
 !          print *, threads, omp_get_num_threads()
-          IF ( threads .NE. OMP_GET_NUM_THREADS() ) THEN
+          tmp = omp_get_num_threads()
+          IF ( threads .NE. tmp ) THEN
             failed = failed + 1
+            WRITE (1,*) "Error: found ", tmp, " instead of ",
+     &          threads, " threads"
           END IF
 !$omp atomic
           nthreads = nthreads + 1
@@ -44,36 +49,36 @@
 </ompts:testcode>
 </ompts:test>
 
-	integer function crschk_omp_num_threads()
+        integer function crschk_omp_num_threads()
         implicit none
-	integer failed, i, max_threads, threads, nthreads
-	integer omp_get_num_threads
-	failed = 0
-	max_threads = 0
+        integer failed, i, max_threads, threads, nthreads
+        integer omp_get_num_threads
+        failed = 0
+        max_threads = 0
 !$omp parallel
 !$omp master
-	max_threads = omp_get_num_threads()
+        max_threads = omp_get_num_threads()
 !$omp end master
 !$omp end parallel
 
         do threads=1, max_threads
-	  nthreads = 0
+          nthreads = 0
 !$omp parallel reduction(+:failed)
-	  if (threads .ne. omp_get_num_threads() ) then
- 	    failed = failed + 1
-	  end if
+          if (threads .ne. omp_get_num_threads() ) then
+            failed = failed + 1
+          end if
 !$omp atomic
-	    nthreads = nthreads + 1
+            nthreads = nthreads + 1
 !$omp end parallel
-	if ( nthreads .eq. threads ) then
- 	  failed = failed + 1
- 	end if
-  	end do
+        if ( nthreads .eq. threads ) then
+          failed = failed + 1
+        end if
+        end do
 !Yi Wen at 05062004 modified here: return value should only be 0 or 1
         if(failed .ne. 0) then
-	    crschk_omp_num_threads = 0
+            crschk_omp_num_threads = 0
         else
             crschk_omp_num_threads = 1
         endif
-	end	
+        end     
 
