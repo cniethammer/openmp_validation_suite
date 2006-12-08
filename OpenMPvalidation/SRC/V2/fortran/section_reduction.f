@@ -1,30 +1,45 @@
-!********************************************************************
-! Functions: chk_section_reduction
-!********************************************************************
+<ompts:test>
+<ompts:testdescription>Test which checks the omp sections reduction directive with all its options.</ompts:testdescription>
+<ompts:ompversion>2.0</ompts:ompversion>
+<ompts:directive>omp sections reduction</ompts:directive>
+<ompts:testcode>
+      INTEGER FUNCTION <ompts:testcode:functionname>section_reduction</ompts:testcode:functionname>()
+        IMPLICIT NONE
+        INTEGER sum2, known_sum, i2
+        INTEGER known_product,int_const
+        INTEGER MAX_FACTOR
+        DOUBLE PRECISION dknown_sum,dpt
+        INTEGER result
+        INCLUDE "omp_testsuite.f"
+        PARAMETER (int_const=10,known_product=3628800)
 
-        integer function chk_section_reduction()
-        implicit none
-        integer sum, sum2, known_sum, i, i2,diff
-        integer product,known_product,int_const
-        integer MAX_FACTOR
-        double precision dsum,dknown_sum,dt,dpt
-        double precision rounding_error, ddiff
-        integer DOUBLE_DIGITS
-        logical logic_and, logic_or, logic_eqv,logic_neqv
-        integer bit_and, bit_or
-        integer exclusiv_bit_or
-        integer min_value, max_value
-        double precision dmin, dmax
-        integer result
-        include "omp_testsuite.f"
-        logical logics(LOOPCOUNT)
-        integer int_array(LOOPCOUNT)
-        double precision d_array(LOOPCOUNT)
-        parameter (int_const=10,known_product=3628800)
-        parameter (DOUBLE_DIGITS=20,MAX_FACTOR=10)
-        parameter (rounding_error=1.E-6)
+        <ompts:orphan:vars>
+        INTEGER i,dummy
+        INTEGER sum, dIFf
+        DOUBLE PRECISION dt
+        DOUBLE PRECISION dsum, ddIFf
+        INTEGER product
+        LOGICAL logics(1000)
+        INTEGER int_array(1000)
+        LOGICAL logic_and, logic_or, logic_eqv,logic_neqv
+        INTEGER bit_and, bit_or
+        INTEGER exclusiv_bit_or
+        INTEGER min_value, max_value
+        DOUBLE PRECISION d_array(1000)
+        DOUBLE PRECISION dmin, dmax
+
+        INTEGER DOUBLE_DIGITS
+        PARAMETER (DOUBLE_DIGITS=20,MAX_FACTOR=10)
+        DOUBLE PRECISION rounding_error
+        PARAMETER (rounding_error=1.E-6)
+
+        COMMON /orphvars/ i,sum,dIFf,product,dt,dsum,ddIFf,logic_and,
+     &    logic_or,logic_eqv,logic_neqv,logics,int_array,bit_and,bit_or,
+     &    exclusiv_bit_or,min_value,dmin,dmax,d_array,max_value
+        </ompts:orphan:vars>
+
         dt = 1./3.
-        known_sum = (LOOPCOUNT * (LOOPCOUNT + 1)) / 2
+        known_sum = (1000 * (1000 + 1)) / 2
         product = 1
         sum2 = 0
         sum = 0
@@ -35,661 +50,710 @@
         bit_and = 1
         bit_or = 0
         exclusiv_bit_or = 0
-!$omp parallel
-!$omp sections private(i) reduction(+:sum)
-!$omp section
-        do i =1, 300
-          sum = sum + i
-        end do
-!$omp section
-        do i =301, 700
-          sum = sum + i
-        end do
-!$omp section
-        do i =701, 1000
-          sum = sum + i
-        end do
-!$omp end sections
-!$omp end parallel
-
-       if (known_sum .ne. sum) then
-             result = result + 1
-        write(1,*) "Error in sum with integers: Result was ",
-     &   sum,"instead of ", known_sum
-        end if
-
-        diff = (LOOPCOUNT * (LOOPCOUNT + 1)) / 2
-
-
 
 !$omp parallel
-!$omp sections reduction (-: diff)
+<ompts:orphan>
+!$omp sections private(i) <ompts:check>reduction(+:sum)</ompts:check>
 !$omp section
-        do i =1, 300
-          diff = diff - i
-        end do
+        DO i =1, 300
+          sum = sum + i
+        END DO
 !$omp section
-        do i =301, 700
-          diff = diff - i
-        end do
+        DO i =301, 700
+          sum = sum + i
+        END DO
 !$omp section
-        do i =701, 1000
-          diff = diff - i
-        end do
-!$omp end sections
-!$omp end parallel
-  
-        if ( diff .NE. 0 ) then
+        DO i =701, 1000
+          sum = sum + i
+        END DO
+!$omp END sections
+</ompts:orphan>
+!$omp END parallel
+
+        IF (known_sum .NE. sum) THEN
           result = result + 1
-        write(1,*) "Error in difference with integers: Result was ",
-     &   sum,"instead of 0."
-        end if
+        WRITE(1,*) "Error in sum with integers: Result was ",
+     &    sum,"instead of ", known_sum
+        END IF
 
-!... Test for doubles
-        dsum =0.
+        dIFf = known_sum
+
+
+
+!$omp parallel
+<ompts:orphan>
+!$omp sections <ompts:check>reduction (-: dIFf)</ompts:check>
+!$omp section
+        DO i =1, 300
+          dIFf = dIFf - i
+        END DO
+!$omp section
+        DO i =301, 700
+          dIFf = dIFf - i
+        END DO
+!$omp section
+        DO i =701, 1000
+          dIFf = dIFf - i
+        END DO
+!$omp END sections
+</ompts:orphan>
+!$omp END parallel
+  
+        IF ( dIFf .NE. 0 ) THEN
+          result = result + 1
+        WRITE(1,*) "Error in dIFference with integers: Result was ",
+     &    sum,"instead of 0."
+        END IF
+
+!**********************************************************************!
+!   Test for DOubles
+!**********************************************************************!
+        dsum = 0.
         dpt = 1
 
-        do i=1, DOUBLE_DIGITS
+        DO i=1, DOUBLE_DIGITS
           dpt= dpt * dt
-        end do
+        END DO
         dknown_sum = (1-dpt)/(1-dt)
+
 !$omp parallel
-!$omp sections reduction(+:dsum)
+<ompts:orphan>
+!$omp sections <ompts:check>reduction(+:dsum)</ompts:check>
 !$omp section
-        do i=0,6
+        DO i=0,6
               dsum = dsum + dt**i
-        end do
+        END DO
 !$omp section
-        do i=7,12
+        DO i=7,12
               dsum = dsum + dt**i
-        end do
+        END DO
 !$omp section
-        do i=13,DOUBLE_DIGITS-1
+        DO i=13,DOUBLE_DIGITS-1
               dsum = dsum + dt**i
-        end do
-!$omp end sections
-!$omp end parallel
+        END DO
+!$omp END sections
+</ompts:orphan>
+!$omp END parallel
 
  
-         if(dsum .ne. dknown_sum .and. 
-     &     abs(dsum - dknown_sum) .gt. rounding_error ) then
-           result = result + 1
-           write(1,*) "Error in sum with doubles: Result was ",
-     &       dsum,"instead of ",dknown_sum,"(Difference: ",
-     &       dsum - dknown_sum,")"
-         end if
+        IF (dsum .NE. dknown_sum .AND. 
+     &    abs(dsum - dknown_sum) .GT. rounding_error ) THEN
+          result = result + 1
+          WRITE(1,*) "Error in sum with DOubles: Result was ",
+     &      dsum,"instead of ",dknown_sum,"(DIFference: ",
+     &      dsum - dknown_sum,")"
+        END IF
+
         dpt = 1
+        DO i=1, DOUBLE_DIGITS
+          dpt = dpt*dt
+        END DO
 
-
-      
-        do i=1, DOUBLE_DIGITS
-           dpt = dpt*dt
-        end do
-        ddiff = ( 1-dpt)/(1-dt)
+        ddIFf = ( 1-dpt)/(1-dt)
 !$omp parallel
-!$omp sections reduction(-:ddiff)
+!$omp sections <ompts:check>reduction(-:ddIFf)</ompts:check>
 !$omp section
-        do i=0, 6
-          ddiff = ddiff - dt**i
-        end do
+        DO i=0, 6
+          ddIFf = ddIFf - dt**i
+        END DO
 !$omp section
-        do i=7, 12
-          ddiff = ddiff - dt**i
-        end do
+        DO i=7, 12
+          ddIFf = ddIFf - dt**i
+        END DO
 !$omp section
-        do i=13, DOUBLE_DIGITS-1
-          ddiff = ddiff - dt**i
-        end do
-!$omp end sections
-!$omp end parallel
+        DO i=13, DOUBLE_DIGITS-1
+          ddIFf = ddIFf - dt**i
+        END DO
+!$omp END sections
+!$omp END parallel
 
-        if ( abs(ddiff) .GT. rounding_error ) then
-           result = result + 1
-           write(1,*) "Error in Difference with doubles: Result was ",
-     &       ddiff,"instead of 0.0"
-        end if
-
-!$omp parallel
-!$omp sections reduction(*:product)
-!$omp section
-        do i=1,3
-           product = product * i
-        end do
-!$omp section
-        do i=4,6
-           product = product * i
-        end do
-!$omp section
-        do i=7,10
-           product = product * i
-        end do
-!$omp end sections
-!$omp end parallel
-
-        if (known_product .NE. product) then
-           result = result + 1
-           write(1,*) "Error in Product with integers: Result was ",
-     &       product," instead of",known_product 
-        end if
-
-        do i=1,LOOPCOUNT
-          logics(i) = .true.
-        end do
-
-!$omp parallel
-!$omp sections reduction(.and.:logic_and)
-!$omp section
-        do i=1,300
-          logic_and = logic_and .and. logics(i)
-        end do
-!$omp section
-        do i=301,700
-          logic_and = logic_and .and. logics(i)
-        end do
-!$omp section
-        do i=701,1000
-          logic_and = logic_and .and. logics(i)
-        end do
-!$omp end sections
-!$omp end parallel
-
-        if (.not. logic_and) then
+        IF ( abs(ddIFf) .GT. rounding_error ) THEN
           result = result + 1
-          write(1,*) "Error in logic AND part 1"
-        end if
-
-
-        logic_and = .true.
-        logics(LOOPCOUNT/2) = .false.
+          WRITE(1,*) "Error in DIFference with DOubles: Result was ",
+     &      ddIFf,"instead of 0.0"
+        END IF
 
 !$omp parallel
-!$omp sections reduction(.and.:logic_and)
+<ompts:orphan>
+!$omp sections <ompts:check>reduction(*:product)</ompts:check>
 !$omp section
-        do i=1,300
-          logic_and = logic_and .and. logics(i)
-        end do
+        DO i=1,3
+          product = product * i
+        END DO
 !$omp section
-        do i=301,700
-          logic_and = logic_and .and. logics(i)
-        end do
+        DO i=4,6
+          product = product * i
+        END DO
 !$omp section
-        do i=701,LOOPCOUNT
-          logic_and = logic_and .and. logics(i)
-        end do
-!$omp end sections
-!$omp end parallel
+        DO i=7,10
+          product = product * i
+        END DO
+!$omp END sections
+</ompts:orphan>
+!$omp END parallel
 
-        if (logic_and) then
+        IF (known_product .NE. product) THEN
+          result = result + 1
+          WRITE(1,*) "Error in Product with integers: Result was ",
+     &      product," instead of",known_product 
+        END IF
+
+        DO i=1,1000
+          logics(i) = .TRUE.
+        END DO
+
+!$omp parallel
+<ompts:orphan>
+!$omp sections <ompts:check>reduction(.and.:logic_and)</ompts:check>
+!$omp section
+        DO i=1,300
+          logic_and = logic_and .AND. logics(i)
+        END DO
+!$omp section
+        DO i=301,700
+          logic_and = logic_and .AND. logics(i)
+        END DO
+!$omp section
+        DO i=701,1000
+          logic_and = logic_and .AND. logics(i)
+        END DO
+!$omp END sections
+</ompts:orphan>
+!$omp END parallel
+
+        IF (.NOT. logic_and) THEN
+          result = result + 1
+          WRITE(1,*) "Error in logic AND part 1"
+        END IF
+
+
+        logic_and = .TRUE.
+        logics(1000/2) = .FALSE.
+
+!$omp parallel
+<ompts:orphan>
+!$omp sections <ompts:check>reduction(.and.:logic_and)</ompts:check>
+!$omp section
+        DO i=1,300
+          logic_and = logic_and .AND. logics(i)
+        END DO
+!$omp section
+        DO i=301,700
+          logic_and = logic_and .AND. logics(i)
+        END DO
+!$omp section
+        DO i=701,1000
+          logic_and = logic_and .AND. logics(i)
+        END DO
+!$omp END sections
+</ompts:orphan>
+!$omp END parallel
+
+        IF (logic_and) THEN
            result = result + 1
-           write(1,*) "Error in logic AND pass 2"
-        end if
+           WRITE(1,*) "Error in logic AND pass 2"
+        END IF
 
-        do i=1, LOOPCOUNT
-         logics(i) = .false.
-        end do
-
-!$omp parallel
-!$omp sections reduction(.or.:logic_or)
-!$omp section
-        do i = 1, 300
-           logic_or = logic_or .or. logics(i)
-        end do
-!$omp section
-        do i = 301, 700
-           logic_or = logic_or .or. logics(i)
-        end do
-!$omp section
-        do i = 701, 1000
-           logic_or = logic_or .or. logics(i)
-        end do
-!$omp end sections
-!$omp end parallel
-
-        if (logic_or) then
-          result = result + 1
-          write(1,*) "Error in logic OR part 1"
-        end if
-
-        logic_or = .false.
-        logics(LOOPCOUNT/2) = .true.
+        DO i=1, 1000
+         logics(i) = .FALSE.
+        END DO
 
 !$omp parallel
-!$omp sections reduction(.or.:logic_or)
+<ompts:orphan>
+!$omp sections <ompts:check>reduction(.or.:logic_or)</ompts:check>
 !$omp section
-        do i=1,300
-           logic_or = logic_or .or. logics(i)
-        end do
+        DO i = 1, 300
+           logic_or = logic_or .OR. logics(i)
+        END DO
 !$omp section
-        do i=301,700
-           logic_or = logic_or .or. logics(i)
-        end do
+        DO i = 301, 700
+           logic_or = logic_or .OR. logics(i)
+        END DO
 !$omp section
-        do i=701,LOOPCOUNT
-           logic_or = logic_or .or. logics(i)
-        end do
-!$omp end sections
-!$omp end parallel
+        DO i = 701, 1000
+           logic_or = logic_or .OR. logics(i)
+        END DO
+!$omp END sections
+</ompts:orphan>
+!$omp END parallel
 
-        if ( .not. logic_or ) then
+        IF (logic_or) THEN
           result = result + 1
-          write(1,*) "Error in logic OR part 2"
-        end if
+          WRITE(1,*) "Error in logic OR part 1"
+        END IF
+
+        logic_or = .FALSE.
+        logics(1000/2) = .TRUE.
+
+!$omp parallel
+<ompts:orphan>
+!$omp sections <ompts:check>reduction(.or.:logic_or)</ompts:check>
+!$omp section
+        DO i=1,300
+           logic_or = logic_or .OR. logics(i)
+        END DO
+!$omp section
+        DO i=301,700
+           logic_or = logic_or .OR. logics(i)
+        END DO
+!$omp section
+        DO i=701,1000
+           logic_or = logic_or .OR. logics(i)
+        END DO
+!$omp END sections
+</ompts:orphan>
+!$omp END parallel
+
+        IF ( .NOT. logic_or ) THEN
+          result = result + 1
+          WRITE(1,*) "Error in logic OR part 2"
+        END IF
 
 !... Test logic EQV, unique in Fortran
-        do i=1, LOOPCOUNT
-         logics(i) = .true.
-        end do
+        DO i=1, 1000
+         logics(i) = .TRUE.
+        END DO
 
-        logic_eqv = .true.
-
-!$omp parallel
-!$omp sections reduction(.eqv.:logic_eqv)
-!$omp section
-        do i = 1, 300
-           logic_eqv = logic_eqv .eqv. logics(i)
-        end do
-!$omp section
-        do i = 301, 700
-           logic_eqv = logic_eqv .eqv. logics(i)
-        end do
-!$omp section
-        do i = 701, 1000
-           logic_eqv = logic_eqv .eqv. logics(i)
-        end do
-!$omp end sections
-!$omp end parallel
-
-        if (.not. logic_eqv) then
-          result = result + 1
-          write(1,*) "Error in logic EQV part 1"
-        end if
-
-        logic_eqv = .true.
-        logics(LOOPCOUNT/2) = .false.
+        logic_eqv = .TRUE.
 
 !$omp parallel
-!$omp sections reduction(.eqv.:logic_eqv)
+<ompts:orphan>
+!$omp sections <ompts:check>reduction(.eqv.:logic_eqv)</ompts:check>
 !$omp section
-        do i=1,300
-           logic_eqv = logic_eqv .eqv. logics(i)
-        end do
+        DO i = 1, 300
+           logic_eqv = logic_eqv .EQV. logics(i)
+        END DO
 !$omp section
-        do i=301,700
-           logic_eqv = logic_eqv .eqv. logics(i)
-        end do
+        DO i = 301, 700
+           logic_eqv = logic_eqv .EQV. logics(i)
+        END DO
 !$omp section
-        do i=701,1000
-           logic_eqv = logic_eqv .eqv. logics(i)
-        end do
-!$omp end sections
-!$omp end parallel
+        DO i = 701, 1000
+           logic_eqv = logic_eqv .EQV. logics(i)
+        END DO
+!$omp END sections
+</ompts:orphan>
+!$omp END parallel
 
-        if ( logic_eqv ) then
+        IF (.NOT. logic_eqv) THEN
           result = result + 1
-          write(1,*) "Error in logic EQV part 2"
-        end if
+          WRITE(1,*) "Error in logic EQV part 1"
+        END IF
+
+        logic_eqv = .TRUE.
+        logics(1000/2) = .FALSE.
+
+!$omp parallel
+<ompts:orphan>
+!$omp sections <ompts:check>reduction(.eqv.:logic_eqv)</ompts:check>
+!$omp section
+        DO i=1,300
+           logic_eqv = logic_eqv .EQV. logics(i)
+        END DO
+!$omp section
+        DO i=301,700
+           logic_eqv = logic_eqv .eqv. logics(i)
+        END DO
+!$omp section
+        DO i=701,1000
+           logic_eqv = logic_eqv .eqv. logics(i)
+        END DO
+!$omp END sections
+</ompts:orphan>
+!$omp END parallel
+
+        IF ( logic_eqv ) THEN
+          result = result + 1
+          WRITE(1,*) "Error in logic EQV part 2"
+        END IF
 
 !... Test logic NEQV, which is unique in Fortran
-        do i=1, LOOPCOUNT
+        DO i=1, 1000
          logics(i) = .false.
-        end do
+        END DO
 
         logic_neqv = .false.
 
 !$omp parallel
-!$omp sections reduction(.neqv.:logic_neqv)
+<ompts:orphan>
+!$omp sections <ompts:check>reduction(.neqv.:logic_neqv)</ompts:check>
 !$omp section
-        do i = 1, 300
-           logic_neqv = logic_neqv .neqv. logics(i)
-        end do
+        DO i = 1, 300
+           logic_neqv = logic_neqv .NEQV. logics(i)
+        END DO
 !$omp section
-        do i = 301, 700
-           logic_neqv = logic_neqv .neqv. logics(i)
-        end do
+        DO i = 301, 700
+           logic_neqv = logic_neqv .NEQV. logics(i)
+        END DO
 !$omp section
-        do i = 701, LOOPCOUNT
-           logic_neqv = logic_neqv .neqv. logics(i)
-        end do
-!$omp end sections
-!$omp end parallel
+        DO i = 701, 1000
+           logic_neqv = logic_neqv .NEQV. logics(i)
+        END DO
+!$omp END sections
+</ompts:orphan>
+!$omp END parallel
 
-        if (logic_neqv) then
+        IF (logic_neqv) THEN
           result = result + 1
-          write(1,*) "Error in logic NEQV part 1"
-        end if
+          WRITE(1,*) "Error in logic NEQV part 1"
+        END IF
 
-        logic_neqv = .false.
-        logics(LOOPCOUNT/2) = .true.
+        logic_neqv = .FALSE.
+        logics(1000/2) = .TRUE.
 
 !$omp parallel
-!$omp sections reduction(.neqv.:logic_neqv)
+<ompts:orphan>
+!$omp sections <ompts:check>reduction(.neqv.:logic_neqv)</ompts:check>
 !$omp section
-        do i=1,300
-           logic_neqv = logic_neqv .neqv. logics(i)
-        end do
+        DO i=1,300
+           logic_neqv = logic_neqv .NEQV. logics(i)
+        END DO
 !$omp section
-        do i=301,700
-           logic_neqv = logic_neqv .neqv. logics(i)
-        end do
+        DO i=301,700
+           logic_neqv = logic_neqv .NEQV. logics(i)
+        END DO
 !$omp section
-        do i=701,LOOPCOUNT
-           logic_neqv = logic_neqv .neqv. logics(i)
-        end do
-!$omp end sections
-!$omp end parallel
+        DO i=701,1000
+           logic_neqv = logic_neqv .NEQV. logics(i)
+        END DO
+!$omp END sections
+</ompts:orphan>
+!$omp END parallel
 
-        if ( .not. logic_neqv ) then
+        IF ( .NOT. logic_neqv ) THEN
           result = result + 1
           write(1,*) "Error in logic NEQV part 2"
-        end if
+        END IF
 
-        do i=1, LOOPCOUNT
+        DO i=1, 1000
            int_array(i) = 1
-        end do
+        END DO
+
 !$omp parallel
-!$omp sections reduction(iand:bit_and)
+<ompts:orphan>
+!$omp sections <ompts:check>reduction(iand:bit_and)</ompts:check>
 !... iand(I,J): Returns value resulting from boolean AND of
 !... pair of bits in each of I and J.
 !$omp section
-        do i=1, 300
+        DO i=1, 300
          bit_and = iand(bit_and,int_array(i))
-        end do
+        END DO
 !$omp section
-        do i=301, 700
+        DO i=301, 700
          bit_and = iand(bit_and,int_array(i))
-        end do
+        END DO
 !$omp section
-        do i=701, 1000
+        DO i=701, 1000
          bit_and = iand(bit_and,int_array(i))
-        end do
-!$omp end sections
-!$omp end parallel
+        END DO
+!$omp END sections
+</ompts:orphan>
+!$omp END parallel
 
-        if ( bit_and .lt. 1 ) then
+        IF ( bit_and .lt. 1 ) THEN
           result = result + 1
           write(1,*) "Error in IAND part 1"
-        end if
+        END IF
 
         bit_and = 1
-        int_array(LOOPCOUNT/2) = 0
+        int_array(1000/2) = 0
 
 !$omp parallel
-!$omp sections reduction(iand:bit_and)
+<ompts:orphan>
+!$omp sections <ompts:check>reduction(iand:bit_and)</ompts:check>
 !$omp section
-        do i=1, 300
-          bit_and = Iand ( bit_and, int_array(i) )
-        end do
+        DO i=1, 300
+          bit_and = iand ( bit_and, int_array(i) )
+        END DO
 !$omp section
-        do i=301, 700
-          bit_and = Iand ( bit_and, int_array(i) )
-        end do
+        DO i=301, 700
+          bit_and = iand ( bit_and, int_array(i) )
+        END DO
 !$omp section
-        do i=701, LOOPCOUNT
-          bit_and = Iand ( bit_and, int_array(i) )
-        end do
-!$omp end sections
-!$omp end parallel
+        DO i=701, 1000
+          bit_and = iand ( bit_and, int_array(i) )
+        END DO
+!$omp END sections
+</ompts:orphan>
+!$omp END parallel
 
-        if( bit_and .ge. 1) then
+        IF( bit_and .GE. 1) THEN
            result = result + 1
-          write(1,*) "Error in IAND part 2"
-        end if
+          WRITE(1,*) "Error in IAND part 2"
+        END IF
 
-      do i=1, LOOPCOUNT
-        int_array(i) = 0
-      end do
+        DO i=1, 1000
+          int_array(i) = 0
+        END DO
 
 
 !$omp parallel
-!$omp sections reduction(ior:bit_or)
+<ompts:orphan>
+!$omp sections <ompts:check>reduction(ior:bit_or)</ompts:check>
 !... Ior(I,J): Returns value resulting from boolean OR of
 !... pair of bits in each of I and J.
 !$omp section
-        do i=1, 300
-          bit_or = Ior(bit_or, int_array(i) )
-        end do
+        DO i=1, 300
+          bit_or = ior(bit_or, int_array(i) )
+        END DO
 !$omp section
-        do i=301, 700
-          bit_or = Ior(bit_or, int_array(i) )
-        end do
+        DO i=301, 700
+          bit_or = ior(bit_or, int_array(i) )
+        END DO
 !$omp section
-        do i=701, LOOPCOUNT
-          bit_or = Ior(bit_or, int_array(i) )
-        end do
-!$omp end sections
-!$omp end parallel
+        DO i=701, 1000
+          bit_or = ior(bit_or, int_array(i) )
+        END DO
+!$omp END sections
+</ompts:orphan>
+!$omp END parallel
 
-        if ( bit_or .ge. 1) then
+        IF ( bit_or .GE. 1) THEN
            result = result + 1
-          write(1,*) "Error in Ior part 1"
-        end if
+          WRITE(1,*) "Error in Ior part 1"
+        END IF
 
 
         bit_or = 0
-        int_array(LOOPCOUNT/2) = 1
+        int_array(1000/2) = 1
 !$omp parallel
-!$omp sections reduction(ior:bit_or)
+<ompts:orphan>
+!$omp sections <ompts:check>reduction(ior:bit_or)</ompts:check>
 !$omp section
-        do i=1, 300
+        DO i=1, 300
           bit_or = Ior(bit_or, int_array(i) )
-        end do
+        END DO
 !$omp section
-        do i=301, 700
+        DO i=301, 700
           bit_or = Ior(bit_or, int_array(i) )
-        end do
+        END DO
 !$omp section
-        do i=701, LOOPCOUNT
+        DO i=701, 1000
           bit_or = Ior(bit_or, int_array(i) )
-        end do
-!$omp end sections
-!$omp end parallel
+        END DO
+!$omp END sections
+</ompts:orphan>
+!$omp END parallel
 
-        if ( bit_or .le. 0) then
+        IF ( bit_or .LE. 0) THEN
            result = result + 1
-          write(1,*) "Error in Ior part 2"
-        end if
+          WRITE(1,*) "Error in Ior part 2"
+        END IF
 
-        do i=1, LOOPCOUNT
+        DO i=1, 1000
           int_array(i) = 0
-        end do
+        END DO
 
 !$omp parallel
-!$omp sections reduction(ieor:exclusiv_bit_or)
+<ompts:orphan>
+!$omp sections <ompts:check>reduction(ieor:exclusiv_bit_or)</ompts:check>
 !$omp section
-        do i = 1, 300
+        DO i = 1, 300
             exclusiv_bit_or = ieor(exclusiv_bit_or, int_array(i))
-        end do
+        END DO
 !$omp section
-        do i = 301, 700
+        DO i = 301, 700
             exclusiv_bit_or = ieor(exclusiv_bit_or, int_array(i))
-        end do
+        END DO
 !$omp section
-        do i = 701, LOOPCOUNT
+        DO i = 701, 1000
             exclusiv_bit_or = ieor(exclusiv_bit_or, int_array(i))
-        end do
-!$omp end sections
-!$omp end parallel
+        END DO
+!$omp END sections
+</ompts:orphan>
+!$omp END parallel
 
-        if ( exclusiv_bit_or .ge. 1) then
+        IF ( exclusiv_bit_or .GE. 1) THEN
            result = result + 1
-           write(1,*) "Error in Ieor part 1"
-        end if
+           WRITE(1,*) "Error in Ieor part 1"
+        END IF
 
         exclusiv_bit_or = 0
-        int_array(LOOPCOUNT/2) = 1
+        int_array(1000/2) = 1
 
 !$omp parallel
-!$omp sections reduction(ieor:exclusiv_bit_or)
+<ompts:orphan>
+!$omp sections <ompts:check>reduction(ieor:exclusiv_bit_or)</ompts:check>
 !$omp section
-        do i = 1, 300
+        DO i = 1, 300
             exclusiv_bit_or = ieor(exclusiv_bit_or, int_array(i))
-        end do
+        END DO
 !$omp section
-        do i = 301, 700
+        DO i = 301, 700
             exclusiv_bit_or = ieor(exclusiv_bit_or, int_array(i))
-        end do
+        END DO
 !$omp section
-        do i = 701, LOOPCOUNT
+        DO i = 701, 1000
             exclusiv_bit_or = ieor(exclusiv_bit_or, int_array(i))
-        end do
-!$omp end sections
-!$omp end parallel
+        END DO
+!$omp END sections
+</ompts:orphan>
+!$omp END parallel
 
-        if ( exclusiv_bit_or .le. 0) then
+        IF ( exclusiv_bit_or .LE. 0) THEN
           result = result + 1
-          write(1,*) "Error in Ieor part 2"
-        end if
+          WRITE(1,*) "Error in Ieor part 2"
+        END IF
 
-        do i=1,LOOPCOUNT
+        DO i=1,1000
            int_array(i) = 10 - i
-        end do
+        END DO
 
         min_value = 65535
 
 !$omp parallel
-!$omp sections reduction(min:min_value)
+<ompts:orphan>
+!$omp sections <ompts:check>reduction(min:min_value)</ompts:check>
 !$omp section
-        do i = 1, 300
+        DO i = 1, 300
             min_value = min(min_value,int_array(i) )
-        end do
+        END DO
 !$omp section
-        do i = 301, 700
+        DO i = 301, 700
             min_value = min(min_value,int_array(i) )
-        end do
+        END DO
 !$omp section
-        do i = 701, LOOPCOUNT
+        DO i = 701, 1000
             min_value = min(min_value,int_array(i) )
-        end do
-!$omp end sections
-!$omp end parallel
+        END DO
+!$omp END sections
+</ompts:orphan>
+!$omp END parallel
 
-        if ( min_value .gt. (10-LOOPCOUNT) )then
+        IF ( min_value .GT. (10-1000) ) THEN
           result = result + 1
-          write(1,*) "Error in integer MIN"
-        end if
+          WRITE(1,*) "Error in integer MIN"
+        END IF
 
 
-        do i=1,LOOPCOUNT
+        DO i=1,1000
            int_array(i) = i
-        end do
+        END DO
 
         max_value = -32768
 
 !$omp parallel
-!$omp sections reduction(max:max_value)
+<ompts:orphan>
+!$omp sections <ompts:check>reduction(max:max_value)</ompts:check>
 !$omp section
-        do i = 1, 300
+        DO i = 1, 300
             max_value = max(max_value,int_array(i) )
-        end do
+        END DO
 !$omp section
-        do i = 301, 700
+        DO i = 301, 700
             max_value = max(max_value,int_array(i) )
-        end do
+        END DO
 !$omp section
-        do i = 701, LOOPCOUNT
+        DO i = 701, 1000
             max_value = max(max_value,int_array(i) )
-        end do
-!$omp end sections
-!$omp end parallel
+        END DO
+!$omp END sections
+</ompts:orphan>
+!$omp END parallel
 
-        if ( max_value .lt. LOOPCOUNT )then
+        IF ( max_value .LT. 1000 ) THEN
           result = result + 1
-          write(1,*) "Error in integer MAX"
-        end if
+          WRITE(1,*) "Error in integer MAX"
+        END IF
 
-!... test double min, max
-        do i=1,LOOPCOUNT
+!... test DOuble min, max
+        DO i=1,1000
            d_array(i) = 10 - i*dt
-        end do
+        END DO
 
         dmin = 2**10
         dt = 0.5
 
 !$omp parallel
-!$omp sections reduction(min:dmin)
+<ompts:orphan>
+!$omp sections <ompts:check>reduction(min:dmin)</ompts:check>
 !$omp section
-        do i = 1, 300
+        DO i = 1, 300
             dmin= min(dmin,d_array(i) )
-        end do
+        END DO
 !$omp section
-        do i = 301, 700
+        DO i = 301, 700
             dmin= min(dmin,d_array(i) )
-        end do
+        END DO
 !$omp section
-        do i = 701, LOOPCOUNT
+        DO i = 701, 1000
             dmin= min(dmin,d_array(i) )
-        end do
-!$omp end sections
-!$omp end parallel
+        END DO
+!$omp END sections
+</ompts:orphan>
+!$omp END parallel
 
-        if ( dmin .gt. (10-dt) )then
+        IF ( dmin .GT. (10-dt) ) THEN
           result = result + 1
-          write(1,*) "Error in double MIN"
-        end if
+          WRITE(1,*) "Error in DOuble MIN"
+        END IF
 
 
-        do i=1,LOOPCOUNT
+        DO i=1,1000
            d_array(i) = i * dt
-        end do
+        END DO
 
         dmax= - (2**10)
 
 !$omp parallel
-!$omp sections reduction(max:dmax)
+<ompts:orphan>
+!$omp sections <ompts:check>reduction(max:dmax)</ompts:check>
 !$omp section
-        do i = 1, 300
+        DO i = 1, 300
             dmax= max(dmax,d_array(i) )
-        end do
+        END DO
 !$omp section
-        do i = 301, 700
+        DO i = 301, 700
             dmax= max(dmax,d_array(i) )
-        end do
+        END DO
 !$omp section
-        do i = 701, LOOPCOUNT
+        DO i = 701, 1000
             dmax= max(dmax,d_array(i) )
-        end do
-!$omp end sections
-!$omp end parallel
+        END DO
+!$omp END sections
+</ompts:orphan>
+!$omp END parallel
 
-        if ( dmax .lt. LOOPCOUNT*dt )then
+        IF ( dmax .LT. 1000*dt ) THEN
           result = result + 1
-          write(1,*) "Error in double MAX"
-        end if
+          WRITE(1,*) "Error in DOuble MAX"
+        END IF
 
-        if ( result .eq. 0 ) then
-           chk_section_reduction =  1
-        else
-           chk_section_reduction =  0
-        end if
+        IF ( result .EQ. 0 ) THEN
+           <testfunctionname></testfunctionname> =  1
+        ELSE
+           <testfunctionname></testfunctionname> =  0
+        END IF
 
-        close(2)
+        CLOSE(2)
 
-       end
-
+      END FUNCTION
+</ompts:testcode>
+</ompts:test>
 
         integer function crschk_section_reduction()
         implicit none
-        integer sum, sum2, known_sum, i, i2,diff
+        integer sum, sum2, known_sum, i, i2,dIFf
         integer product,known_product,int_const
         integer MAX_FACTOR
-        double precision dsum,dknown_sum,dt,dpt
-        double precision rounding_error, ddiff
+        DOuble precision dsum,dknown_sum,dt,dpt
+        DOuble precision rounding_error, ddIFf
         integer DOUBLE_DIGITS
         logical logic_and, logic_or, logic_eqv,logic_neqv
         integer bit_and, bit_or
         integer exclusiv_bit_or
         integer min_value, max_value
-        double precision dmin, dmax
+        DOuble precision dmin, dmax
         integer result
         include "omp_testsuite.f"
-        logical logics(LOOPCOUNT)
-        integer int_array(LOOPCOUNT)
-        double precision d_array(LOOPCOUNT)
+        logical logics(1000)
+        integer int_array(1000)
+        DOuble precision d_array(1000)
         parameter (int_const=10,known_product=3628800)
         parameter (DOUBLE_DIGITS=20,MAX_FACTOR=10)
         parameter (rounding_error=1.E-6)
         dt = 1./3.
-        known_sum = (LOOPCOUNT * (LOOPCOUNT + 1)) / 2
+        known_sum = (1000 * (1000 + 1)) / 2
         product = 1
         sum2 = 0
         sum = 0
@@ -703,568 +767,568 @@
 !$omp parallel
 !$omp sections 
 !$omp section
-        do i =1, 300
+        DO i =1, 300
           sum = sum + i
-        end do
+        END DO
 !$omp section
-        do i =301, 700
+        DO i =301, 700
           sum = sum + i
-        end do
+        END DO
 !$omp section
-        do i =701, LOOPCOUNT
+        DO i =701, 1000
           sum = sum + i
-        end do
-!$omp end sections
-!$omp end parallel
+        END DO
+!$omp END sections
+!$omp END parallel
 
-       if (known_sum .ne. sum) then
+       IF (known_sum .ne. sum) THEN
              result = result + 1
-        end if
+        END IF
 
-        diff = (LOOPCOUNT * (LOOPCOUNT + 1)) / 2
+        dIFf = (1000 * (1000 + 1)) / 2
 
 
 
 !$omp parallel
 !$omp sections
 !$omp section
-        do i =1, 300
-          diff = diff - i
-        end do
+        DO i =1, 300
+          dIFf = dIFf - i
+        END DO
 !$omp section
-        do i =301, 700
-          diff = diff - i
-        end do
+        DO i =301, 700
+          dIFf = dIFf - i
+        END DO
 !$omp section
-        do i =701, LOOPCOUNT
-          diff = diff - i
-        end do
-!$omp end sections
-!$omp end parallel
+        DO i =701, 1000
+          dIFf = dIFf - i
+        END DO
+!$omp END sections
+!$omp END parallel
   
-        if ( diff .NE. 0 ) then
+        IF ( dIFf .NE. 0 ) THEN
           result = result + 1
-!        write(1,*) "Error in difference with integers: Result was ",
+!        write(1,*) "Error in dIFference with integers: Result was ",
 !     &   sum,"instead of 0."
-        end if
+        END IF
 
-!... Test for doubles
+!... Test for DOubles
         dsum =0.
         dpt = 1
 
-        do i=1, DOUBLE_DIGITS
+        DO i=1, DOUBLE_DIGITS
           dpt= dpt * dt
-        end do
+        END DO
         dknown_sum = (1-dpt)/(1-dt)
 !$omp parallel
 !$omp sections
 !$omp section
-        do i=0,6
+        DO i=0,6
               dsum = dsum + dt**i
-        end do
+        END DO
 !$omp section
-        do i=7,12
+        DO i=7,12
               dsum = dsum + dt**i
-        end do
+        END DO
 !$omp section
-        do i=13,DOUBLE_DIGITS-1
+        DO i=13,DOUBLE_DIGITS-1
               dsum = dsum + dt**i
-        end do
-!$omp end sections
-!$omp end parallel
+        END DO
+!$omp END sections
+!$omp END parallel
 
  
-         if(dsum .ne. dknown_sum .or. 
-     &     abs(dsum - dknown_sum) .gt. rounding_error ) then
+         IF(dsum .ne. dknown_sum .or. 
+     &     abs(dsum - dknown_sum) .gt. rounding_error ) THEN
            result = result + 1
-!           write(1,*) "Error in sum with doubles: Result was ",
-!     &       dsum,"instead of ",dknown_sum,"(Difference: ",
+!           write(1,*) "Error in sum with DOubles: Result was ",
+!     &       dsum,"instead of ",dknown_sum,"(DIFference: ",
 !     &       dsum - dknown_sum,")"
-        end if
+        END IF
         dpt = 1
 
 
       
-        do i=1, DOUBLE_DIGITS
+        DO i=1, DOUBLE_DIGITS
            dpt = dpt*dt
-        end do
-        ddiff = ( 1-dpt)/(1-dt)
+        END DO
+        ddIFf = ( 1-dpt)/(1-dt)
 !$omp parallel
 !$omp sections
 !$omp section
-        do i=0, 6
-          ddiff = ddiff - dt**i
-        end do
+        DO i=0, 6
+          ddIFf = ddIFf - dt**i
+        END DO
 !$omp section
-        do i=7, 12
-          ddiff = ddiff - dt**i
-        end do
+        DO i=7, 12
+          ddIFf = ddIFf - dt**i
+        END DO
 !$omp section
-        do i=13, DOUBLE_DIGITS-1
-          ddiff = ddiff - dt**i
-        end do
-!$omp end sections
-!$omp end parallel
+        DO i=13, DOUBLE_DIGITS-1
+          ddIFf = ddIFf - dt**i
+        END DO
+!$omp END sections
+!$omp END parallel
 
-        if ( ddiff .GT. rounding_error .or.
-     &       ddiff .GT. (-rounding_error) ) then
+        IF ( ddIFf .GT. rounding_error .or.
+     &       ddIFf .GT. (-rounding_error) ) THEN
            result = result + 1
-!           write(1,*) "Error in Difference with doubles: Result was ",
-!     &       ddiff,"instead of 0.0"
-        end if
+!           write(1,*) "Error in DIFference with DOubles: Result was ",
+!     &       ddIFf,"instead of 0.0"
+        END IF
 
 !$omp parallel
 !$omp sections
 !$omp section
-        do i=1,3
+        DO i=1,3
            product = product * i
-        end do
+        END DO
 !$omp section
-        do i=4,7
+        DO i=4,7
            product = product * i
-        end do
+        END DO
 !$omp section
-        do i=8,MAX_FACTOR
+        DO i=8,MAX_FACTOR
            product = product * i
-        end do
-!$omp end sections
-!$omp end parallel
+        END DO
+!$omp END sections
+!$omp END parallel
 
-        if (known_product .NE. product) then
+        IF (known_product .NE. product) THEN
            result = result + 1
 !           write(1,*) "Error in Product with integers: Result was ",
 !     &       product," instead of",known_product 
-        end if
+        END IF
 
-        do i=1,LOOPCOUNT
+        DO i=1,1000
           logics(i) = .true.
-        end do
+        END DO
 
 !$omp parallel
 !$omp sections
 !$omp section
-        do i=1,300
+        DO i=1,300
           logic_and = logic_and .and. logics(i)
-        end do
+        END DO
 !$omp section
-        do i=301,700
+        DO i=301,700
           logic_and = logic_and .and. logics(i)
-        end do
+        END DO
 !$omp section
-        do i=701,LOOPCOUNT
+        DO i=701,1000
           logic_and = logic_and .and. logics(i)
-        end do
-!$omp end sections
-!$omp end parallel
+        END DO
+!$omp END sections
+!$omp END parallel
 
-        if (.not. logic_and) then
+        IF (.not. logic_and) THEN
           result = result + 1
 !          write(1,*) "Error in logic AND part 1"
-        end if
+        END IF
 
 
         logic_and = .true.
-        logics(LOOPCOUNT/2) = .false.
+        logics(1000/2) = .false.
 
 !$omp parallel
 !$omp sections
 !$omp section
-        do i=1,300
+        DO i=1,300
           logic_and = logic_and .and. logics(i)
-        end do
+        END DO
 !$omp section
-        do i=301,700
+        DO i=301,700
           logic_and = logic_and .and. logics(i)
-        end do
+        END DO
 !$omp section
-        do i=701,LOOPCOUNT
+        DO i=701,1000
           logic_and = logic_and .and. logics(i)
-        end do
-!$omp end sections
-!$omp end parallel
+        END DO
+!$omp END sections
+!$omp END parallel
 
-        if (logic_and) then
+        IF (logic_and) THEN
            result = result + 1
 !           write(1,*) "Error in logic AND pass 2"
-        end if
+        END IF
 
 
 
 
-        do i=1, LOOPCOUNT
+        DO i=1, 1000
          logics(i) = .false.
-        end do
+        END DO
 
 !$omp parallel
 !$omp sections
 !$omp section
-        do i = 1, 300
+        DO i = 1, 300
            logic_or = logic_or .or. logics(i)
-        end do
+        END DO
 !$omp section
-        do i = 301, 700
+        DO i = 301, 700
            logic_or = logic_or .or. logics(i)
-        end do
+        END DO
 !$omp section
-        do i = 701, LOOPCOUNT
+        DO i = 701, 1000
            logic_or = logic_or .or. logics(i)
-        end do
-!$omp end sections
-!$omp end parallel
+        END DO
+!$omp END sections
+!$omp END parallel
 
-        if (logic_or) then
+        IF (logic_or) THEN
           result = result + 1
-!	  write(1,*) "Error in logic OR part 1"
-        end if
+!         write(1,*) "Error in logic OR part 1"
+        END IF
 
         logic_or = .false.
-        logics(LOOPCOUNT/2) = .true.
+        logics(1000/2) = .true.
 
 !$omp parallel
 !$omp sections
 !$omp section
-        do i=1,300
+        DO i=1,300
            logic_or = logic_or .or. logics(i)
-        end do
+        END DO
 !$omp section
-        do i=301,700
+        DO i=301,700
            logic_or = logic_or .or. logics(i)
-        end do
+        END DO
 !$omp section
-        do i=701,LOOPCOUNT
+        DO i=701,1000
            logic_or = logic_or .or. logics(i)
-        end do
-!$omp end sections
-!$omp end parallel
+        END DO
+!$omp END sections
+!$omp END parallel
 
-        if ( .not. logic_or ) then
+        IF ( .not. logic_or ) THEN
           result = result + 1
 !          write(1,*) "Error in logic OR part 2"
-        end if
+        END IF
 
 !... Test logic EQV, unique in Fortran
-        do i=1, LOOPCOUNT
+        DO i=1, 1000
          logics(i) = .true.
-        end do
+        END DO
 
         logic_eqv = .true.
 
 !$omp parallel
 !$omp sections
 !$omp section
-        do i = 1, 300
+        DO i = 1, 300
            logic_eqv = logic_eqv .eqv. logics(i)
-        end do
+        END DO
 !$omp section
-        do i = 301, 700
+        DO i = 301, 700
            logic_eqv = logic_eqv .eqv. logics(i)
-        end do
+        END DO
 !$omp section
-        do i = 701, LOOPCOUNT
+        DO i = 701, 1000
            logic_eqv = logic_eqv .eqv. logics(i)
-        end do
-!$omp end sections
-!$omp end parallel
+        END DO
+!$omp END sections
+!$omp END parallel
 
-        if (.not. logic_eqv) then
+        IF (.not. logic_eqv) THEN
           result = result + 1
-!	  write(1,*) "Error in logic EQV part 1"
-        end if
+!         write(1,*) "Error in logic EQV part 1"
+        END IF
 
         logic_eqv = .true.
-        logics(LOOPCOUNT/2) = .false.
+        logics(1000/2) = .false.
 
 !$omp parallel
 !$omp sections
 !$omp section
-        do i=1,300
+        DO i=1,300
            logic_eqv = logic_eqv .eqv. logics(i)
-        end do
+        END DO
 !$omp section
-        do i=301,700
+        DO i=301,700
            logic_eqv = logic_eqv .eqv. logics(i)
-        end do
+        END DO
 !$omp section
-        do i=701,LOOPCOUNT
+        DO i=701,1000
            logic_eqv = logic_eqv .eqv. logics(i)
-        end do
-!$omp end sections
-!$omp end parallel
+        END DO
+!$omp END sections
+!$omp END parallel
 
-        if ( logic_eqv ) then
+        IF ( logic_eqv ) THEN
           result = result + 1
 !          write(1,*) "Error in logic EQV part 2"
-        end if
+        END IF
 
 !... Test logic NEQV, which is unique in Fortran
-        do i=1, LOOPCOUNT
+        DO i=1, 1000
          logics(i) = .false.
-        end do
+        END DO
 
         logic_neqv = .false.
 
 !$omp parallel
 !$omp sections
 !$omp section
-        do i = 1, 300
+        DO i = 1, 300
            logic_neqv = logic_neqv .neqv. logics(i)
-        end do
+        END DO
 !$omp section
-        do i = 301, 700
+        DO i = 301, 700
            logic_neqv = logic_neqv .neqv. logics(i)
-        end do
+        END DO
 !$omp section
-        do i = 701, LOOPCOUNT
+        DO i = 701, 1000
            logic_neqv = logic_neqv .neqv. logics(i)
-        end do
-!$omp end sections
-!$omp end parallel
+        END DO
+!$omp END sections
+!$omp END parallel
 
-        if (logic_neqv) then
+        IF (logic_neqv) THEN
           result = result + 1
-!	  write(1,*) "Error in logic NEQV part 1"
-        end if
+!         write(1,*) "Error in logic NEQV part 1"
+        END IF
 
         logic_neqv = .false.
-        logics(LOOPCOUNT/2) = .true.
+        logics(1000/2) = .true.
 
 !$omp parallel
 !$omp sections
 !$omp section
-        do i=1,300
+        DO i=1,300
            logic_neqv = logic_neqv .neqv. logics(i)
-        end do
+        END DO
 !$omp section
-        do i=301,700
+        DO i=301,700
            logic_neqv = logic_neqv .neqv. logics(i)
-        end do
+        END DO
 !$omp section
-        do i=701,LOOPCOUNT
+        DO i=701,1000
            logic_neqv = logic_neqv .neqv. logics(i)
-        end do
-!$omp end sections
-!$omp end parallel
+        END DO
+!$omp END sections
+!$omp END parallel
 
-        if ( .not. logic_neqv ) then
+        IF ( .not. logic_neqv ) THEN
           result = result + 1
 !          write(1,*) "Error in logic NEQV part 2"
-        end if
+        END IF
 
 
-        do i=1, LOOPCOUNT
+        DO i=1, 1000
            int_array(i) = 1
-        end do
+        END DO
 !$omp parallel
 !$omp sections
 !$omp section
-        do i=1, 300
+        DO i=1, 300
          bit_and = iand(bit_and,int_array(i))
-        end do
+        END DO
 !$omp section
-        do i=301, 700
+        DO i=301, 700
          bit_and = iand(bit_and,int_array(i))
-        end do
+        END DO
 !$omp section
-        do i=701, LOOPCOUNT
+        DO i=701, 1000
          bit_and = iand(bit_and,int_array(i))
-        end do
-!$omp end sections
-!$omp end parallel
+        END DO
+!$omp END sections
+!$omp END parallel
 
-        if ( bit_and .lt. 1 ) then
+        IF ( bit_and .lt. 1 ) THEN
           result = result + 1
 !          write(1,*) "Error in IAND part 1"
-        end if
+        END IF
 
         bit_and = 1
-        int_array(LOOPCOUNT/2) = 0
+        int_array(1000/2) = 0
 
 !$omp parallel
 !$omp sections
 !$omp section
-        do i=1, 300
+        DO i=1, 300
           bit_and = Iand ( bit_and, int_array(i) )
-        end do
+        END DO
 !$omp section
-        do i=301, 700
+        DO i=301, 700
           bit_and = Iand ( bit_and, int_array(i) )
-        end do
+        END DO
 !$omp section
-        do i=701, LOOPCOUNT
+        DO i=701, 1000
           bit_and = Iand ( bit_and, int_array(i) )
-        end do
-!$omp end sections
-!$omp end parallel
+        END DO
+!$omp END sections
+!$omp END parallel
 
-        if( bit_and .ge. 1) then
+        IF( bit_and .ge. 1) THEN
            result = result + 1
 !          write(1,*) "Error in IAND part 2"
-        end if
+        END IF
 
-      do i=1, LOOPCOUNT
+      DO i=1, 1000
         int_array(i) = 0
-      end do
+      END DO
 
 
 !$omp parallel
 !$omp sections
 !$omp section
-        do i=1, 300
+        DO i=1, 300
           bit_or = Ior(bit_or, int_array(i) )
-        end do
+        END DO
 !$omp section
-        do i=301, 700
+        DO i=301, 700
           bit_or = Ior(bit_or, int_array(i) )
-        end do
+        END DO
 !$omp section
-        do i=701, LOOPCOUNT
+        DO i=701, 1000
           bit_or = Ior(bit_or, int_array(i) )
-        end do
-!$omp end sections
-!$omp end parallel
+        END DO
+!$omp END sections
+!$omp END parallel
 
-        if ( bit_or .ge. 1) then
+        IF ( bit_or .ge. 1) THEN
            result = result + 1
 !          write(1,*) "Error in Ior part 1"
-        end if
+        END IF
 
 
         bit_or = 0
-        int_array(LOOPCOUNT/2) = 1
+        int_array(1000/2) = 1
 !$omp parallel
 !$omp sections
 !$omp section
-        do i=1, 300
+        DO i=1, 300
           bit_or = Ior(bit_or, int_array(i) )
-        end do
+        END DO
 !$omp section
-        do i=301, 700
+        DO i=301, 700
           bit_or = Ior(bit_or, int_array(i) )
-        end do
+        END DO
 !$omp section
-        do i=701, LOOPCOUNT
+        DO i=701, 1000
           bit_or = Ior(bit_or, int_array(i) )
-        end do
-!$omp end sections
-!$omp end parallel
+        END DO
+!$omp END sections
+!$omp END parallel
 
-        if ( bit_or .le. 0) then
+        IF ( bit_or .le. 0) THEN
            result = result + 1
 !          write(1,*) "Error in Ior part 2"
-        end if
+        END IF
 
-        do i=1, LOOPCOUNT
+        DO i=1, 1000
           int_array(i) = 0
-        end do
+        END DO
 
 !$omp parallel
 !$omp sections
 !$omp section
-        do i = 1, 300
+        DO i = 1, 300
             exclusiv_bit_or = ieor(exclusiv_bit_or, int_array(i))
-        end do
+        END DO
 !$omp section
-        do i = 301, 700
+        DO i = 301, 700
             exclusiv_bit_or = ieor(exclusiv_bit_or, int_array(i))
-        end do
+        END DO
 !$omp section
-        do i = 701, LOOPCOUNT
+        DO i = 701, 1000
             exclusiv_bit_or = ieor(exclusiv_bit_or, int_array(i))
-        end do
-!$omp end sections
-!$omp end parallel
+        END DO
+!$omp END sections
+!$omp END parallel
 
-        if ( exclusiv_bit_or .ge. 1) then
+        IF ( exclusiv_bit_or .ge. 1) THEN
            result = result + 1
 !           write(1,*) "Error in Ieor part 1"
-        end if
+        END IF
 
         exclusiv_bit_or = 0
-        int_array(LOOPCOUNT/2) = 1
+        int_array(1000/2) = 1
 
 !$omp parallel
 !$omp sections
 !$omp section
-        do i = 1, 300
+        DO i = 1, 300
             exclusiv_bit_or = ieor(exclusiv_bit_or, int_array(i))
-        end do
+        END DO
 !$omp section
-        do i = 301, 700
+        DO i = 301, 700
             exclusiv_bit_or = ieor(exclusiv_bit_or, int_array(i))
-        end do
+        END DO
 !$omp section
-        do i = 701, LOOPCOUNT
+        DO i = 701, 1000
             exclusiv_bit_or = ieor(exclusiv_bit_or, int_array(i))
-        end do
-!$omp end sections
-!$omp end parallel
+        END DO
+!$omp END sections
+!$omp END parallel
 
-        if ( exclusiv_bit_or .le. 0) then
+        IF ( exclusiv_bit_or .le. 0) THEN
           result = result + 1
 !          write(1,*) "Error in Ieor part 2"
-        end if
+        END IF
 
-        do i=1,LOOPCOUNT
+        DO i=1,1000
            int_array(i) = 10 - i
-        end do
+        END DO
 
         min_value = 65535
 
 !$omp parallel
 !$omp sections
 !$omp section
-        do i = 1, 300
+        DO i = 1, 300
             min_value = min(min_value,int_array(i) )
-        end do
+        END DO
 !$omp section
-        do i = 301, 700
+        DO i = 301, 700
             min_value = min(min_value,int_array(i) )
-        end do
+        END DO
 !$omp section
-        do i = 701, LOOPCOUNT
+        DO i = 701, 1000
             min_value = min(min_value,int_array(i) )
-        end do
-!$omp end sections
-!$omp end parallel
+        END DO
+!$omp END sections
+!$omp END parallel
 
 
-        if ( min_value .gt. (10-LOOPCOUNT) )then
+        IF ( min_value .gt. (10-1000) )THEN
           result = result + 1
 !          write(1,*) "Error in integer MIN"
-        end if
+        END IF
 
-        do i=1,LOOPCOUNT
+        DO i=1,1000
            int_array(i) = i
-        end do
+        END DO
 
         max_value = -32768
 
 !$omp parallel
 !$omp sections
 !$omp section
-        do i = 1, 300
+        DO i = 1, 300
             max_value = max(max_value,int_array(i) )
-        end do
+        END DO
 !$omp section
-        do i = 301, 700
+        DO i = 301, 700
             max_value = max(max_value,int_array(i) )
-        end do
+        END DO
 !$omp section
-        do i = 701, LOOPCOUNT
+        DO i = 701, 1000
             max_value = max(max_value,int_array(i) )
-        end do
-!$omp end sections
-!$omp end parallel
+        END DO
+!$omp END sections
+!$omp END parallel
 
-        if ( max_value .lt. LOOPCOUNT )then
+        IF ( max_value .lt. 1000 )THEN
           result = result + 1
 !          write(1,*) "Error in integer MAX"
-        end if
+        END IF
 
-!... test double min, max
-        do i=1,LOOPCOUNT
+!... test DOuble min, max
+        DO i=1,1000
            d_array(i) = 10 - i*dt
-        end do
+        END DO
 
         dmin = 2**10
         dt = 0.5
@@ -1272,61 +1336,61 @@
 !$omp parallel
 !$omp sections
 !$omp section
-        do i = 1, 300
+        DO i = 1, 300
             dmin= min(dmin,d_array(i) )
-        end do
+        END DO
 !$omp section
-        do i = 301, 700
+        DO i = 301, 700
             dmin= min(dmin,d_array(i) )
-        end do
+        END DO
 !$omp section
-        do i = 701, LOOPCOUNT
+        DO i = 701, 1000
             dmin= min(dmin,d_array(i) )
-        end do
-!$omp end sections
-!$omp end parallel
+        END DO
+!$omp END sections
+!$omp END parallel
 
-        if ( dmin .gt. (10-dt) )then
+        IF ( dmin .gt. (10-dt) )THEN
           result = result + 1
-!          write(1,*) "Error in double MIN"
-        end if
+!          write(1,*) "Error in DOuble MIN"
+        END IF
 
 
-        do i=1,LOOPCOUNT
+        DO i=1,1000
            d_array(i) = i * dt
-        end do
+        END DO
 
         dmax= - (2**10)
 
 !$omp parallel
 !$omp sections
 !$omp section
-        do i = 1, 300
+        DO i = 1, 300
             dmax= max(dmax,d_array(i) )
-        end do
+        END DO
 !$omp section
-        do i = 301, 700
+        DO i = 301, 700
             dmax= max(dmax,d_array(i) )
-        end do
+        END DO
 !$omp section
-        do i = 701, LOOPCOUNT
+        DO i = 701, 1000
             dmax= max(dmax,d_array(i) )
-        end do
-!$omp end sections
-!$omp end parallel
+        END DO
+!$omp END sections
+!$omp END parallel
 
-        if ( dmax .lt. LOOPCOUNT*dt )then
+        IF ( dmax .lt. 1000*dt )THEN
           result = result + 1
-!          write(1,*) "Error in double MAX"
-        end if
+!          write(1,*) "Error in DOuble MAX"
+        END IF
 
-        if ( result .eq. 0 ) then
+        IF ( result .eq. 0 ) THEN
            crschk_section_reduction =  1
         else
            crschk_section_reduction =  0
-        end if
+        END IF
 
         close(2)
 
-       end
+       END
 
