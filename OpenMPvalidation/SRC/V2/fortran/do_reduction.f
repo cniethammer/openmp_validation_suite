@@ -29,7 +29,7 @@
         DOUBLE PRECISION dmin, dmax
         COMMON /orphvars/ sum,product,diff,i,dsum,ddiff,dt,logic_and,
      &    logic_or,logic_eqv,logic_neqv,logics,bit_and,bit_or,int_array,
-     &    exclusiv_bit_or,min_value,max_value,d_array,dmin,dmax
+     &    exclusiv_bit_or,min_value,dmin,dmax,d_array,max_value
 </ompts:orphan:vars>
 
         dt = 1./3.
