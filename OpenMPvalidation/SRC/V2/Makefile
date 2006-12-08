@@ -7,8 +7,9 @@
 # Content:
 #########################################################
  
-# 1. basic usage
-# 2. Compiler selection and Flags
+# 1. Basic usage
+# 2. General testsuite settings
+# 3. Compiler selection and Flags
 
 #########################################################
 
@@ -23,7 +24,19 @@
 
 
 #########################################################
-# 2. Compiler selection and Flags
+# 2. General testsuite settings
+#########################################################
+
+# Set the number of minimal and maximal used threads. The 
+# testsuite will run the tests with each threadnumber 
+# inbetween these borders.
+# Because some tests need at least 2 threads you should 
+# not set one of these variables to 1
+MIN_THREADS = 2
+MAX_THREADS = 2
+
+#########################################################
+# 3. Compiler selection and Flags
 #########################################################
 
 # GNU Compiler
@@ -145,9 +158,9 @@ omp_testsuite.h:
 	./ompts_makeHeader.pl
 
 ctest:
-	./runtest.pl -lang=c -d=c testlist-c.txt
+	./runtest.pl -lang=c -d=c -minthreads=$(MIN_THREADS) -maxthreads=$(MAX_THREADS) testlist-c.txt
 ftest:
-	./runtest.pl -lang=fortran -d=fortran testlist-f.txt
+	./runtest.pl -lang=fortran -d=fortran -minthreads=$(MIN_THREADS) -maxthreads=$(MAX_THREADS)                         testlist-f.txt
 
 print_compile_options:
 	@echo "C compiler: $(CC)"
