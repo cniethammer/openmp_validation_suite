@@ -38,6 +38,7 @@
         IF ( known_sum .EQ. sum ) THEN
           <testfunctionname></testfunctionname> = 1
         ELSE
+          WRITE (1,*) "Found sum was", sum, "instead", known_sum
           <testfunctionname></testfunctionname> = 0
         END IF
       END
