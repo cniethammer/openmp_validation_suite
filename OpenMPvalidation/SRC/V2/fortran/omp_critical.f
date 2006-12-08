@@ -13,20 +13,24 @@
 
       INTEGER FUNCTION <ompts:testcode:functionname>omp_critical</ompts:testcode:functionname>()
         IMPLICIT NONE
-        INTEGER i, sum, known_sum
+        INTEGER known_sum
+        <ompts:orphan:vars>
+        INTEGER i, sum
+        COMMON /orphvars/ sum, i
+        </ompts:orphan:vars>
         sum = 0
 !$omp parallel
 !$omp do
         DO i = 0 , 999
-		<ompts:orphan>
-		<ompts:check>
+                <ompts:orphan>
+                <ompts:check>
 !$omp critical
-		</ompts:check>
+                </ompts:check>
            sum = sum + i
-		<ompts:check>
+                <ompts:check>
 !$omp end critical
-		</ompts:check>
-		</ompts:orphan>
+                </ompts:check>
+                </ompts:orphan>
         END DO
 !$omp end do
 !$omp end parallel
