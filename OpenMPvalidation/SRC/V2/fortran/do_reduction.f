@@ -6,15 +6,13 @@
       INTEGER FUNCTION <ompts:testcode:functionname>do_reduction</ompts:testcode:functionname>()
         IMPLICIT NONE
         INTEGER sum2, known_sum
-        INTEGER known_product,int_const
-        INTEGER MAX_FACTOR
+        INTEGER known_product
         DOUBLE PRECISION rounding_error, dpt
         INTEGER double_DIGITS
         DOUBLE PRECISION dknown_sum
         INTEGER result
         INCLUDE "omp_testsuite.f"
-        PARAMETER (int_const=10,known_product=3628800)
-        PARAMETER (double_DIGITS=20,MAX_FACTOR=10)
+        PARAMETER (known_product=3628800)
         PARAMETER (rounding_error=1.E-6)
 <ompts:orphan:vars>
         INTEGER sum,diff,product,i
@@ -30,6 +28,8 @@
         COMMON /orphvars/ sum,product,diff,i,dsum,ddiff,dt,logic_and,
      &    logic_or,logic_eqv,logic_neqv,logics,bit_and,bit_or,int_array,
      &    exclusiv_bit_or,min_value,dmin,dmax,d_array,max_value
+        INTEGER MAX_FACTOR
+        PARAMETER (double_DIGITS=20,MAX_FACTOR=10)
 </ompts:orphan:vars>
 
         dt = 1./3.
@@ -44,7 +44,6 @@
         bit_and = 1
         bit_or = 0
         exclusiv_bit_or = 0
-
 !$omp parallel
 <ompts:orphan>
 !$omp do schedule(dynamic, 1) <ompts:check>reduction(+:sum)</ompts:check>
