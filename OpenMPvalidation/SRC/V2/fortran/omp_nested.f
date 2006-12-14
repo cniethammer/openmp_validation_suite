@@ -4,7 +4,7 @@
 <ompts:directive>nestedtest</ompts:directive>
 <ompts:dependences>omp critical</ompts:dependences>
 <ompts:testcode>
-        INTEGER FUNCTION <ompts:testcode:functionname>omp_nested</ompts:testcode:functionname>()
+      INTEGER FUNCTION <ompts:testcode:functionname>omp_nested</ompts:testcode:functionname>()
 !        USE OMP_LIB
         IMPLICIT NONE
         INTEGER counter
@@ -12,22 +12,22 @@
 
         counter =0
         
-		<ompts:check>
+        <ompts:check>
 !$      CALL OMP_SET_NESTED(.TRUE.)
 !#ifdef _OPENMP
 !       CALL OMP_SET_NESTED(.TRUE.) 
 !#endif
-		</ompts:check>
-		<ompts:crosscheck>
+        </ompts:check>
+        <ompts:crosscheck>
 !$      CALL OMP_SET_NESTED(.FALSE.)
 !#ifdef _OPENMP
 !       CALL OMP_SET_NESTED(.FALSE.)
 !#endif
-		</ompts:crosscheck>
+        </ompts:crosscheck>
 
 !$omp parallel
 !$omp critical
-        counter = counter + 1
+          counter = counter + 1
 !$omp end critical
 
 !$omp parallel
@@ -39,8 +39,10 @@
 !$omp end parallel
         
         IF (counter .EQ. 0 ) THEN
+           WRITE (1,*) "Counter was 0"
            <testfunctionname></testfunctionname> = 0
         ELSE
+           WRITE (1,*) "Counter was", counter
            <testfunctionname></testfunctionname> = 1
         END IF 
       END FUNCTION
