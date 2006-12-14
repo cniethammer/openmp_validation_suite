@@ -38,10 +38,10 @@
       WRITE (1,*) "--------------------------------------------------"
       WRITE (1,*) "Testting <directive></directive>"
       WRITE (1,*) "--------------------------------------------------"
-      WRITE (1,*) "\n"
+      WRITE (1,*) 
       WRITE (1,*) "testname: <testfunctionname></testfunctionname>"
       WRITE (1,*) "(Crosstests should fail)"
-      WRITE (1,*) "\n"
+      WRITE (1,*)
       
       DO j = 1, N
         temp =  <testfunctionname></testfunctionname>()
