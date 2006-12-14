@@ -101,7 +101,7 @@ foreach $testtype (@testtypes)
       {
 # Generate the orphan subroutines:
 	$orphfuncs = create_orph_fortranfunctions("$testtype_", $code);
-# Repla:e orphan regions by functioncalls:
+# Replace orphan regions by functioncalls:
 	($code) = orphan_regions2fortranfunctions( "$testtype_", ($code) );
 	($code) = enlarge_tags('ompts:orphan:vars','','',($code));
 # Put all together:
