@@ -38,6 +38,7 @@
 
 
 !$omp critical
+        WRITE (1,*) sum0
         sum = sum + sum1
 !$omp end critical
 !$omp end parallel
@@ -45,9 +46,10 @@
 
         known_sum=12345*numthreads+ (LOOPCOUNT*(LOOPCOUNT+1))/2
         IF ( known_sum .EQ. sum ) THEN
-           <testfunctionname></testfunctionname> = 1
+          <testfunctionname></testfunctionname> = 1
         ELSE
-           <testfunctionname></testfunctionname> = 0
+          WRITE (1,*) "Found sum was", sum, "instead of", known_sum
+          <testfunctionname></testfunctionname> = 0
         END IF
       END FUNCTION
 </ompts:testcode>
