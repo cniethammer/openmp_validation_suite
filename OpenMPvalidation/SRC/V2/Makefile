@@ -76,7 +76,7 @@ MAX_THREADS = 2
 #CFLAGS =  -openmp -lm -DVERBOSE
 
 #FC = ifort
-#FFLAGS = -openmp -lm
+#FFLAGS = -openmp -lm -fpp
 
 
 # Omni compilers:
