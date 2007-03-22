@@ -10,7 +10,7 @@ do_some_work2 ()
   double sum = 0;
   for (i = 0; i < 1000; i++)
     {
-      sum += sqrt (i);
+      sum += sqrt ((double)i);
     }
 }
 
