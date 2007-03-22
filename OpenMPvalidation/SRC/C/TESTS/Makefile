@@ -18,10 +18,11 @@ NUM_THREADS= 2
 #CLINKFLAGS = -fopenmp -lgomp -lm
 
 # Fujitsu Compilers:
+#
 #CC = fcc
 #CFLAGS = -KOMP,fast_GP2=2
 #CLINKFLAGS = $(CFLAGS)
-#
+
 # PGI compilers
 #
 #CC = pgcc
@@ -29,7 +30,7 @@ NUM_THREADS= 2
 #CLINKFLAGS = $(CFLAGS)
 
 # Intel compilers:
-# first line of flags is tested
+#
 #CC = ecc
 #CC = icc
 #CFLAGS = -Wall -O0 -openmp
@@ -40,7 +41,7 @@ NUM_THREADS= 2
 # Omni compilers:
 #
 #CC = ompcc
-#CFLAGS = -O3 -lm 
+#CFLAGS = -lm 
 #CLINKFLAGS = $(CFLAGS)
 
 # Assure compilers:
@@ -56,42 +57,44 @@ NUM_THREADS= 2
 #CFLAGS = -Popenmp
 #CLINKFLAGS = $(CFLAGS)
 
-#
 # Hitachi:
 #
 #CC = xcc 
 #CFLAGS = -O4 -pvec +Op -parallel -omp
 #CLINKFLAGS = $(CFLAGS)
-#
+
 # SGI:
-#
 #
 #CC = cc
 #CFLAGS = -mp -lm 
 #CLINKFLAGS = $(CFLAGS)
 
 # IBM compilers:
+#
 #CC = xlc_r
 #CFLAGS = -qsmp=omp -lm
 #CLINKFLAGS = $(CFLAGS)
-#
 
 # SUN compilers
+#
 #CC = cc
 #CFLAGS = -xopenmp -lm
 #CLINKFLAGS = $(CFLAGS)
-#
+
 # open64 compilers
+#
 #CC = opencc
 #CFLAGS = -mp -Ofast -lm
 #CLINKFLAGS = $(CFLAGS)
 
 # ORC compilers
+#
 #CC = orcc
 #CFLAGS = -mp
 #CLINKFLAGS = $(CFLAGS)
 
 #Pathscale compilers
+#
 #CC = pathcc
 #CFLAGS = -mp -Ofast -lm
 #CLINKFLAGS = $(CFLAGS)
