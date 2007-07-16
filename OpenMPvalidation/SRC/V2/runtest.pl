@@ -123,6 +123,13 @@ for($j=$minthreads; $j <= $maxthreads; $j++){
 }
 print RESULTS "\n";
 
+# Keep track of information about the tests
+$totalnum = 0;
+$ctestnum = 0;
+$testsuccess = 0;
+$testfail = 0;
+$testnocompile = 0;
+
 # Now run all the tests and write the results of the tests in the resultsfile.
 # For each directive there is used a seperate line beginning with the name of 
 # the tested directive. It follows the result of the test, crosstest, orphaned
@@ -135,6 +142,7 @@ TEST: while(<TEST>){
 	 chomp($testname);
 	 $template = $dir."/".$testname.".".$extension;
 
+         $totalnum = $totalnum + 1;
 	 print RESULTS "$testname"." ";
          for($j = length($testname); $j < 40; $j++){
              print RESULTS ".";
@@ -194,6 +202,7 @@ TEST: while(<TEST>){
 		     else {
 			print "......... failed\n";
 			printf GLOBALLOG "Error: Compilation failed\n";
+                        $testnocompile = $testnocompile + 1;
 		     }
 		  }
 
@@ -218,9 +227,11 @@ TEST: while(<TEST>){
 # print $testname.$orphanname." failed $failed\% of the tests.!" ;
 			   print "failed $failed\% of the tests!" ;
 			   print GLOBALLOG "Error: $failed\% of the tests failed!\n";
+                           $testfail = $testfail + 1;
 			} else {
 # print $testname.$orphanname." succeeded!";
 			   print "succeeded";
+                           $testsuccess = $testsuccess + 1;
 			}
 
 			if($failed > 0){
@@ -232,6 +243,7 @@ TEST: while(<TEST>){
 			      $cmd = "OMP_NUM_THREADS=$numthreads; export OMP_NUM_THREADS; ./$crossexec_name > $crossexec_name.out";
 			      $exit_status = system($cmd);
 			      if ($exit_status){
+                                 $ctestnum = $ctestnum + 1;
 				 $crossresult = $exit_status >> 8;
 				 print " and was verified with a certainty of $crossresult\%\n";
 				 printf GLOBALLOG "Succeeded  and was verified with a certainty of $crossresult\%\n";
@@ -259,6 +271,11 @@ TEST: while(<TEST>){
 	 }
 	 print RESULTS "\n";
       } # end of outer loop
+    print "\nTested $totalnum directive(s). $testfail tests failed, and $testsuccess successful with $ctestnum cross checked\n";
+    if ($testnocompile > 0) {
+        print "$testnocompile test(s) failed to compile\n";
+    }
+    print "For more detailed information see files results.txt, ompts.log, and compile.log\n";
     close(RESULTS);
     close(TEST);
     my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime time;
