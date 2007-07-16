@@ -150,13 +150,11 @@ MAX_THREADS = 2
 
 
 #OpenUH Compiler
-#CC = uhcc
-#CFLAGS = -mp
+CC = uhcc
+CFLAGS = -mp
 
-#FC = uhf90
-#FFLAGS = -mp 
-
-
+FC = uhf90
+FFLAGS = -mp 
 
 
 default: omp_testsuite.h
@@ -165,10 +163,10 @@ default: omp_testsuite.h
 omp_testsuite.h:
 	./ompts_makeHeader.pl
 
-cusctest:
+stest:
 	./runtest.pl -lang=c -d=c -minthreads=$(MIN_THREADS) -maxthreads=$(MAX_THREADS) customtest.txt
 
-cusftest:
+sftest:
 	./runtest.pl -lang=fortran -d=fortran -minthreads=$(MIN_THREADS) -maxthreads=$(MAX_THREADS) customtest.txt
 
 ctest:
@@ -206,6 +204,8 @@ cleanlogs:
 
 cleanresults:
 	-rm results.txt
+	-rm cresults.txt
+	-rm fresults.txt
 
 cleanall: clean cleanlogs cleanresults
 
