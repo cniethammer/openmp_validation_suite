@@ -106,6 +106,7 @@ if ($language == "") {
 print "Reading testlist ...\n";
 # opening testlist
 open(TEST,$testfile) or die "Error: Could not open  $testfile\n";
+$results = $language.$results;
 # opening the results file in write mode and add the first line (tableheader)
 open(RESULTS,">$results") or die "Error: Could not create  $results\n";
 
@@ -275,7 +276,7 @@ TEST: while(<TEST>){
     if ($testnocompile > 0) {
         print "$testnocompile test(s) failed to compile\n";
     }
-    print "For more detailed information see files results.txt, ompts.log, and compile.log\n";
+    print "For more detailed information see files $results, ompts.log, and compile.log\n";
     close(RESULTS);
     close(TEST);
     my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime time;
