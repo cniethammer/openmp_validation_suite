@@ -88,7 +88,7 @@ print $message;
 open(GLOBALLOG,">$logfilename") or die "Error: Could not create  $logfilename\n";
 my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime time;
 $year += 1900;
-print GLOBALLOG "Test startet on $mday.$mon.$year at $hour:$min:$sec\n\n";
+print GLOBALLOG "Test started on $mday.$mon.$year at $hour:$min:$sec\n\n";
 print GLOBALLOG $message;
 close(GLOBALLOG);
 $cmd = "make print_compile_options >> $logfilename";
@@ -114,9 +114,12 @@ print RESULTS "\\ Number of Threads\t";
 for($j=$minthreads; $j <= $maxthreads; $j++){
     print RESULTS "$j\t\t\t\t";
 }
-print RESULTS "\nTested Directive";
+print RESULTS "\nTested Directive ";
+for($j=16; $j < 40; $j++){
+    print RESULTS " ";
+}
 for($j=$minthreads; $j <= $maxthreads; $j++){
-    print RESULTS "\tt\tct\tot\toct";
+    print RESULTS " t\tct\tot\toct";
 }
 print RESULTS "\n";
 
@@ -132,7 +135,11 @@ TEST: while(<TEST>){
 	 chomp($testname);
 	 $template = $dir."/".$testname.".".$extension;
 
-	 print RESULTS "$testname\t";
+	 print RESULTS "$testname"." ";
+         for($j = length($testname); $j < 40; $j++){
+             print RESULTS ".";
+         }
+         print RESULTS " ";
 	 print "\nTesting for $testname\n";
 	 print GLOBALLOG "Testing for $testname\n";
 
@@ -210,7 +217,7 @@ TEST: while(<TEST>){
 			if ($failed > 0){
 # print $testname.$orphanname." failed $failed\% of the tests.!" ;
 			   print "failed $failed\% of the tests!" ;
-			   print GLOBALLOG "Error: $failed\% ot the tests failed!\n";
+			   print GLOBALLOG "Error: $failed\% of the tests failed!\n";
 			} else {
 # print $testname.$orphanname." succeeded!";
 			   print "succeeded";

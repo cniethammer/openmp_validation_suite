@@ -133,9 +133,12 @@ MAX_THREADS = 2
 # open64 compilers
 # remark: -I. was a workaround because the installation came without omp.h file
 #CC = opencc
-#CFLAGS = -O0 -openmp -lm -I. -lomp -lpthread
-#FC =
-#FFLAGS =
+#CFLAGS = -O0 -openmp -lm -I. -lomp -lpthread 
+#CFLAGS = -O0 -openmp -lm -I /home/matthew/opt/usr/include -lpthread
+#CFLAGS = -openmp -lm
+
+#FC = openf90
+#FFLAGS = -O0 -openmp -lm  -lomp -lpthread
 
 
 #Pathscale Compiler
@@ -146,7 +149,12 @@ MAX_THREADS = 2
 #FFLAGS= -mp -Ofast -lm
 
 
+#OpenUH Compiler
+#CC = uhcc
+#CFLAGS = -mp
 
+#FC = uhf90
+#FFLAGS = -mp 
 
 
 
@@ -157,8 +165,15 @@ default: omp_testsuite.h
 omp_testsuite.h:
 	./ompts_makeHeader.pl
 
+cusctest:
+	./runtest.pl -lang=c -d=c -minthreads=$(MIN_THREADS) -maxthreads=$(MAX_THREADS) customtest.txt
+
+cusftest:
+	./runtest.pl -lang=fortran -d=fortran -minthreads=$(MIN_THREADS) -maxthreads=$(MAX_THREADS) customtest.txt
+
 ctest:
 	./runtest.pl -lang=c -d=c -minthreads=$(MIN_THREADS) -maxthreads=$(MAX_THREADS) testlist-c.txt
+
 ftest:
 	./runtest.pl -lang=fortran -d=fortran -minthreads=$(MIN_THREADS) -maxthreads=$(MAX_THREADS)                         testlist-f.txt
 
@@ -193,3 +208,4 @@ cleanresults:
 	-rm results.txt
 
 cleanall: clean cleanlogs cleanresults
+

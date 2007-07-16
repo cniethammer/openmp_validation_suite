@@ -1,3 +1,2 @@
 # Add custom tests in this list
-
-omp_single_nowait
+has_openmp

@@ -44,7 +44,7 @@ int main()
 	else{
 		fprintf(logFile,"\nDirective failed the test %i times out of %i. %i were successful\n",failed,REPETITIONS,success);
 		printf("Directive failed the test %i times out of %i.\n%i test(s) were successful\n",failed,REPETITIONS,success);
-		result = (int) ((failed / REPETITIONS ) * 100 );
+		result = (int) (((double) failed / (double) REPETITIONS ) * 100 );
 	}
 	printf ("Result: %i\n", result);
 	return result;
