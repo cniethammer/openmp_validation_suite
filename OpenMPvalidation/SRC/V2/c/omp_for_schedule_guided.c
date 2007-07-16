@@ -58,7 +58,7 @@ int <ompts:testcode:functionname>omp_for_schedule_guided</ompts:testcode:functio
      *
 	 * Each thread will start immediately with the first chunk.
      */
-#pragma omp parallel shared(tids)
+#pragma omp parallel shared(tids,maxiter)
     {	/* begin of parallel */
       <ompts:orphan>
       double count;
@@ -80,6 +80,7 @@ int <ompts:testcode:functionname>omp_for_schedule_guided</ompts:testcode:functio
 	  }	/* end of critical */ 
 	}
 	/*printf ("thread %d sleeping\n", tid);*/
+#pragma omp flush(maxiter,notout)	
 	while (notout && (count < MAX_TIME) && (maxiter == j))
 	{
 #pragma omp flush(maxiter,notout)

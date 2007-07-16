@@ -36,7 +36,7 @@ int <ompts:testcode:functionname>omp_flush</ompts:testcode:functionname> (FILE *
 	}
 
 	if (rank == 0) {
-	    <ompts:check>my_sleep(1.);</ompts:check>
+	    my_sleep(1.);
 	    <ompts:orphan>
 		<ompts:check>#pragma omp flush (result2)</ompts:check>
 		result1 = result2;

@@ -20,13 +20,18 @@ int <ompts:testcode:functionname>omp_for_firstprivate</ompts:testcode:functionna
     </ompts:orphan:vars>
 
     int known_sum;
+    int threadsnum;
 
     sum = 0;
-    sum0 = 0;
+    sum0 = 12345;
     sum1 = 0;
 
 #pragma omp parallel
     {
+#pragma omp single
+    {
+     threadsnum=omp_get_num_threads();
+     }
 	/* sum0 = 0; */
 	<ompts:orphan>
 	int i;
@@ -43,7 +48,7 @@ int <ompts:testcode:functionname>omp_for_firstprivate</ompts:testcode:functionna
 	}	/* end of critical */
     }	/* end of parallel */    
 
-    known_sum = (LOOPCOUNT * (LOOPCOUNT + 1)) / 2;
+    known_sum = 12345* threadsnum+ (LOOPCOUNT * (LOOPCOUNT + 1)) / 2;
     return (known_sum == sum);
 }
 </ompts:testcode>

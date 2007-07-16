@@ -1,120 +1,113 @@
 <ompts:test>
-<ompts:testdescription>Test which checks the dynamic option of the omp for schedule directive.</ompts:testdescription>
+<ompts:testdescription>Test which checks the dynamic option of the omp for schedule directive</ompts:testdescription>
 <ompts:ompversion>2.0</ompts:ompversion>
 <ompts:directive>omp for schedule(dynamic)</ompts:directive>
 <ompts:dependences>omp flush,omp for nowait,omp critical,omp single</ompts:dependences>
 <ompts:testcode>
+
+/*
+* Test for dynamic scheduling with chunk size
+* Method: caculate how many times the iteration space is dispatched
+*         and judge if each dispatch has the requested chunk size
+*         unless it is the last one.
+* It is possible for two adjacent chunks are assigned to the same thread
+* Modifyied by Chunhua Liao
+*/
 #include <stdio.h>
+#include <omp.h>
 #include <unistd.h>
 #include <stdlib.h>
 
 #include "omp_testsuite.h"
 #include "omp_my_sleep.h"
 
-#define NUMBER_OF_THREADS 10
-#define CFDMAX_SIZE 50000
-
-
+#define CFDMAX_SIZE 100
 const int chunk_size = 7;
 
 int <ompts:testcode:functionname>omp_for_schedule_dynamic</ompts:testcode:functionname> (FILE * logFile)
 {
-<ompts:orphan:vars>
-    int *tids;
+  //const int chunk_size = 7;
+  int tid;
+<ompts:orphan:vars>  
+  int *tids;
+  int i;
 </ompts:orphan:vars>
 
-    int i;
-    int tidsArray[CFDMAX_SIZE];
-    int count;
-    int tmp_count = 0;
-    int *tmp;
-    int result = 0;
+  int tidsArray[CFDMAX_SIZE];
+  int count = 0;
+  int tmp_count = 0; /*dispatch times*/
+  int *tmp;  /*store chunk size for each dispatch*/
+  //int i;
+  int result = 0;
+  
+  tids = tidsArray;
 
-    tids = tidsArray;
+#pragma omp parallel private(tid) shared(tids)
+  {				/* begin of parallel */
+     <ompts:orphan>
+      int tid;
 
-#pragma omp parallel shared(tids,count)
-    { /* begin of parallel*/
-
-	{	/* begin of orphaned block */
-	<ompts:orphan>
-	    int j;
-	    int tid;
-	    tid = omp_get_thread_num ();
+    tid = omp_get_thread_num ();
 #pragma omp for <ompts:check>schedule(dynamic,chunk_size)</ompts:check>
-	    for (j = 0; j < CFDMAX_SIZE; ++j)
-	    {
-		  /* One thread should take a short timeout to increase the probability of 
-		   * dynamic distribution of the chunks. */
-		  if (j == 1) {
-			  my_sleep(SLEEPTIME);
-#ifdef VERBOSE
-			  fprintf(logFile, "Thread %d waited %lf seconds\n", tid, SLEEPTIME);
-#endif
-		  }
-		  tids[j] = tid;
-	    }	/* end of for */
-	</ompts:orphan>
-	}	/* end of orphaned block */
-    }	/* end of parallel */
-	
-	/* determining the number of assigned chunks and allocating the necessary 
-	 * memory for the evaluation */
-	count = 1;
-	for (i = 0; i < CFDMAX_SIZE - 1; ++i){
-	  if(tids[i] != tids[i + 1])
-		count++;
-	}
-#ifdef VERBOSE
-	fprintf (logFile, "%d chunks were assigned.\n", count);
-#endif
-    tmp = (int*) malloc(sizeof (int) * (count));
+    for (i = 0; i < CFDMAX_SIZE; i++)
+      {
+	tids[i] = tid;
+      }
+     </ompts:orphan>
+  }				/* end of parallel */
 
-	/* write the chunksizes in the tmp array */ 
-    tmp[0] = 1;
-    for (i = 0; i < CFDMAX_SIZE - 1; ++i)
+  for (i = 0; i < CFDMAX_SIZE - 1; ++i)
+    {
+      if (tids[i] != tids[i + 1])
 	{
-	  /* First du some error handling */
-	  if (tmp_count >= count) {
-		fprintf(logFile,"Error: List for the evaluation of the results is too small.\n");
-		break;
-	  }
-	  /* Now check the chunks */
-	  if (tids[i] != tids[i + 1]) {
-		tmp_count++;
-		tmp[tmp_count] = 1;
-	  }
-	  else 
-		tmp[tmp_count]++;
+	  count++;
 	}
-#ifdef VERBOSE
-	fprintf(logFile, " Nr.:\tsize\n");
-    for (i = 0; i < count; i++) 
-	  fprintf(logFile, "%5d:\t%d\n", i + 1, tmp[i]);
-#endif
+    }
 
-	/* Evaluation of the results stored in the tmp array */
-    for(i = 0; i < count ; ++i)
+  tmp = (int *) malloc (sizeof (int) * (count + 1));
+  tmp[0] = 1;
+
+  for (i = 0; i < CFDMAX_SIZE - 1; ++i)
+    {
+      if (tmp_count > count)
 	{
-	  if(tmp[i] != chunk_size) {
-	    if (tmp[i] > chunk_size)
-		  result++;
-		else  {
-		  if (i == count - 1)
-			fprintf (logFile, "Last chunk had chunksize %d.\n", tmp[i]);
-		  else {
-			fprintf (logFile, "Error: Found chunk with chunksize %d (< %d) before the end.\n", tmp[i], chunk_size);
-			result = 0;
-			break;
-		  }
-		}
-	  }
+	  printf ("--------------------\nTestinternal Error: List too small!!!\n--------------------\n");	/* Error handling */
+	  break;
 	}
-	if((tmp[0] != CFDMAX_SIZE) && result ) {
-	  fprintf (logFile, "Seems to work. (Treads got %d times chunks \"twice\" by a total of %d chunks)\n", result, CFDMAX_SIZE / chunk_size); 
-	  return result; 
+      if (tids[i] != tids[i + 1])
+	{
+	  tmp_count++;
+	  tmp[tmp_count] = 1;
 	}
-	else 
-	  return 0;
+      else
+	{
+	  tmp[tmp_count]++;
+	}
+    }
+/*
+printf("debug----\n");
+    for (i = 0; i < CFDMAX_SIZE; ++i)
+	printf("%d ",tids[i]);
+printf("debug----\n");
+*/
+/* is dynamic statement working? */
+  for (i = 0; i < count; i++)
+    {
+      if ((tmp[i]%chunk_size)!=0) 
+/*it is possible for 2 adjacent chunks assigned to a same thread*/
+	{
+         result++;
+  fprintf(logFile,"The intermediate dispatch has wrong chunksize.\n");
+	  /*result += ((tmp[i] / chunk_size) - 1);*/
+	}
+    }
+  if ((tmp[count]%chunk_size)!=(CFDMAX_SIZE%chunk_size))
+   { 
+   result++;
+  fprintf(logFile,"the last dispatch has wrong chunksize.\n");
+   }
+  /* for (int i=0;i<count+1;++i) printf("%d\t:=\t%d\n",i+1,tmp[i]); */
+  return (result==0);
 }
 </ompts:testcode>
 </ompts:test>

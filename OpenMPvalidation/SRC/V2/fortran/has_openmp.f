@@ -12,7 +12,7 @@ the second format (#ifdef)</ompts:testdescription>
 <ompts:check>
 !version 1.
 !C23456789 
-        <testfunctionname></testfunctionname> = 1
+!$        <testfunctionname></testfunctionname> = 1
 
 ! version 2.
 !#ifdef _OPENMP

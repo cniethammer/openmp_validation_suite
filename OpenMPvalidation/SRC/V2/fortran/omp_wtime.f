@@ -8,7 +8,7 @@
         IMPLICIT NONE
         DOUBLE PRECISION start
         DOUBLE PRECISION endtime
-        DOUBLE PRECISION omp_get_wtime
+!       DOUBLE PRECISION omp_get_wtime
         INTEGER wait_time
         DOUBLE PRECISION measured_time
         INTEGER fileunit

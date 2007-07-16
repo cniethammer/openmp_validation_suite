@@ -40,14 +40,13 @@ int <ompts:testcode:functionname>omp_single_private</ompts:testcode:functionname
 		nr_threads_in_single++;
 #pragma omp flush                         
 		myit++;
-		nr_threads_in_single--;
 		myresult = myresult + nr_threads_in_single;
 	    } /* end of single */    
 	</ompts:orphan>
 	} /* end of for */
 #pragma omp critical
 	{
-	    result += myresult;
+            result += nr_threads_in_single;
 	    nr_iterations += myit;
 	}
     } /* end of parallel */

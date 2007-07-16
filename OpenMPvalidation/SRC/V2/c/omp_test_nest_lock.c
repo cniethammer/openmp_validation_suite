@@ -7,10 +7,12 @@
 #include <stdio.h>
 #include "omp_testsuite.h"
 
-omp_nest_lock_t lck;
+
+static omp_nest_lock_t lck;
 
 int <ompts:testcode:functionname>omp_test_nest_lock</ompts:testcode:functionname>(FILE * logFile)
 {
+    
     int nr_threads_in_single = 0;
     int result = 0;
     int nr_iterations = 0;

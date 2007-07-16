@@ -9,15 +9,16 @@
         INTEGER sum, sum0, known_sum
         sum = 7
         sum0 = 11
-!$omp parallel sections
-!<ompts:check>firstprivate(sum0)</ompts:check><ompts:crosscheck>private(sum0)</ompts:crosscheck>
+!$omp parallel sections <ompts:check>firstprivate(sum0)</ompts:check><ompts:crosscheck>private(sum0)</ompts:crosscheck>  
 !$omp section
 !$omp critical 
         sum = sum + sum0
 !$omp end critical
+<ompts:crosscheck>!$omp section</ompts:crosscheck>
 !$omp critical
         sum = sum + sum0
 !$omp end critical
+<ompts:crosscheck>!$omp section</ompts:crosscheck>
 !$omp critical
         sum = sum + sum0
 !$omp end critical

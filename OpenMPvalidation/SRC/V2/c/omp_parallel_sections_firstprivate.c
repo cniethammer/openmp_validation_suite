@@ -11,7 +11,7 @@ int <ompts:testcode:functionname>omp_parallel_sections_firstprivate</ompts:testc
 int sum=7;
   int sum0=11;
   int known_sum;
-#pragma omp parallel sections <ompts:check>firstprivate(sum0)</ompts:check><ompts:crosscheck></ompts:crosscheck>
+#pragma omp parallel sections <ompts:check>firstprivate(sum0)</ompts:check><ompts:crosscheck>private(sum0)</ompts:crosscheck>
   {
 #pragma omp section 
     {

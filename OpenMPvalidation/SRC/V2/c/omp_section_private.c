@@ -11,6 +11,7 @@ int <ompts:testcode:functionname>omp_section_private</ompts:testcode:functionnam
     <ompts:orphan:vars>
 	int sum;
 	int sum0;
+        int i;
     </ompts:orphan:vars>
     int known_sum;
 
@@ -20,7 +21,6 @@ int <ompts:testcode:functionname>omp_section_private</ompts:testcode:functionnam
 #pragma omp parallel
     {
 	<ompts:orphan>
-	    int i;
 #pragma omp  sections <ompts:check>private(sum0,i)</ompts:check><ompts:crosscheck>private(i)</ompts:crosscheck>
 	{
 #pragma omp section 

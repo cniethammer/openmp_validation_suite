@@ -9,22 +9,23 @@
 
 #include "omp_testsuite.h"
 
-int sum0;
-#pragma omp threadprivate(sum0)
+//int sum0;
+//#pragma omp threadprivate(sum0)
 
 int <ompts:testcode:functionname>omp_for_lastprivate</ompts:testcode:functionname> (FILE * logFile)
 {
 	int sum = 0;
-	int known_sum;
+        int known_sum;
 	<ompts:orphan:vars>
 	    int i0;
+	    int sum0;
 	</ompts:orphan:vars>
 
-	i0 = -1;
+	sum0 = 0;
+        i0 = -1;
 
-#pragma omp parallel
+#pragma omp parallel firstprivate(sum0)
 	{
-	    sum0 = 0;
 	    {	/* Begin of orphaned block */
 	    <ompts:orphan>
 		int i;

@@ -16,18 +16,18 @@
 
 !$omp parallel private(i)
         DO i=0, LOOPCOUNT -1
-!$omp single
+<ompts:check>!$omp single</ompts:check>
 !$omp atomic
           nr_iterations = nr_iterations + 1
-!$omp end single nowait
+<ompts:check>!$omp end single nowait</ompts:check>
         END DO
 !$omp end parallel
 !$omp parallel private(i,my_iterations)
         my_iterations = 0
         DO i=0, LOOPCOUNT -1
-!$omp single
+<ompts:check>!$omp single</ompts:check>
           my_iterations = my_iterations + 1
-!$omp end single <ompts:check>nowait</ompts:check>
+<ompts:check>!$omp end single nowait</ompts:check>
         END DO
 !$omp critical
         total_iterations = total_iterations + my_iterations

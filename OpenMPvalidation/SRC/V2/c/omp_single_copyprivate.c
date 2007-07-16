@@ -22,7 +22,7 @@ int <ompts:testcode:functionname>omp_single_copyprivate</ompts:testcode:function
     {
 	<ompts:orphan>
 	    int i;
-	    for (i = 0; i < LOOPCOUNT; i++)
+            for (i = 0; i < LOOPCOUNT; i++)
 	    {
 		/*
 		   int thread;

@@ -17,7 +17,7 @@ int <ompts:testcode:functionname>omp_parallel_default</ompts:testcode:functionna
 
   known_sum = (LOOPCOUNT * (LOOPCOUNT + 1)) / 2 ;
 
-#pragma omp parallel default(shared) private(mysum)
+#pragma omp parallel <ompts:check>default(shared)</ompts:check> private(mysum)
   {
 	mysum = 0;
 #pragma omp for

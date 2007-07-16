@@ -22,7 +22,7 @@
           sum0 = sum0 + i
           i0 = i
         END DO
-!$omp end do
+<ompts:check>!$omp end do</ompts:check>
 </ompts:orphan>
 !$omp critical
         sum = sum + sum0
