@@ -1,2 +1,2 @@
       integer LOOPCOUNT
-      parameter (LOOPCOUNT=100)
+      parameter (LOOPCOUNT=1000)
