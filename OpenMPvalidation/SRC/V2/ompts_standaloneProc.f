@@ -2,11 +2,12 @@
 ! more comments here.....
       PROGRAM <testfunctionname></testfunctionname>_main
       IMPLICIT NONE
-      INTEGER LOOPCOUNT 
+!      INTEGER LOOPCOUNT 
       INTEGER failed, success
       INTEGER N
       INTEGER num_tests,crosschecked, crossfailed, j
       INTEGER temp,temp1
+      INCLUDE "omp_testsuite.f"
 
       INTEGER <testfunctionname></testfunctionname>
 
@@ -20,7 +21,7 @@
       result = 1
       N=20
       failed = 0
-      LOOPCOUNT = 10000
+!      LOOPCOUNT = 10000
 
       logfilename = "f<testfunctionname></testfunctionname>.log"
 !      WRITE (*,*) "Enter logFilename:" 
