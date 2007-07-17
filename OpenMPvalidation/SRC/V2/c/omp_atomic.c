@@ -20,7 +20,7 @@ int <ompts:testcode:functionname>omp_atomic</ompts:testcode:functionname> (FILE 
         double ddiff;
         int product;
         int x;
-        int logics[1000];
+        int *logics;
         int bit_and = 1;
         int bit_or = 0;
         int exclusiv_bit_or = 0;
@@ -34,15 +34,13 @@ int <ompts:testcode:functionname>omp_atomic</ompts:testcode:functionname> (FILE 
     int known_diff;
     int known_product;
     int result = 0;
-    //int logics[1000];
     int logic_and = 1;
     int logic_or = 0;
-    //int bit_and = 1;
-    //int bit_or = 0;
-    //int exclusiv_bit_or = 0;
     double dknown_sum;
     double rounding_error = 1.E-9;
     double dpt, div;
+    int logicsArray[LOOPCOUNT];
+    logics = logicsArray;
     
     sum = 0;
     diff = 0;
@@ -53,14 +51,14 @@ int <ompts:testcode:functionname>omp_atomic</ompts:testcode:functionname> (FILE 
 	<ompts:orphan>
 	    int i;
 #pragma omp for
-	    for (i = 0; i < 1000; i++)
+	    for (i = 1; i <= LOOPCOUNT; i++)
 	    {
 		<ompts:check>#pragma omp atomic</ompts:check>
 		sum += i;
 	    }
 	</ompts:orphan>
     }
-    known_sum = 999 * 1000 / 2;
+    known_sum = (LOOPCOUNT * (LOOPCOUNT + 1)) / 2;
     if (known_sum != sum)
     {
         fprintf (logFile, 
@@ -74,14 +72,14 @@ int <ompts:testcode:functionname>omp_atomic</ompts:testcode:functionname> (FILE 
         <ompts:orphan>   
             int i;
 #pragma omp for
-            for (i = 0; i < 1000; i++)
+            for (i = 0; i < LOOPCOUNT; i++)
             {
                  <ompts:check>#pragma omp atomic</ompts:check>
                  diff -= i;
             }
         </ompts:orphan>
     }
-    known_diff = 999 * 1000 / 2 * -1;
+    known_diff = ((LOOPCOUNT - 1) * LOOPCOUNT) / 2 * -1;
     if (diff != known_diff)
     {
         fprintf (logFile,
@@ -168,6 +166,8 @@ int <ompts:testcode:functionname>omp_atomic</ompts:testcode:functionname> (FILE 
                  product, known_product);
         result++;
     }
+
+    product = KNOWN_PRODUCT;
 #pragma omp parallel
     {
         <ompts:orphan>
@@ -215,7 +215,7 @@ int <ompts:testcode:functionname>omp_atomic</ompts:testcode:functionname> (FILE 
         <ompts:orphan>
             int i;
 #pragma omp for
-            for (i = 0; i < 1000; ++i)
+            for (i = 0; i < LOOPCOUNT; ++i)
             {
                 <ompts:check>#pragma omp atomic</ompts:check>
                 x++;
@@ -223,7 +223,7 @@ int <ompts:testcode:functionname>omp_atomic</ompts:testcode:functionname> (FILE 
          </ompts:orphan>
     }
 
-    if (x != 1000)
+    if (x != LOOPCOUNT)
     {
         result++;
         fprintf (logFile, "Error in ++\n");
@@ -234,7 +234,7 @@ int <ompts:testcode:functionname>omp_atomic</ompts:testcode:functionname> (FILE 
         <ompts:orphan>
             int i;
 #pragma omp for
-            for (i = 0; i < 1000; ++i)
+            for (i = 0; i < LOOPCOUNT; ++i)
             {
                 <ompts:check>#pragma omp atomic</ompts:check>
                 x--;
@@ -248,7 +248,7 @@ int <ompts:testcode:functionname>omp_atomic</ompts:testcode:functionname> (FILE 
         fprintf (logFile, "Error in --\n");
     }
 
-    for (j = 0; j < 1000; ++j)
+    for (j = 0; j < LOOPCOUNT; ++j)
     {
         logics[j] = 1;
     }
@@ -259,7 +259,7 @@ int <ompts:testcode:functionname>omp_atomic</ompts:testcode:functionname> (FILE 
         <ompts:orphan>
            int i;
 #pragma omp for
-            for (i = 0; i < 1000; ++i)
+            for (i = 0; i < LOOPCOUNT; ++i)
             {
                 <ompts:check>#pragma omp atomic</ompts:check>
                 bit_and &= logics[i];
@@ -274,14 +274,14 @@ int <ompts:testcode:functionname>omp_atomic</ompts:testcode:functionname> (FILE 
     }
 
     bit_and = 1;
-    logics[500] = 0;
+    logics[LOOPCOUNT / 2] = 0;
 
 #pragma omp parallel
     {
         <ompts:orphan>
             int i;
 #pragma omp for
-            for (i = 0; i < 1000; ++i)
+            for (i = 0; i < LOOPCOUNT; ++i)
             {
                 <ompts:check>#pragma omp atomic</ompts:check>
                 bit_and &= logics[i];
@@ -295,7 +295,7 @@ int <ompts:testcode:functionname>omp_atomic</ompts:testcode:functionname> (FILE 
         fprintf (logFile, "Error in BIT AND part 2\n");
     }
 
-    for (j = 0; j < 1000; j++)
+    for (j = 0; j < LOOPCOUNT; j++)
     {
         logics[j] = 0;
     }
@@ -306,7 +306,7 @@ int <ompts:testcode:functionname>omp_atomic</ompts:testcode:functionname> (FILE 
         <ompts:orphan>
             int i;
 #pragma omp for
-            for (i = 0; i < 1000; ++i)
+            for (i = 0; i < LOOPCOUNT; ++i)
             {
                 <ompts:check>#pragma omp atomic</ompts:check>
                 bit_or |= logics[i];
@@ -320,14 +320,14 @@ int <ompts:testcode:functionname>omp_atomic</ompts:testcode:functionname> (FILE 
         fprintf (logFile, "Error in BIT OR part 1\n");
     }
     bit_or = 0;
-    logics[500] = 1;
+    logics[LOOPCOUNT / 2] = 1;
 
 #pragma omp parallel
     {
         <ompts:orphan>
             int i;
 #pragma omp for
-            for (i = 0; i < 1000; ++i)
+            for (i = 0; i < LOOPCOUNT; ++i)
             {
                 <ompts:check>#pragma omp atomic</ompts:check>
                 bit_or |= logics[i];
@@ -341,7 +341,7 @@ int <ompts:testcode:functionname>omp_atomic</ompts:testcode:functionname> (FILE 
         fprintf (logFile, "Error in BIT OR part 2\n");
     }
 
-    for (j = 0; j < 1000; j++)
+    for (j = 0; j < LOOPCOUNT; j++)
     {
         logics[j] = 0;
     }
@@ -352,7 +352,7 @@ int <ompts:testcode:functionname>omp_atomic</ompts:testcode:functionname> (FILE 
         <ompts:orphan> 
             int i;
 #pragma omp for
-            for (i = 0; i < 1000; ++i)
+            for (i = 0; i < LOOPCOUNT; ++i)
             {
                  <ompts:check>#pragma omp atomic</ompts:check>
                  exclusiv_bit_or ^= logics[i];
@@ -367,14 +367,14 @@ int <ompts:testcode:functionname>omp_atomic</ompts:testcode:functionname> (FILE 
     }
 
     exclusiv_bit_or = 0;
-    logics[500] = 1;
+    logics[LOOPCOUNT / 2] = 1;
     
 #pragma omp parallel
     {
         <ompts:orphan> 
             int i;
 #pragma omp for
-            for (i = 0; i < 1000; ++i)
+            for (i = 0; i < LOOPCOUNT; ++i)
             {
                  <ompts:check>#pragma omp atomic</ompts:check>
                  exclusiv_bit_or ^= logics[i];
