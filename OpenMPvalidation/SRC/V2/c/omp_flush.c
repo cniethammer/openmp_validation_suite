@@ -13,13 +13,13 @@
 int <ompts:testcode:functionname>omp_flush</ompts:testcode:functionname> (FILE * logFile)
 {
     <ompts:orphan:vars>
-	int sum1;
-	int sum2;
-        int i;
+	int result1;
+	int result2;
+	int dummy;
     </ompts:orphan:vars>
 
-    sum1 = 0;
-    sum2 = 0;
+	result1 = 0;
+	result2 = 0;
 
 #pragma omp parallel
     {
@@ -28,25 +28,23 @@ int <ompts:testcode:functionname>omp_flush</ompts:testcode:functionname> (FILE *
 
 #pragma omp barrier
 	if (rank == 1) {
+	    result2 = 3;
 	    <ompts:orphan>
-                for (i = 0; i <= 10000; i++) {
-                    <ompts:check>#pragma omp flush (sum2)</ompts:check>
-                    sum1 = sum2 + i;
-                }
+		<ompts:check>#pragma omp flush (result2)</ompts:check>
+		dummy = result2;
 	    </ompts:orphan>
 	}
 
 	if (rank == 0) {
+	    <ompts:check>my_sleep(1.);</ompts:check>
 	    <ompts:orphan>
-                for (i = 0; i <= 10000; i++) {
-		    <ompts:check>#pragma omp flush (sum1)</ompts:check>
-                    sum2 = sum1 + i;
-                }
+		<ompts:check>#pragma omp flush (result2)</ompts:check>
+		result1 = result2;
 	    </ompts:orphan>
 	}
     }	/* end of parallel */
 
-    return ((sum1 > 100000) && (sum2 > 100000));
+    return ((result1 == result2) && (result2 == dummy) && (result2 == 3));
 }
 </ompts:testcode>
 </ompts:test>
