@@ -6,8 +6,9 @@
       INTEGER FUNCTION <ompts:testcode:functionname>omp_in_parallel</ompts:testcode:functionname>()
 !   checks that false is returned when called from serial region
 !   and true is returned when called within parallel region
-		<ompts:orphan:vars>
         LOGICAL omp_in_parallel
+		<ompts:orphan:vars>
+!        LOGICAL omp_in_parallel
         LOGICAL serial, parallel
         COMMON /orphvars/ serial, parallel
 		</ompts:orphan:vars>
