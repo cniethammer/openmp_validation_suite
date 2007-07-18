@@ -44,5 +44,5 @@ omp_single
 omp_test_lock
 omp_test_nest_lock
 omp_threadprivate
-omp_threadprivate_for
-omp_parallel_default
+#omp_threadprivate_for
+#omp_parallel_default
