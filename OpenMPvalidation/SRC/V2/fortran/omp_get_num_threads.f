@@ -6,9 +6,9 @@
 <ompts:testcode>
       INTEGER FUNCTION <ompts:testcode:functionname>omp_get_num_threads</ompts:testcode:functionname>()
         INTEGER nthreads
+        INTEGER omp_get_num_threads
 		<ompts:orphan:vars>
         INTEGER nthreads_lib
-        INTEGER omp_get_num_threads
         COMMON /orphvars/ nthreads_lib
 		</ompts:orphan:vars>
         nthreads=0
