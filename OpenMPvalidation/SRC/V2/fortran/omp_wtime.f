@@ -6,9 +6,11 @@
       INTEGER FUNCTION <ompts:testcode:functionname>omp_wtime</ompts:testcode:functionname>(fileunit)
         USE omp_lib
         IMPLICIT NONE
+        <ompts:orphan:vars>
         DOUBLE PRECISION start
         DOUBLE PRECISION endtime
-!       DOUBLE PRECISION omp_get_wtime
+        COMMON start, endtime
+        </ompts:orphan:vars>
         INTEGER wait_time
         DOUBLE PRECISION measured_time
         INTEGER fileunit
@@ -29,7 +31,6 @@
                 </ompts:check>
                 </ompts:orphan>
         measured_time=endtime-start
-!        print *, "measureed time", measured_time
         WRITE(1,*) "work took",measured_time,"sec. time."
         IF(measured_time.GT.0.99*wait_time .AND.
      & measured_time .LT. 1.01*wait_time) THEN
