@@ -4,6 +4,22 @@
 <ompts:directive>omp for schedule(guided)</ompts:directive>
 <ompts:dependences>omp flush,omp for nowait,omp critical,omp single</ompts:dependences>
 <ompts:testcode>
+/* Test for guided scheduling
+ * Ensure threads get chunks interleavely first
+ * Then judge the chunk sizes are decreasing to a stable value
+ * Modified by Chunhua Liao
+ * For example, 100 iteration on 2 threads, chunksize 7
+ * one line for each dispatch, 0/1 means thread id
+ * 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0  24
+ * 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1              18
+ * 0 0 0 0 0 0 0 0 0 0 0 0 0 0                      14
+ * 1 1 1 1 1 1 1 1 1 1                              10
+ * 0 0 0 0 0 0 0 0                                   8
+ * 1 1 1 1 1 1 1                                     7
+ * 0 0 0 0 0 0 0                                     7
+ * 1 1 1 1 1 1 1                                     7
+ * 0 0 0 0 0                                         5
+*/
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
