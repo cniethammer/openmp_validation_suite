@@ -16,7 +16,7 @@ int <ompts:testcode:functionname>omp_atomic</ompts:testcode:functionname> (FILE 
 	int sum;
         int diff;
         double dsum = 0;
-        double dt = 0.5;
+        double dt = 0.5;	/* base of geometric row for + and - test*/
         double ddiff;
         int product;
         int x;
@@ -26,9 +26,9 @@ int <ompts:testcode:functionname>omp_atomic</ompts:testcode:functionname> (FILE 
         int exclusiv_bit_or = 0;
     </ompts:orphan:vars>
 
-#define DOUBLE_DIGITS 20    
+#define DOUBLE_DIGITS 20	/* dt^DOUBLE_DIGITS */
 #define MAX_FACTOR 10
-#define KNOWN_PRODUCT 3628800    
+#define KNOWN_PRODUCT 3628800	/* 10! */
     int j;
     int known_sum;
     int known_diff;
