@@ -3,6 +3,10 @@
 <ompts:ompversion>2.0</ompts:ompversion>
 <ompts:directive>omp_in_parallel</ompts:directive>
 <ompts:testcode>
+/*
+ * Checks that false is returned when called from serial region
+ * and true is returned when called within parallel region. 
+ */
 #include <stdio.h>
 #include "omp_testsuite.h"
 
