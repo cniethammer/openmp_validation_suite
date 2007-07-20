@@ -26,7 +26,6 @@ const int chunk_size = 7;
 
 int <ompts:testcode:functionname>omp_for_schedule_dynamic</ompts:testcode:functionname> (FILE * logFile)
 {
-  //const int chunk_size = 7;
   int tid;
 <ompts:orphan:vars>  
   int *tids;
@@ -37,7 +36,6 @@ int <ompts:testcode:functionname>omp_for_schedule_dynamic</ompts:testcode:functi
   int count = 0;
   int tmp_count = 0; /*dispatch times*/
   int *tmp;  /*store chunk size for each dispatch*/
-  //int i;
   int result = 0;
   
   tids = tidsArray;
