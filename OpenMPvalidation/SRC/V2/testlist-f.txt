@@ -26,7 +26,7 @@ omp_testlock
 omp_threadprivate
 omp_get_wticks
 ###omp_workshare_default
-###omp_workshare
+omp_workshare
 ### Braucht man den oder obigen erweitern?
 omp_wtime
 par_do_firstprivate
