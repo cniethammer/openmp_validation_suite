@@ -7,8 +7,11 @@
       INTEGER FUNCTION <ompts:testcode:functionname>omp_nested</ompts:testcode:functionname>()
 !        USE OMP_LIB
         IMPLICIT NONE
-        INTEGER counter
         INCLUDE "omp_testsuite.f"
+<ompts:orphan:vars>
+        INTEGER counter
+        COMMON /orphvars/ counter
+</ompts:orphan:vars>
 
         counter =0
         
@@ -26,6 +29,7 @@
         </ompts:crosscheck>
 
 !$omp parallel
+        <ompts:orphan>
 !$omp critical
           counter = counter + 1
 !$omp end critical
@@ -35,7 +39,7 @@
           counter = counter - 1
 !$omp end critical
 !$omp end parallel
-
+        </ompts:orphan>
 !$omp end parallel
         
         IF (counter .EQ. 0 ) THEN
