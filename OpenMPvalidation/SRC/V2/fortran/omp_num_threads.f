@@ -5,9 +5,12 @@
 <ompts:testcode>
       INTEGER FUNCTION <ompts:testcode:functionname>omp_num_threads</ompts:testcode:functionname>()
         IMPLICIT NONE
-        INTEGER failed, i, max_threads, threads, nthreads
+        INTEGER i, max_threads
         INTEGER omp_get_num_threads
-        INTEGER tmp
+<ompts:orphan:vars>
+        INTEGER failed,threads,nthreads,tmp
+        COMMON /orphvars/ failed,threads,nthreads
+</ompts:orphan:vars>
 
         failed = 0
         max_threads = 0
@@ -22,6 +25,7 @@
         CALL OMP_SET_DYNAMIC(.TRUE.)
         DO threads = 1, max_threads
           nthreads = 0
+           <ompts:orphan>
 !$omp parallel num_threads(threads) reduction(+:failed)
 !          print *, threads, omp_get_num_threads()
           tmp = omp_get_num_threads()
@@ -33,6 +37,7 @@
 !$omp atomic
           nthreads = nthreads + 1
 !$omp end parallel
+          </ompts:orphan>
 !            print *, threads, nthreads
           <ompts:check>IF ( nthreads .NE. threads ) THEN</ompts:check>
           <ompts:crosscheck>IF ( nthreads .EQ. threads ) THEN</ompts:crosscheck>
