@@ -5,10 +5,15 @@
 <ompts:testcode>
       INTEGER FUNCTION <ompts:testcode:functionname>section_firstprivate</ompts:testcode:functionname>()
         IMPLICIT NONE
-        INTEGER sum, sum0, known_sum
+        INTEGER known_sum
+<ompts:orphan:vars>
+        INTEGER sum,sum0
+        COMMON /orphvars/ sum,sum0
+</ompts:orphan:vars>
         sum = 7
         sum0 = 11
 !$omp parallel
+        <ompts:orphan>
 !$omp sections <ompts:check>firstprivate(sum0)</ompts:check><ompts:crosscheck>private(sum0)</ompts:crosscheck>
 !$omp section
 !$omp critical
@@ -23,6 +28,7 @@
         sum = sum + sum0
 !$omp end critical
 !$omp end sections
+        </ompts:orphan>
 !$omp end parallel
         known_sum = 11*3+7
         IF ( known_sum .EQ. sum) THEN

@@ -6,10 +6,16 @@
 <ompts:testcode>
       INTEGER FUNCTION <ompts:testcode:functionname>section_private</ompts:testcode:functionname>()
         IMPLICIT NONE
-        INTEGER sum, sum0, known_sum, i
+        INTEGER known_sum
+<ompts:orphan:vars>
+        INTEGER sum,sum0,i
+        COMMON /orphvars/ sum,sum0,i
+</ompts:orphan:vars>
+
         sum = 7
         sum0 = 0
 !$omp parallel
+        <ompts:orphan>
 !$omp sections <ompts:check>private(sum0,i)</ompts:check><ompts:crosscheck>private(i)</ompts:crosscheck>
 !$omp section
         sum0 = 0
@@ -36,6 +42,7 @@
         sum = sum + sum0
 !$omp end critical
 !$omp end sections
+        </ompts:orphan>
 !$omp end parallel
         known_sum = (999*1000)/2+7
         IF ( known_sum .EQ. sum) THEN

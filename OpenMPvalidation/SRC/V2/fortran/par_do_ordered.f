@@ -27,14 +27,18 @@
       INTEGER FUNCTION <ompts:testcode:functionname>par_do_ordered</ompts:testcode:functionname>()
         IMPLICIT NONE
         COMMON /com/ last_i
-        INTEGER sum, known_sum,i, is_larger,last_i
-        INTEGER i_islarger2
+        INTEGER known_sum,i, last_i
+<ompts:orphan:vars>
+        INTEGER is_larger,sum,i_islarger2
+        COMMON /orphvars/ is_larger,sum,i_islarger2
+</ompts:orphan:vars>
         
         sum=0
         is_larger=1
         last_i=0
 !$omp parallel do schedule(static, 1) ordered
         DO i=1, 99
+                <ompts:orphan>
 		<ompts:check>
 !$omp ordered
 		</ompts:check>
@@ -48,6 +52,7 @@
 !$omp end ordered
 		</ompts:check>
         END DO
+                </ompts:orphan>
 !$omp end parallel do
         known_sum = (99*100)/2
 !Yi Wen; Sun compiler will fail sometimes
