@@ -30,7 +30,7 @@
         INTEGER known_sum,i, last_i
 <ompts:orphan:vars>
         INTEGER is_larger,sum,i_islarger2
-        COMMON /orphvars/ is_larger,sum,i_islarger2
+        COMMON /orphvars/ is_larger,sum,i
 </ompts:orphan:vars>
         
         sum=0
@@ -51,8 +51,8 @@
 		<ompts:check>
 !$omp end ordered
 		</ompts:check>
-        END DO
                 </ompts:orphan>
+        END DO
 !$omp end parallel do
         known_sum = (99*100)/2
 !Yi Wen; Sun compiler will fail sometimes
