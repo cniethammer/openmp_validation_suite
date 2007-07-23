@@ -48,37 +48,3 @@
       END FUNCTION
 </ompts:testcode>
 </ompts:test>
-
-        integer function crschk_omp_num_threads()
-        implicit none
-        integer failed, i, max_threads, threads, nthreads
-        integer omp_get_num_threads
-        failed = 0
-        max_threads = 0
-!$omp parallel
-!$omp master
-        max_threads = omp_get_num_threads()
-!$omp end master
-!$omp end parallel
-
-        do threads=1, max_threads
-          nthreads = 0
-!$omp parallel reduction(+:failed)
-          if (threads .ne. omp_get_num_threads() ) then
-            failed = failed + 1
-          end if
-!$omp atomic
-            nthreads = nthreads + 1
-!$omp end parallel
-        if ( nthreads .eq. threads ) then
-          failed = failed + 1
-        end if
-        end do
-!Yi Wen at 05062004 modified here: return value should only be 0 or 1
-        if(failed .ne. 0) then
-            crschk_omp_num_threads = 0
-        else
-            crschk_omp_num_threads = 1
-        endif
-        end     
-
