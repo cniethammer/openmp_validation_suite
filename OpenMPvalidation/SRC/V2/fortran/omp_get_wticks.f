@@ -21,17 +21,3 @@
       END FUNCTION
 </ompts:testcode>
 </ompts:test>
-
-      integer function crschk_omp_ticks_time()
-        implicit none
-        double precision tick
-        tick=0.0
-!        tick=omp_get_wtick()
-        if(tick .gt. 0 .AND. tick .lt. 0.01) then
-                crschk_omp_ticks_time=1
-        else
-                crschk_omp_ticks_time=0
-        endif
-      end
-
-
