@@ -6,12 +6,11 @@
 <ompts:testcode>
       INTEGER FUNCTION <ompts:testcode:functionname>single_copyprivate</ompts:testcode:functionname>()
         IMPLICIT NONE
-        INTEGER i
         INTEGER omp_get_thread_num
         INCLUDE "omp_testsuite.f"
 <ompts:orphan:vars>
-        INTEGER j,thread,nr_iterations,result
-        COMMON /orphvars/ j,thread,nr_iterations,result
+        INTEGER i,j,thread,nr_iterations,result
+        COMMON /orphvars/ nr_iterations,result
 </ompts:orphan:vars>
 
         result=0
