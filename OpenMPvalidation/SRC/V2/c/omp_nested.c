@@ -4,6 +4,11 @@
 <ompts:directive>omp_nested</ompts:directive>
 <ompts:dependences>omp critical</ompts:dependences>
 <ompts:testcode>
+/*
+ * Test if the compiler supports nested parallelism
+ * By Chunhua Liao, University of Houston
+ * Oct. 2005
+ */
 #include <stdio.h>
 #include "omp_testsuite.h"
 
