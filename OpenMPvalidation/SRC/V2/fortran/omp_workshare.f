@@ -5,7 +5,7 @@
 <ompts:dependences>omp critical</ompts:dependences>
 <ompts:testcode>
 !********************************************************************
-! Functions: chk_omp_workshare
+! Function: omp_workshare
 ! 
 ! by Chunhua Liao, University of Houston
 ! Oct. 2005 - First version
