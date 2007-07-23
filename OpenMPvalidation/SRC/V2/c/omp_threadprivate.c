@@ -4,6 +4,14 @@
 <ompts:directive>omp threadprivate</ompts:directive>
 <ompts:dependences>omp critical,omp_set_dynamic,omp_get_num_threads</ompts:dependences>
 <ompts:testcode>
+/*
+ * Threadprivate is tested in 2 ways:
+ * 1. The global variable declared as threadprivate should have
+ *    local copy for each thread. Otherwise race condition and 
+ *    wrong result.
+ * 2. If the value of local copy is retained for the two adjacent
+ *    parallel regions
+ */
 #include "omp_testsuite.h"
 #include <stdlib.h>
 #include <stdio.h>
