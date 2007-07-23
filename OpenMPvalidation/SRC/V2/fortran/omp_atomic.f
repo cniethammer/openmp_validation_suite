@@ -4,31 +4,39 @@
 <ompts:directive>omp atomic</ompts:directive>
 <ompts:testcode>
 !********************************************************************
-! Functions: chk_omp_atomic
+! Functions: omp_atomic
 ! change "character*20" into "character (LEN=20)::"
 ! get rid of the "tab" key by Zhenying Liu, on Oct. 16, 2005.
 !********************************************************************
       INTEGER FUNCTION <ompts:testcode:functionname>omp_atomic</ompts:testcode:functionname>()
         IMPLICIT NONE
-        INTEGER sum, sum2, known_sum, i, i2,diff
-        INTEGER product,known_product,int_const
-        INTEGER MAX_FACTOR
-        DOUBLE PRECISION dsum,dknown_sum,dt,dpt
-        DOUBLE PRECISION rounding_error, ddiff
+        INCLUDE "omp_testsuite.f"
+        INTEGER sum2, known_sum
+        INTEGER known_product, int_const
+        DOUBLE PRECISION rounding_error, dpt
         INTEGER double_DIGITS
+        DOUBLE PRECISION dknown_sum
+        INTEGER result
+        PARAMETER (int_const=10,known_product=3628800)
+        PARAMETER (rounding_error=1.E-2)
+<ompts:orphan:vars>
+        INTEGER sum,i,diff,product
+        DOUBLE PRECISION dsum,dt,ddiff
         LOGICAL logic_and, logic_or, logic_eqv,logic_neqv
         INTEGER bit_and, bit_or
         INTEGER exclusiv_bit_or
         INTEGER min_value, max_value
         DOUBLE PRECISION dmin, dmax
-        INTEGER result
-        INCLUDE "omp_testsuite.f"
         LOGICAL logics(LOOPCOUNT)
         INTEGER int_array(LOOPCOUNT)
         DOUBLE PRECISION d_array(LOOPCOUNT)
-        PARAMETER (int_const=10,known_product=3628800)
+        COMMON /orphvars/ sum,product,diff,i,dsum,ddiff,dt,logic_and,
+     &    logic_or,logic_eqv,logic_neqv,logics,bit_and,bit_or,int_array,
+     &    exclusiv_bit_or,min_value,dmin,dmax,d_array,max_value
+        INTEGER MAX_FACTOR
         PARAMETER (double_DIGITS=20,MAX_FACTOR=10)
-        PARAMETER (rounding_error=1.E-2)
+</ompts:orphan:vars>
+
         dt = 1./3.
         known_sum = (LOOPCOUNT * (LOOPCOUNT + 1)) / 2
         product = 1
@@ -42,6 +50,7 @@
         bit_or = 0
         exclusiv_bit_or = 0
 !$omp parallel
+<ompts:orphan>
 !$omp do 
         DO i =1, LOOPCOUNT
 <ompts:check>
@@ -50,6 +59,7 @@
           sum = sum + i
         END DO
 !$omp end do
+</ompts:orphan>
 !$omp end parallel
 
         IF (known_sum .NE. sum) THEN
@@ -62,6 +72,7 @@
 
 
 !$omp parallel
+<ompts:orphan>
 !$omp do 
         DO i =1, LOOPCOUNT
 <ompts:check>
@@ -70,6 +81,7 @@
           diff = diff - i
         END DO
 !$omp end do
+</ompts:orphan>
 !$omp end parallel
   
         IF ( diff .NE. 0 ) THEN
@@ -87,6 +99,7 @@
         END DO
         dknown_sum = (1-dpt)/(1-dt)
 !$omp parallel
+<ompts:orphan>
 !$omp do 
         DO i=0,DOUBLE_DIGITS-1
 <ompts:check>
@@ -95,6 +108,7 @@
               dsum = dsum + dt**i
         END DO
 !$omp end do
+</ompts:orphan>
 !$omp end parallel
 
  
@@ -114,6 +128,7 @@
 
         ddiff = ( 1-dpt)/(1-dt)
 !$omp parallel
+<ompts:orphan>
 !$omp do 
         DO i=0, DOUBLE_DIGITS-1
 <ompts:check>
@@ -122,6 +137,7 @@
           ddiff = ddiff - dt**i
         END DO
 !$omp end do
+</ompts:orphan>
 !$omp end parallel
 
         IF ( ABS(ddiff) .GT. rounding_error ) THEN
@@ -131,6 +147,7 @@
         END IF
 
 !$omp parallel
+<ompts:orphan>
 !$omp do 
         DO i=1,MAX_FACTOR
 <ompts:check>
@@ -139,6 +156,7 @@
            product = product * i
         END DO
 !$omp end do
+</ompts:orphan>
 !$omp end parallel
 
         IF (known_product .NE. product) THEN
@@ -152,6 +170,7 @@
         END DO
 
 !$omp parallel
+<ompts:orphan>
 !$omp do 
         DO i=1,LOOPCOUNT
 <ompts:check>
@@ -160,6 +179,7 @@
           logic_and = logic_and .AND. logics(i)
         END DO
 !$omp end do
+</ompts:orphan>
 !$omp end parallel
 
         IF (.NOT. logic_and) THEN
@@ -172,6 +192,7 @@
         logics(LOOPCOUNT/2) = .FALSE.
 
 !$omp parallel
+<ompts:orphan>
 !$omp do
         DO i=1,LOOPCOUNT
 <ompts:check>
@@ -180,6 +201,7 @@
           logic_and = logic_and .AND. logics(i)
         END DO
 !$omp end do
+</ompts:orphan>
 !$omp end parallel
 
         IF (logic_and) THEN
@@ -192,6 +214,7 @@
         END DO
 
 !$omp parallel
+<ompts:orphan>
 !$omp do 
         DO i = 1, LOOPCOUNT
 <ompts:check>
@@ -200,6 +223,7 @@
            logic_or = logic_or .OR. logics(i)
         END DO
 !$omp end do
+</ompts:orphan>
 !$omp end parallel
 
         IF (logic_or) THEN
@@ -211,6 +235,7 @@
         logics(LOOPCOUNT/2) = .TRUE.
 
 !$omp parallel
+<ompts:orphan>
 !$omp do 
         DO i=1,LOOPCOUNT
 <ompts:check>
@@ -219,6 +244,7 @@
            logic_or = logic_or .OR. logics(i)
         END DO
 !$omp end do
+</ompts:orphan>
 !$omp end parallel
 
         IF ( .NOT. logic_or ) THEN
@@ -234,6 +260,7 @@
         logic_eqv = .TRUE.
 
 !$omp parallel
+<ompts:orphan>
 !$omp do 
         DO i = 1, LOOPCOUNT
 <ompts:check>
@@ -242,6 +269,7 @@
            logic_eqv = logic_eqv .EQV. logics(i)
         END DO
 !$omp end do
+</ompts:orphan>
 !$omp end parallel
 
         IF (.NOT. logic_eqv) THEN
@@ -253,6 +281,7 @@
         logics(LOOPCOUNT/2) = .FALSE.
 
 !$omp parallel
+<ompts:orphan>
 !$omp do 
         DO i=1,LOOPCOUNT
 <ompts:check>
@@ -261,6 +290,7 @@
            logic_eqv = logic_eqv .EQV. logics(i)
         END DO
 !$omp end do
+</ompts:orphan>
 !$omp end parallel
 
         IF ( logic_eqv ) THEN
@@ -276,6 +306,7 @@
         logic_neqv = .FALSE.
 
 !$omp parallel
+<ompts:orphan>
 !$omp do 
         DO i = 1, LOOPCOUNT
 <ompts:check>
@@ -284,6 +315,7 @@
            logic_neqv = logic_neqv .OR. logics(i)
         END DO
 !$omp end do
+</ompts:orphan>
 !$omp end parallel
 
         IF (logic_neqv) THEN
@@ -295,6 +327,7 @@
         logics(LOOPCOUNT/2) = .TRUE.
 
 !$omp parallel
+<ompts:orphan>
 !$omp do 
         DO i=1,LOOPCOUNT
 <ompts:check>
@@ -303,6 +336,7 @@
            logic_neqv = logic_neqv .OR. logics(i)
         END DO
 !$omp end do
+</ompts:orphan>
 !$omp end parallel
 
         IF ( .NOT. logic_neqv ) THEN
@@ -314,6 +348,7 @@
           int_array(i) = 1
         END DO
 !$omp parallel
+<ompts:orphan>
 !$omp do 
         DO i=1, LOOPCOUNT
 !... iand(I,J): Returns value resulting from boolean AND of 
@@ -324,6 +359,7 @@
           bit_and = IAND(bit_and,int_array(i))
         END DO
 !$omp end do
+</ompts:orphan>
 !$omp end parallel
 
         IF ( bit_and .LT. 1 ) THEN
@@ -335,6 +371,7 @@
         int_array(LOOPCOUNT/2) = 0
 
 !$omp parallel
+<ompts:orphan>
 !$omp do 
         DO i=1, LOOPCOUNT
 <ompts:check>
@@ -343,6 +380,7 @@
           bit_and = IAND ( bit_and, int_array(i) )
         END DO
 !$omp end do
+</ompts:orphan>
 !$omp end parallel
 
         IF( bit_and .GE. 1) THEN
@@ -356,6 +394,7 @@
 
 
 !$omp parallel
+<ompts:orphan>
 !$omp do 
         DO i=1, LOOPCOUNT
 !... Ior(I,J): Returns value resulting from boolean OR of 
@@ -366,6 +405,7 @@
           bit_or = Ior(bit_or, int_array(i) )
         END DO
 !$omp end do
+</ompts:orphan>
 !$omp end parallel
 
         IF ( bit_or .GE. 1) THEN
@@ -377,6 +417,7 @@
         bit_or = 0
         int_array(LOOPCOUNT/2) = 1
 !$omp parallel
+<ompts:orphan>
 !$omp do 
         DO i=1, LOOPCOUNT
 <ompts:check>
@@ -385,6 +426,7 @@
           bit_or = IOR(bit_or, int_array(i) )
         END DO
 !$omp end do
+</ompts:orphan>
 !$omp end parallel
 
         IF ( bit_or .le. 0) THEN
@@ -397,6 +439,7 @@
         END DO
 
 !$omp parallel
+<ompts:orphan>
 !$omp do 
         DO i = 1, LOOPCOUNT
 <ompts:check>
@@ -405,6 +448,7 @@
             exclusiv_bit_or = IEOR(exclusiv_bit_or, int_array(i))
         END DO
 !$omp end do
+</ompts:orphan>
 !$omp end parallel
 
         IF ( exclusiv_bit_or .GE. 1) THEN
@@ -416,6 +460,7 @@
         int_array(LOOPCOUNT/2) = 1
 
 !$omp parallel
+<ompts:orphan>
 !$omp do 
         DO i = 1, LOOPCOUNT
 <ompts:check>
@@ -424,6 +469,7 @@
             exclusiv_bit_or = ieor(exclusiv_bit_or, int_array(i))
         END DO
 !$omp end do
+</ompts:orphan>
 !$omp end parallel
 
         IF ( exclusiv_bit_or .LE. 0) THEN
@@ -438,6 +484,7 @@
         min_value = 65535
 
 !$omp parallel
+<ompts:orphan>
 !$omp do 
         DO i = 1, LOOPCOUNT
 <ompts:check>
@@ -446,6 +493,7 @@
             min_value = min(min_value,int_array(i) )
         END DO
 !$omp end do
+</ompts:orphan>
 !$omp end parallel
 
         IF ( min_value .GT. (10-LOOPCOUNT) )THEN
@@ -461,6 +509,7 @@
         max_value = -32768
 
 !$omp parallel
+<ompts:orphan>
 !$omp do 
         DO i = 1, LOOPCOUNT
 <ompts:check>
@@ -469,6 +518,7 @@
             max_value = max(max_value,int_array(i) )
         END DO
 !$omp end do
+</ompts:orphan>
 !$omp end parallel
 
         IF ( max_value .LT. LOOPCOUNT )THEN
@@ -485,6 +535,7 @@
         dt = 0.5
 
 !$omp parallel
+<ompts:orphan>
 !$omp do 
         DO i = 1, LOOPCOUNT
 <ompts:check>
@@ -493,6 +544,7 @@
             dmin= MIN(dmin,d_array(i) )
         END DO
 !$omp end do
+</ompts:orphan>
 !$omp end parallel
 
         IF ( dmin .GT. (10-dt) )THEN
@@ -508,6 +560,7 @@
         dmax= - (2**10)
 
 !$omp parallel
+<ompts:orphan>
 !$omp do 
         DO i = 1, LOOPCOUNT
 <ompts:check>
@@ -516,6 +569,7 @@
           dmax= max(dmax,d_array(i) )
         END DO
 !$omp end do
+</ompts:orphan>
 !$omp end parallel
 
         IF ( dmax .LT. LOOPCOUNT*dt )THEN
