@@ -20,6 +20,7 @@ omp_get_wtime
 omp_in_parallel
 omp_lock
 omp_master
+omp_nested
 omp_nest_lock
 omp_parallel_copyin
 omp_parallel_for_firstprivate
