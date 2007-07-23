@@ -33,6 +33,7 @@
       WRITE (*,*) "## Repetitions:", N 
       WRITE (*,*) "## Loop Count :", LOOPCOUNT
       WRITE (*,*) "##############################################"
+      WRITE (*,*)
 
       crossfailed=0
       result=1
@@ -48,19 +49,23 @@
         temp =  <testfunctionname></testfunctionname>()
         IF (temp .EQ. 1) THEN
           WRITE (1,*)  j, ". test successfull."
+          WRITE (*,*)  j, ". test successfull."
           success = success + 1
         ELSE
           WRITE (1,*) "Error: ",j, ". test failed."
+          WRITE (*,*) "Error: ",j, ". test failed."
           failed = failed + 1
         ENDIF
       END DO
 
       
       IF (failed .EQ. 0) THEN
-        WRITE (1,*) "Directiv worked without errors."
+        WRITE (1,*) "Directive worked without errors."
+        WRITE (*,*) "Directive worked without errors."
         result = 0
       ELSE
         WRITE (1,*) "Directive failed the test ", failed, " times."
+        WRITE (*,*) "Directive failed the test ", failed, " times."
         result = failed * 100 / N
       ENDIF
       CALL EXIT (result)
