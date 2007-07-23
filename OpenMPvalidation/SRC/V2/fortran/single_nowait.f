@@ -6,8 +6,12 @@
 <ompts:testcode>
       INTEGER FUNCTION <ompts:testcode:functionname>single_nowait</ompts:testcode:functionname>()
         IMPLICIT NONE
-        INTEGER result, nr_iterations, total_iterations, my_iterations,i
+        INTEGER result, total_iterations, my_iterations,i
         INCLUDE "omp_testsuite.f"
+<ompts:orphan:vars>
+        INTEGER nr_iterations
+        COMMON /orphvars/ nr_iterations
+</ompts:orphan:vars>
 
         result=0
         nr_iterations=0
@@ -16,10 +20,12 @@
 
 !$omp parallel private(i)
         DO i=0, LOOPCOUNT -1
+        <ompts:orphan>
 <ompts:check>!$omp single</ompts:check>
 !$omp atomic
           nr_iterations = nr_iterations + 1
 <ompts:check>!$omp end single nowait</ompts:check>
+        </ompts:orphan>
         END DO
 !$omp end parallel
 !$omp parallel private(i,my_iterations)

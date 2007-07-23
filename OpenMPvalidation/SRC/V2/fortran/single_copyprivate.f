@@ -6,17 +6,19 @@
 <ompts:testcode>
       INTEGER FUNCTION <ompts:testcode:functionname>single_copyprivate</ompts:testcode:functionname>()
         IMPLICIT NONE
-        INTEGER result
-        INTEGER nr_iterations
         INTEGER i
-        INTEGER j,thread
         INTEGER omp_get_thread_num
         INCLUDE "omp_testsuite.f"
+<ompts:orphan:vars>
+        INTEGER j,thread,nr_iterations,result
+        COMMON /orphvars/ j,thread,nr_iterations,result
+</ompts:orphan:vars>
 
         result=0
         nr_iterations=0
 
 !$omp parallel private(i,j,thread)
+        <ompts:orphan>
         DO i=0,LOOPCOUNT-1
           thread=OMP_GET_THREAD_NUM()
 !$omp single 
@@ -27,6 +29,7 @@
           result=result+j-i;
 !$omp end critical
         END DO
+        </ompts:orphan>
 !$omp end parallel
         IF(result .EQ. 0 .AND. 
      &     nr_iterations .EQ. LOOPCOUNT) THEN
