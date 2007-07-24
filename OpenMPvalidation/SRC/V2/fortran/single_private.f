@@ -10,7 +10,7 @@
         INTEGER nr_iterations, i
 		<ompts:orphan:vars>
         INTEGER nr_threads_in_single, myresult, myit
-        COMMON /orphvars/ myresult, myit,nr_threads_in_single
+        COMMON /orphvars/ result,nr_iterations
 		</ompts:orphan:vars>
         INCLUDE "omp_testsuite.f"
         nr_threads_in_single=0
@@ -19,10 +19,10 @@
         myit=0
         nr_iterations=0
 !$omp parallel private(i, myresult, myit)
+<ompts:orphan>
         myresult = 0
         myit = 0
         DO i=0, LOOPCOUNT -1
-<ompts:orphan>
 !$omp single <ompts:check>private(nr_threads_in_single)</ompts:check>
           nr_threads_in_single = 0
 !$omp flush
@@ -32,14 +32,15 @@
 !          nr_threads_in_single = nr_threads_in_single - 1
           myresult = myresult + nr_threads_in_single
 !$omp end single nowait
-</ompts:orphan>
         END DO
 !$omp critical
 !        result = result + myresult
         result = result + nr_threads_in_single
         nr_iterations = nr_iterations + myit
 !$omp end critical
+</ompts:orphan>
 !$omp end parallel
+!        WRITE(1,*) "result is",result,"nr_it is",nr_iterations
         IF ( result .EQ. 0 .AND. nr_iterations .EQ. LOOPCOUNT) THEN
           <testfunctionname></testfunctionname> = 1
         ELSE
