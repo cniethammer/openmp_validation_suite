@@ -48,6 +48,7 @@
         count = 0
         tmp_count = 0
         openwork = CFSMAX_SIZE
+<ompts:check>
 
 ! Determine the number of available threads
 !$omp parallel 
@@ -68,7 +69,7 @@
 !$omp parallel private(tid,count) shared(tids,maxiter)
         tid = omp_get_thread_num()
         <ompts:orphan>
-!$omp do <ompts:check>schedule(guided)</ompts:check>
+!$omp do schedule(guided)
         DO i = 0 , CFSMAX_SIZE-1
           count = 0
 !$omp flush(maxiter)
@@ -164,5 +165,10 @@
            <testfunctionname></testfunctionname> = 0
         END IF
       END
+</ompts:check>
+<ompts:crosscheck>
+      <testfunctionname></testfunctionname> = 0
+      END
+</ompts:crosscheck>
 </ompts:testcode>
 </omtps:test>
