@@ -102,13 +102,21 @@ II.2. Running custom tests
 In order to run single tests or custom groups of tests, two make commmands
 are defined: make stest and make fstest. These two command reference the file
 customtest.txt when looking for a testlist to use. Simply edit customtest.txt
-to include the desired test or tests and to run c tests
+to include the desired test or tests. If customtest.txt contains c tests,
 
 >      make stest
 
 or for fortran tests
 
 >      make fstest
+
+In order to change the number of threads used in the tests, simply edit the 
+Makefile variables MINTHREADS and MAXTHREADS. By default, they are configured
+to use 2 threads. To change the number of times each test is run, for c tests
+edit the REPETITIONS variable in the file ompts-c.conf. The LOOPCOUNT and 
+SLEEPTIME variables can also be changed here. For fortran tests, edit the file
+omp_testsuite.f to change both the LOOPCOUNT and the number of times each test
+is run.
 
 
 
