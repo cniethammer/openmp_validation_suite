@@ -1,10 +1,9 @@
 !This is the main driver to invoke different test functions
-! more comments here.....
       PROGRAM <testfunctionname></testfunctionname>_main
       IMPLICIT NONE
 !      INTEGER LOOPCOUNT 
-      INTEGER failed, success
-      INTEGER N
+      INTEGER failed, success !Number of failed/succeeded tests
+      INTEGER N !Number of times to run test
       INTEGER num_tests,crosschecked, crossfailed, j
       INTEGER temp,temp1
       INCLUDE "omp_testsuite.f"
@@ -12,7 +11,7 @@
       INTEGER <testfunctionname></testfunctionname>
 
 
-      CHARACTER*50 logfilename
+      CHARACTER*50 logfilename !Pointer to logfile
       INTEGER result 
 
       num_tests = 0
@@ -23,6 +22,7 @@
       failed = 0
 !      LOOPCOUNT = 10000
 
+      !Open a new logfile or overwrite the existing one.
       logfilename = "f<testfunctionname></testfunctionname>.log"
 !      WRITE (*,*) "Enter logFilename:" 
 !      READ  (*,*) logfilename
@@ -38,7 +38,7 @@
       crossfailed=0
       result=1
       WRITE (1,*) "--------------------------------------------------"
-      WRITE (1,*) "Testting <directive></directive>"
+      WRITE (1,*) "Testing <directive></directive>"
       WRITE (1,*) "--------------------------------------------------"
       WRITE (1,*) 
       WRITE (1,*) "testname: <testfunctionname></testfunctionname>"
