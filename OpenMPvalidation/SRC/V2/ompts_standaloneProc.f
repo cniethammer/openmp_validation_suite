@@ -1,9 +1,7 @@
 !This is the main driver to invoke different test functions
       PROGRAM <testfunctionname></testfunctionname>_main
       IMPLICIT NONE
-!      INTEGER LOOPCOUNT 
       INTEGER failed, success !Number of failed/succeeded tests
-      INTEGER N !Number of times to run test
       INTEGER num_tests,crosschecked, crossfailed, j
       INTEGER temp,temp1
       INCLUDE "omp_testsuite.f"
@@ -18,9 +16,7 @@
       crosschecked = 0
       crossfailed = 0
       result = 1
-      N=20
       failed = 0
-!      LOOPCOUNT = 10000
 
       !Open a new logfile or overwrite the existing one.
       logfilename = "f<testfunctionname></testfunctionname>.log"
@@ -49,11 +45,9 @@
         temp =  <testfunctionname></testfunctionname>()
         IF (temp .EQ. 1) THEN
           WRITE (1,*)  j, ". test successfull."
-          WRITE (*,*)  j, ". test successfull."
           success = success + 1
         ELSE
           WRITE (1,*) "Error: ",j, ". test failed."
-          WRITE (*,*) "Error: ",j, ". test failed."
           failed = failed + 1
         ENDIF
       END DO
@@ -63,10 +57,12 @@
         WRITE (1,*) "Directive worked without errors."
         WRITE (*,*) "Directive worked without errors."
         result = 0
+        WRITE (*,*) "Result:",result
       ELSE
         WRITE (1,*) "Directive failed the test ", failed, " times."
         WRITE (*,*) "Directive failed the test ", failed, " times."
         result = failed * 100 / N
+        WRITE (*,*) "Result:",result
       ENDIF
       CALL EXIT (result)
       END PROGRAM 
