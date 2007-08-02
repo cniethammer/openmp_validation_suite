@@ -272,7 +272,9 @@ TEST: while(<TEST>){
 	 }
 	 print RESULTS "\n";
       } # end of outer loop
-    print "\nTested $totalnum directive(s). $testfail tests failed, and $testsuccess successful with $ctestnum cross checked\n";
+    $testnum = $testfail + $testsuccess;
+    print "\nTested $totalnum directive(s) using $testnum tests. $testfail tests failed, and $testsuccess successful with $ctestnum cross checked\n";
+    print RESULTS "\nTested $totalnum directive(s) using $testnum tests. $testfail tests failed, and $testsuccess successful with $ctestnum cross checked\n";
     if ($testnocompile > 0) {
         print "$testnocompile test(s) failed to compile\n";
     }
