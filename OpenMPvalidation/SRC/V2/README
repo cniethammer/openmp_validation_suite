@@ -42,6 +42,12 @@ directive. These are tests in which either the directive is missing or used
 with different arguments. If this so called crosstest fails, this indicates 
 strongly that the previous test is capable of testing the directive.
 
+Lastly, an orphaned test is also run to determine if the directive being
+tested is able to correctly run when 'orphaned' from the main function. 
+Essentially, the directive's code is placed into its own function which is
+called during execution of the main function and often inside a parallel 
+region.
+
 
 I.2.  Files and directories
 ----------------------------
@@ -120,7 +126,7 @@ is run.
 
 
 
-II.3. Where to search for results
+II.3. Understanding the results
 ---------------------------------
 
 
@@ -298,3 +304,33 @@ III.2.  Adding tests to the test lists
 
 After you have created a new test you have to add them to a testlist. Simply 
 add the function name in a new Line into a file.
+
+
+
+------------------------------------------------------------------------------
+
+IV.   Known Issues and Workaround
+==============================================================================
+
+The Sun OS has a problem with the -maxdepth option on the 'make cleanall' 
+command. This prevents the tests from being removed from the working directory
+and can cause problems with future tests. To remedy, edit the makefile line
+under the clean command:
+
+     -rm [cf]test*.[cf] [cf]crosstest*.[cf] [cf]ctest*.[cf] [cf]orphan*.[cf]
+
+Change to:
+
+     -rm [cf]test* [cf]crosstest* [cf]ctest* [cf]orphan*
+
+
+
+------------------------------------------------------------------------------
+
+V.   Contact and Support
+==============================================================================
+
+Contact: http://www.cs.uh.edu/~openuh                                        
+Bug report: http://spanner.hpctools.uh.edu/bugzilla/
+
+     
