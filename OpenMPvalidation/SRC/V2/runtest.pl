@@ -277,6 +277,7 @@ TEST: while(<TEST>){
     print RESULTS "\nTested $totalnum directive(s) using $testnum tests. $testfail tests failed, and $testsuccess successful with $ctestnum cross checked\n";
     if ($testnocompile > 0) {
         print "$testnocompile test(s) failed to compile\n";
+        print RESULTS "$testnocompile test(s) failed to compile\n";
     }
     print "For more detailed information see files $results, ompts.log, and compile.log\n";
     close(RESULTS);
