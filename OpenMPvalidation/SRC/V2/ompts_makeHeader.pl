@@ -17,7 +17,7 @@
 # 	after setting this option. (Not implemented yet.)
 # -o=FILENAME: outputfilename (default is "omp_testsuite.h")
 
-$headerfile = "\/\* Global headerfile of the OpenMP Testsuite \*\/\n\n\/\* This file was created with the ompts_makeHeder.pl script using the following opions:\ *\/\n\/\* ";
+$headerfile = "\/\* Global headerfile of the OpenMP Testsuite \*\/\n\n\/\* This file was created with the ompts_makeHeader.pl script using the following opions:\ *\/\n\/\* ";
 if(@ARGV > 0)
 {
 	foreach $opt (@ARGV)
