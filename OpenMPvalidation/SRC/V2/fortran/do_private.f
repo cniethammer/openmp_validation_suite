@@ -6,14 +6,14 @@
 <ompts:testcode>
       SUBROUTINE do_some_work()
         IMPLICIT NONE
-        REAL i
+        INTEGER i
         INTRINSIC sqrt
         DOUBLE PRECISION sum
 
         INCLUDE "omp_testsuite.f"
         sum=0.0
-        DO i=0.0, LOOPCOUNT-1,1.0
-          sum = sum + sqrt(i)
+        DO i=0, LOOPCOUNT-1
+          sum = sum + sqrt(REAL(i))
         ENDDO
 
       END
