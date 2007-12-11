@@ -29,13 +29,13 @@ int <ompts:testcode:functionname>omp_for_firstprivate</ompts:testcode:functionna
 #pragma omp parallel
     {
 #pragma omp single
-    {
-     threadsnum=omp_get_num_threads();
-     }
+        {
+            threadsnum=omp_get_num_threads();
+        }
 	/* sum0 = 0; */
 	<ompts:orphan>
 	int i;
-#pragma omp for <ompts:check>firstprivate(sum0)</ompts:check><ompts:crosscheck></ompts:crosscheck>
+#pragma omp for <ompts:check>firstprivate(sum0)</ompts:check>
 	for (i = 1; i <= LOOPCOUNT; i++)
 	{
 	    sum0 = sum0 + i;

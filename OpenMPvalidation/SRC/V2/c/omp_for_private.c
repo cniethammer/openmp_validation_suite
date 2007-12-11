@@ -2,7 +2,7 @@
 <ompts:testdescription>Test which checks the omp for private clause by counting up a variable in a parallelized loop. Each thread has a private variable (1) and a variable (2) declared by for private. First it stores the result of its last iteration in variable (2). Then this thread waits some time before it stores the value of the variable (2) in its private variable (1). At the beginning of the next iteration the value of (1) is assigned to (2). At the end all private variables (1) are added to a total sum in a critical section and compared with the correct result.</ompts:testdescription>
 <ompts:ompversion>2.0</ompts:ompversion>
 <ompts:directive>omp for private</ompts:directive>
-<ompts:dependences>omp parallel private,omp flush,omp critical</ompts:dependences>
+<ompts:dependences>omp parallel,omp flush,omp critical,omp threadprivate</ompts:dependences>
 <ompts:testcode>
 #include <stdio.h>
 #include <math.h>

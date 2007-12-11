@@ -1,5 +1,5 @@
 <ompts:test>
-<ompts:testdescription>Test which checks the default option of the parallel construct. </ompts:testdescription>
+<ompts:testdescription>Test which checks the default option of the parallel construct.</ompts:testdescription>
 <ompts:ompversion>2.0</ompts:ompversion>
 <ompts:directive>omp parallel default</ompts:directive>
 <ompts:testcode>
