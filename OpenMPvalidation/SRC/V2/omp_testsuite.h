@@ -1,6 +1,6 @@
 /* Global headerfile of the OpenMP Testsuite */
 
-/* This file was created with the ompts_makeHeder.pl script using the following opions: */
+/* This file was created with the ompts_makeHeader.pl script using the following opions: */
 /* -f=ompts-c.conf -t=c  */
 
 
@@ -10,13 +10,22 @@
 #include <stdio.h>
 #include <omp.h>
 
-#define OMPTS_VERSION "2.0"
+/* Version info                                           */
+/**********************************************************/
+#define OMPTS_VERSION "3.0a"
 
+/* General                                                */
+/**********************************************************/
 #define LOOPCOUNT 	1000
 #define REPETITIONS 	  20
-#define SLEEPTIME	 0.1
+/* following times are in seconds */
+#define SLEEPTIME	 0.01
+#define SLEEPTIME_LONG	 0.5
 
-
+/* Definitions for tasks                                  */
+/**********************************************************/
+#define NUM_TASKS              25
+#define MAX_TASKS_PER_THREAD    5
 int test_has_openmp(FILE * logfile);  /* Test for _OPENMP */
 int crosstest_has_openmp(FILE * logfile);  /* Crosstest for _OPENMP */
 int test_omp_atomic(FILE * logfile);  /* Test for omp atomic */
@@ -109,5 +118,43 @@ int test_omp_parallel_default(FILE * logfile);  /* Test for omp parallel default
 int crosstest_omp_parallel_default(FILE * logfile);  /* Crosstest for omp parallel default */
 int test_omp_threadprivate_for(FILE * logfile);  /* Test for omp threadprivate */
 int crosstest_omp_threadprivate_for(FILE * logfile);  /* Crosstest for omp threadprivate */
+int test_omp_task(FILE * logfile);  /* Test for omp task */
+int crosstest_omp_task(FILE * logfile);  /* Crosstest for omp task */
+int test_omp_nested(FILE * logfile);  /* Test for omp_nested */
+int crosstest_omp_nested(FILE * logfile);  /* Crosstest for omp_nested */
+int test_omp_parallel_for_if(FILE * logfile);  /* Test for omp parallel for if */
+int crosstest_omp_parallel_for_if(FILE * logfile);  /* Crosstest for omp parallel for if */
+int test_omp_task_untied(FILE * logfile);  /* Test for omp task untied */
+int crosstest_omp_task_untied(FILE * logfile);  /* Crosstest for omp task untied */
+int test_omp_task_if(FILE * logfile);  /* Test for omp task if */
+int crosstest_omp_task_if(FILE * logfile);  /* Crosstest for omp task if */
+int test_omp_task_private(FILE * logfile);  /* Test for omp task private */
+int crosstest_omp_task_private(FILE * logfile);  /* Crosstest for omp task private */
+int test_omp_task_untied2(FILE * logfile);  /* Test for omp task untied */
+int crosstest_omp_task_untied2(FILE * logfile);  /* Crosstest for omp task untied */
+int test_omp_task_firstprivate(FILE * logfile);  /* Test for omp task firstprivate */
+int crosstest_omp_task_firstprivate(FILE * logfile);  /* Crosstest for omp task firstprivate */
+int test_omp_taskwait(FILE * logfile);  /* Test for omp taskwait */
+int crosstest_omp_taskwait(FILE * logfile);  /* Crosstest for omp taskwait */
+int test_omp_for_schedule_static_3(FILE * logfile);  /* Test for omp for schedule(static) */
+int crosstest_omp_for_schedule_static_3(FILE * logfile);  /* Crosstest for omp for schedule(static) */
+int test_omp_master_3(FILE * logfile);  /* Test for omp master */
+int crosstest_omp_master_3(FILE * logfile);  /* Crosstest for omp master */
+int test_omp_task(FILE * logfile);  /* Test for omp task */
+int crosstest_omp_task(FILE * logfile);  /* Crosstest for omp task */
+int test_omp_task_firstprivate(FILE * logfile);  /* Test for omp task firstprivate */
+int crosstest_omp_task_firstprivate(FILE * logfile);  /* Crosstest for omp task firstprivate */
+int test_omp_task_private(FILE * logfile);  /* Test for omp task private */
+int crosstest_omp_task_private(FILE * logfile);  /* Crosstest for omp task private */
+int test_omp_task_if(FILE * logfile);  /* Test for omp task if */
+int crosstest_omp_task_if(FILE * logfile);  /* Crosstest for omp task if */
+int test_omp_task_untied3(FILE * logfile);  /* Test for omp task untied */
+int crosstest_omp_task_untied3(FILE * logfile);  /* Crosstest for omp task untied */
+int test_omp_taskwait(FILE * logfile);  /* Test for omp taskwait */
+int crosstest_omp_taskwait(FILE * logfile);  /* Crosstest for omp taskwait */
+int test_omp_task_untied(FILE * logfile);  /* Test for omp task untied */
+int crosstest_omp_task_untied(FILE * logfile);  /* Crosstest for omp task untied */
+int test_omp_task_untied2(FILE * logfile);  /* Test for omp task untied */
+int crosstest_omp_task_untied2(FILE * logfile);  /* Crosstest for omp task untied */
 
 #endif

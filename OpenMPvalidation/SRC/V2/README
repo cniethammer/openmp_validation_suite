@@ -254,14 +254,14 @@ The directives have to be listed by their directive names as it is called in
 the programming language. Multiple directives are separated by ','.
 
 - <ompts:testcode> </ompts:testcode> In this tag stands the whole source code
-  for the test / crosstest.  Each test has to be written as a function. The
+for the test / crosstest.  Each test has to be written as a function. The
 syntax of the functions differs between C and Fortran: In C it has to take a
 file pointer 'FILE * logFile' and return an int. If the test has been passed
-successful it has to return 0. The file pointer can be used to write
-information into a log file.  In Fortran the function takes no argument and the
-function name must not exceed XX characters.  The return value has to be
-specified using the '<testfunctionname>' tags. It has to be 1 if the test
-succeeded and 0 if the test failed. For details see the example.
+successful it has to return a value unequal to 0. The file pointer can be used
+to write information into a log file.  In Fortran the function takes no
+argument and the function name must not exceed XX characters.  The return value
+has to be specified using the '<testfunctionname>' tags. It has to be 1 if the
+test succeeded and 0 if the test failed. For details see the example.
 
 To tell the test suite the name of your test function you have to enclose it
 into the '<ompts:testcode:functionname> </ompts:testcode:functionname>' tag.
