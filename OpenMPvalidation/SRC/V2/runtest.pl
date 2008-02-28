@@ -3,286 +3,507 @@
 # runtest [options] FILENAME
 #
 # Read the file FILENAME. Each line contains a test. 
-# Convert template to test and crosstest. 
+# Convert template to test and crosstest.
 # If possilble generate orphaned testversions, too.
 # Use make to compile the test
-#
-# Options:
-# -norphan			do not generate orphaned test versions
-# -maxthread=COUNT		run tests with a threadnumber from 2 up to COUNT
-# -norun			only compile, no run
-# -nocompile			do not compile, only run
-# -lang=LANGUAGE		specify explicit the language (c or fortran)
-# -d=DIR			specify the directory containing the templates explicitly
-# -results=FILE			specify the name of the file containing the results
-# -logfile=FILE			specify the name of the file for global log messages
-# --help			print help
-#
 
-$results 	= "results.txt";
-$logfilename 	= "ompts.log";
-$dir 		= "";
+################################################################################
+# Global configuration options for the runtestscript itsel:
+################################################################################
 
-# Using Getopt::long to extract the programm options
+# name of the global configuration file for the testsuite:
+$config_file    = "ompts.conf";
+$logfile        = "ompts.log"; # overwriteable by value in config file
+$env_set_threads_command = 'OMP_NUM_THREADS=%n; export OMP_NUM_THREADS;';
+$debug_mode     = 0;
+################################################################################
+# After this line the script part begins! Do not edit anithing below
+################################################################################
+
+
+# Namespaces:
 use Getopt::Long;
+use Data::Dumper;
+use ompts_parserFunctions;
 
-# Getting given options
-GetOptions("--help" => \$help, 
-      "-norphan" => \$norphan,
-      "-minthreads=i" => \$minthreads, 
-      "-maxthreads=i" => \$maxthreads, 
-      "-norun" => \$norun, 
-      "-nocompile" => \$nocompile, 
-      "-lang=s" => \$language,
-      "-d=s" => \$dir, 
-      "-results=s" => \$results, 
-      "-logfile=s" => \$logfilename, 
-      "-f!");
-$testfile = $ARGV[0];
+# Extracting given options
+GetOptions("help",
+      "listlanguages",
+      "lang=s",
+      "list",
+      "testinfo=s",
+      "numthreads=i",
+      "test=s",
+      "compile!",
+      "run!",
+      "orphan!",
+      "resultfile=s"
+      );
 
-if($help){
-    $helptext = "runtest [options] FILENAME\n
-The runtest script reads the file FILENAME. Each line of this file has to
-contain the name of a test. The script converts templates to tests and
-crosstests. If possilble it generates orphaned testversions, too. Then it
-compiles the source using make and runs finaly all tests.
+# Get global configuratino options from config file:
+if(! -e $config_file){ error ("Could not find config file $config_file\n", 1);}
+open (CONFIG, "<$config_file") or error ("Could not open config file $config_file\n", 2);
+while (<CONFIG>) { $config .= $_; }
+close (CONFIG);
+
+($logfile) = get_tag_values ("logfile", $config);
+($timeout) = get_tag_values ("singletesttimeout", $config);
+($display_errors) = get_tag_values("displayerrors", $config);
+($display_warnings) = get_tag_values ("displaywarnings", $config);
+($numthreads) = get_tag_values ("numthreads", $config);
+($env_set_threads_command) = get_tag_values("envsetthreadscommand",$config);
+$env_set_threads_command =~ s/\%n/$numthreads/g;
+@languages = get_tag_values ("language", $config);
+
+if (!defined($opt_compile)) {$opt_compile = 1;}
+if (!defined($opt_run))     {$opt_run = 1;}
+if (!defined($opt_orphan)) {$opt_orphan = 1;}
+if (!defined($opt_resultsfile)) {($opt_resultsfile) = get_tag_values("resultsfile", $config);}
+if ( defined($opt_numthreads) && ($opt_numthreads > 0)) {$numthreads = $opt_numthreads;}
+if ($debug_mode) {
+print <<EOF;
+Testsuite configuration:
+Logfile = $logfile
+Timeout = $timeout seconds
+Language:  $opt_lang
+Display errors:   $display_errors
+Display warnings: $display_warnings
+Resultsfile:      $opt_resultsfile
+Numthreads: $numthreads
+------------------------------
+EOF
+}
+
+if ($opt_help)         { print_help_text ();   exit 0; }
+if ($opt_listlanguages){ print_avail_langs (); exit 0; }
+if ($opt_list)     { print_avail_tests ();   exit 0; }
+if ($opt_testinfo) { print_testinfo ();      exit 0; } 
+if ($opt_test)     { write_result_file_head();
+                     execute_single_test (); exit 0; }
+if (-e $ARGV[0])   { write_result_file_head();
+                     execute_testlist($ARGV[0]); result_summary(); exit 0;}
+
+################################################################################
+# sub function definitions
+################################################################################
+
+# Function which prints a summary of all test
+sub result_summary
+{
+    my $num_directives = @test_results;
+
+    print <<EOF;
+Number of tested Open MP constructs: $num_constructs
+Number of used tests:                $num_tests
+Number of failed tests:              $num_fail_tests
++ from this fail compilation:        $num_failed_compilation
+Number of successful tests:          $num_successful_tests
++ from this were verified:           $num_verified_tests
+EOF
+
+}
+
+# Function that executest the tests specified in the given list
+sub execute_testlist
+{
+    my ($filename) = @_;
+    # opening testlist
+    open(TESTS,$filename) or error ("Could not open  $filename\n", 1);
+TEST: while (<TESTS>) {
+        if (/^\s*#/) {next TEST;}
+        if (/^\s*$/) {next TEST;}
+        $opt_test = $_;
+        chomp ($opt_test);
+        execute_single_test ();
+    }
+# print Dumper(@test_results);
+}
+
+# Function that executes a system command but takes care of the global timeout
+# If command did not finish inbetween returns '-' otherwise the exit status of
+# the system command
+sub timed_sys_command
+{
+    my ($command) = @_;
+    my $exit_status = '-';
+
+# set up the timeout for the command
+    eval {
+        local $SIG{ALRM} = sub {die "alarm\n"};
+        alarm $timeout;
+        log_message_add ("Starting command \"$command\"");
+        $exit_status = system ($command);
+        alarm 0;
+    };
+# check if command finished during the maximum execution time
+    if ($@ eq "alarm\n") { 
+# test timed out
+	if ($debug_mode) { 
+	    log_message_add ("Command \"$command\" reached max execution time.\n"); 
+	}
+    }
+# test finished
+    return $exit_status;
+}
+
+# Function that runs the tests given as a array containing the testnames
+# Returns an array containing the percent values of the passed tests and the 
+# successful crosstests.
+sub run_test
+{
+    my ($testname, $orphan) = @_;
+    my $bin_name, $cbin_name;
+    my $cmd, $exit_status, $failed;
+    my $resulttest, $resultctest;
+
+# path to test and crosstest either in normal or in orphaned version
+    if ($orphan) {
+        $bin_name  = "bin/$opt_lang/orph_test_$testname";
+        $cbin_name = "bin/$opt_lang/orph_ctest_$testname";
+    } else {
+        $bin_name  = "bin/$opt_lang/test_$testname";
+        $cbin_name = "bin/$opt_lang/ctest_$testname";
+    }
+# Check if executables exist
+    if (! -e $bin_name) {
+        test_error ("Could not find executable \"$bin_name\".");
+        return ('-', '-');
+    }
+# run the test
+    $cmd = "$env_set_threads_command ./$bin_name >$bin_name.out";
+    print "Running test with $numthreads threads .";
+    $exit_status = timed_sys_command ($cmd); 
+############################################################
+# Check if test finished within max execution time
+    if ($exit_status eq '-') {
+        print ".... failed (timeout)\n";
+        return ('TO','-')
+    }
+############################################################
+# check if all tests were successful
+    $failed = $exit_status >> 8;
+    $resulttest = 100 - $failed;
+    if ($resulttest eq 100) {
+        print ".... success ...";
+    } else {
+        print ".... failed $failed\% of the tests\n";
+        return ($resulttest, '-');
+    }
+############################################################
+
+# do crosstest
+# check if executable exist
+    if (! -e $cbin_name) {
+        test_error ("Could not find executable \"$cbin_name\".");
+        print "... not verified (crosstest missing)\n";
+        return ($resulttest, '-');
+    }
+# run crosstest
+# Test was successful, so it makes sense to run the crosstest
+    $cmd = "$env_set_threads_command ./$cbin_name > $cbin_name.out";
+    $exit_status = timed_sys_command ($cmd);
+############################################################
+# Check if crosstest finished within max execution time
+    if ($exit_status eq '-') {
+        print "... not verified (timeout)\n";
+        return ($result, 'TO');
+    }
+############################################################
+# test if crosstests failed as expected
+    $resultctest = $exit_status >> 8;
+    if ($resultctest > 0) {
+        print "... and verified with $resultctest\% certainty\n";
+    } else {
+        print "... but might be lucky\n";
+    }
+    return ('test' => $resulttest, 'crosstest' => $resultctest);
+############################################################
+}
+
+# Function that generates the test binaries out of the sourcecode
+sub compile_src
+{
+    my ($testname, $orphan) = @_;
+    print "Compiling soures ............";
+    if ($orphan) {
+# Make orphaned tests
+        $exec_name     = "bin/$opt_lang/orph_test_$testname";
+        $crossexe_name = "bin/$opt_lang/orph_ctest_$testname";
+        $resulttest  = system ("make $exec_name > $exec_name\_compile.log" );
+        $resultctest = system ("make $crossexe_name > $crossexe_name\_compile.log" );
+    } else {
+# Make test
+        $exec_name     = "bin/$opt_lang/test_$testname";
+        $crossexe_name = "bin/$opt_lang/ctest_$testname";
+        $resulttest  = system ("make $exec_name > $exec_name\_compile.log" );
+        $resultctest = system ("make $crossexe_name > $crossexe_name\_compile.log" );
+    }
+    if ($resulttest) { test_error ("Compilation of the test failed."); }
+    if ($resultctest){ test_error ("Compilation of the crosstest failed."); }
+
+    if ($resulttest or $resultctest) {
+        print ".... failed\n";
+        return 0;
+    } else {
+        print ".... success\n";
+        return 1;
+    }
+}
+
+# Function which prepare the directory structure:
+sub init_directory_structure
+{
+    my ($language) = @_;
+    if (-e "bin" && -d "bin") { warning ("Old binary directory detected!");}
+    else { system ("mkdir bin"); }
+    if (-e "bin/$language" && -d "bin/$language") {
+        warning ("Old binary directory for language $language found.");}
+    else { system ("mkdir bin/$language"); }
+}
+
+# Function that generates the sourcecode for the given test
+sub make_src
+{
+    my ($testname, $orphan) = @_;
+    my $template_file;
+    my $src_name;
+
+    $template_file = "$dir/$testname.$extension";
+    if (!-e $template_file) { test_error ("Could not find template for \"$testname\""); }
+
+    print "Generating sources ..........";
+    if ($orphan) {
+# Make orphaned tests
+        $src_name = "bin/$opt_lang/orph_test_$testname.$extension";
+        $resulttest = system ("./$templateparsername --test --orphan $template_file $src_name");
+        $src_name = "bin/$opt_lang/orph_ctest_$testname.$extension";
+        $resultctest = system ("./$templateparsername --crosstest --orphan $template_file $src_name");
+    } else {
+# Make test
+        $src_name = "bin/$opt_lang/test_$testname.$extension";
+        $resulttest = system ("./$templateparsername --test --noorphan $template_file $src_name");
+        $src_name = "bin/$opt_lang/ctest_$testname.$extension";
+        $resultctest = system ("./$templateparsername --crosstest --noorphan $template_file $src_name");
+    }
+    if ($resulttest) { test_error ("Generation of sourcecode for the test failed."); }
+    if ($resultctest){ test_error ("Generation of sourcecode for the crosstest failed."); }
+
+    if ($resulttest or $resultctest) {
+        print ".... failed\n";
+       return 0;
+    } else {
+       print ".... success\n";
+       return 1;
+    }
+}
+
+# Function which checks if a given test is orphanable
+sub test_is_orphanable
+{
+    my ($testname) = @_;
+    my $src;
+    my $file = "$dir/$testname.$extension";
+    if(! -e $file){ test_error ("Could not find test file $file\n");}
+    open (TEST, "<$file") or test_error ("Could not open test file $file\n");
+    while (<TEST>) { $src .= $_; }
+    close (TEST);
+    return $src =~/ompts:orphan/;
+}
+
+sub write_result_file_head
+{
+    $resultline = "$testname\t";
+    open (RESULTS, ">$opt_resultsfile") or error ("Could not open file '$opt_resultsfile' to write results.", 1);
+    print RESULTS "#Tested Directive\tt\tct\tot\toct\n";
+}
+
+# Function which adds a result to the list of results
+sub add_result
+{
+    my ($testname, $result) = @_;
+    $resultline = "$testname\t";
+
+    $num_constructs++;
+
+    open (RESULTS, ">>$opt_resultsfile") or error ("Could not open file '$opt_resultsfile' to write results.", 1);
+
+    if (${$result}[0][0] or ${$result}[0][2]) { $num_tests ++; }
+    if ($opt_compile and ${$result}[0][1] eq 0) { ${$result}[0][2]{test} ='ce'; ${$result}[0][2]{crosstest} ='-'; $num_failed_compilation++;}
+    if ($opt_run and ${$result}[0][2]) {
+        if (${$result}[0][2]{test} eq 100) { 
+            $num_successful_tests++; 
+            if (${$result}[0][2]{crosstest} eq 100) { $num_verified_tests++; }
+        } 
+    }
+    $resultline .= "${$result}[0][2]{test}\t${$result}[0][2]{crosstest}\t";
+
+    if (${$result}[1][0] or ${$result}[1][2]) { $num_tests ++; } 
+    else { $resultline .= "-\t-\n"; }
+    if ($opt_compile and ${$result}[1][1] eq 0) { ${$result}[1][2]{test} ='ce'; ${$result}[1][2]{crosstest} ='-'; $num_failed_compilation++;}
+    if ($opt_run and ${$result}[1][2]) {
+        if (${$result}[1][2]{test} eq 100) { 
+            $num_successful_tests++; 
+            if (${$result}[1][2]{crosstest} eq 100) { $num_verified_tests++; }
+        }
+    }
+    $resultline .= "${$result}[1][2]{test}\t${$result}[1][2]{crosstest}\n";
+    $num_failed_tests += $num_failed_compilation;
+    print RESULTS $resultline;
+}
+
+# Function which executes a single test
+sub execute_single_test
+{
+    my @result;
+    init_language_settings ($opt_lang);
+    init_directory_structure ($opt_lang);
+    log_message_add ("Testing for \"$opt_test\":");
+    print "Testing for \"$opt_test\":\n";
+# tests in normal mode
+    if ($opt_compile){ $result[0][0] = make_src ($opt_test, 0);
+                       $result[0][1] = compile_src ($opt_test, 0);}
+    if ($opt_run)    { $result[0][2] = {run_test ($opt_test, 0)};}
+# tests in orphaned mode
+    if ($opt_orphan && test_is_orphanable($opt_test)){
+        log_message_add ("Testing for \"$opt_test\" in orphaned mode:");
+        print "+ orphaned mode:\n";
+        if ($opt_compile) { $result[1][0] = make_src ($opt_test, 1);
+                            $result[1][1] = compile_src ($opt_test, 1);}
+        if ($opt_run)     { $result[1][2] = {run_test ($opt_test, 1)};}
+    }
+    add_result($opt_test, \@result);
+}
+
+# Function that prints info about a given test
+sub print_testinfo 
+{
+    init_language_settings($opt_lang);
+    my $doc = "";
+    my $file = $dir."/".$opt_testinfo.".".$extension;
+    if (! -e $file) {error ("Could not find template for test $opt_testinfo", 5);}
+    open (TEST,"<$file") or error ("Could not open template file \"$file\" for test $opt_testinfo", 6);
+    while (<TEST>) {$doc .= $_;}
+    close (TEST);
+
+    (my $omp_version) = get_tag_values ("ompts:ompversion", $doc);
+    (my $dependences) = get_tag_values ("ompts:dependences", $doc);
+    (my $description) = get_tag_values ("ompts:testdescription", $doc);
+    my $orphanable = 'no';
+    if ($doc =~ /ompts:orphan/) {$orphanable = 'yes';}
+    print <<EOF;
+Info for test $opt_testinfo:
+Open MP standard: $omp_version
+Orphaned mode: $orphanable
+Dependencies:  $dependences
+Description:   $description
+EOF
+}
+
+# Function that initializes the settings for the given language
+sub init_language_settings
+{
+    my ($language) = @_;
+    foreach my $lang (@languages) {
+        (my $name) = get_tag_values ("languagename", $lang);
+        if ($name eq $language) {
+            ($extension) = get_tag_values ("fileextension", $lang);
+            ($dir)       = get_tag_values ("dir", $lang);
+            ($templateparsername) =get_tag_values ("templateparsername", $lang);
+            last;
+        }
+    }
+    # Check if we found the specified language in the config file
+    if (!$extension and !$dir) { 
+      error ("Language $language could not be found.\n", 3);
+    }
+}
+
+
+
+# Function that prints all available tests for the given language
+sub print_avail_tests 
+{
+    init_language_settings($opt_lang);
+    my @tests;
+    opendir(DIR,"$dir") or error ("Could not open directory $dir", 4);
+    while($_ = readdir(DIR)) { if (/\.$extension$/) {s/\.$extension//; push (@tests, $_);}}
+    closedir(DIR);
+    print "Found ".(@tests)." tests:\n". "-" x 30 . "\n";
+    foreach (@tests) { print $_."\n";}
+}
+
+# Function that prints all available tests for the given language
+sub print_avail_langs
+{
+    if (@languages > 0) {
+        print "Available languages:\n";
+        foreach (@languages) {
+            (my $name) = get_tag_values ("languagename", $_);
+            print "$name\n";
+        }
+    } else {
+        print "No languages available\n";
+    }
+}
+
+# Function that prints the error message
+sub print_help_text 
+{
+    print <<EOF;
+runtest.pl [options] [FILE]
+
+Executes the tests listed in FILE. FILE has to contain the names of the tests,
+one test per line. Lines starting with '#' will be ignored.
+A language has to be specified for all commands except --help and --listlanguages.
 
 Options:
- -norphan            do not generate orphaned test versions
- -minthreads=COUNT   run tests with a minimum of COUNT>2 threads 
- -maxthreads=COUNT   run tests with a threadnumber from 2 up to COUNT
- -norun              only compile, no run
- -nocompile          do not compile, only run
- -lang=LANGUAGE      specify explicit the language (c or fortran)
- -d=DIR              specify the directory containing the templates
-            	     default is templates
- -results=FILE       specify the name of the file containing the results
- -logfile=FILE	     specify the name of the file for global log messages
- --help              print help 
-";
-    print $helptext;
-    exit 0;
+  --help            displays this help message
+  --listlanguages   lists all available languages
+  --lang=s          select language
+  --list            list available tests for a language
+  --testinfo=NAME   show info for test NAME
+  --numthreads=NUM  set number of threads (overwrites config file settings)
+  --test=NAME       execute single test NAME
+  --nocompile       do not compile tests
+  --norun           do not run tests
+  --noorphan        switch of orphaned tests
+  --resultfile=NAME use NAME as resultfile (overwrites config file settings)
+EOF
 }
 
-# Set minthreads if it was not specified with the program arguments
-if(!($minthreads) || $minthreads < 2){ $minthreads = 2; }
-# Set maxthread if it was not specified with the program arguments
-if(!($maxthreads) || $maxthreads < $minthreads ){ $maxthreads = $minthreads; }
-# Checking if given testfile exists
-if(!(-e $testfile)) { die "The specified testlist does not exist."; }
-# Checking if language was specified
-if($language eq "c") { $extension = "c"; }
-elsif($language eq "fortran" or $language eq "f") { $language = "f"; $extension = "f"; }
-else { die "You must specify an valid language!\n"; }
-
-# printing some Information
-$message = "Running tests with mimimal $minthreads threads.
-Running tests with maximal $maxthreads threads.
-Using testlist $testfile for input.
-Using dir $dir to search for testtemplates.
-Compiling tests for language $language.\n";
-
-print $message;
-
-# printing information in logfile
-open(GLOBALLOG,">$logfilename") or die "Error: Could not create  $logfilename\n";
-my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime time;
-$year += 1900;
-print GLOBALLOG "Test started on $mday.$mon.$year at $hour:$min:$sec\n\n";
-print GLOBALLOG $message;
-close(GLOBALLOG);
-$cmd = "make print_compile_options >> $logfilename";
-system($cmd);
-open(GLOBALLOG,">>$logfilename") or die "Error: Could not create  $logfilename\n";
-print GLOBALLOG "\n\nStarting tests:\n\n";
-
-# generating an up to date header file using the ompts_makeHeader.pl script if compiling for c
-if ($language == "") {
-  print "Generating headerfile ...\n";
-  $cmd = "./ompts_makeHeader.pl -f=ompts-$extension.conf -t=$dir";
-  system($cmd);
+# Function that writes an error message for a failed test / part of a test
+sub test_error
+{
+   my ($message) = @_;
+   log_message_add ("ERROR: $message");
+   if ($display_errors eq 1) { print STDERR "ERROR: $message\n"; }
 }
 
-print "Reading testlist ...\n";
-# opening testlist
-open(TEST,$testfile) or die "Error: Could not open  $testfile\n";
-$results = $language.$results;
-# opening the results file in write mode and add the first line (tableheader)
-open(RESULTS,">$results") or die "Error: Could not create  $results\n";
-
-
-print RESULTS "\\ Number of Threads\t";
-for($j=$minthreads; $j <= $maxthreads; $j++){
-    print RESULTS "$j\t\t\t\t";
+# Function that returns an warning message
+sub warning {
+  my ($message) = @_;
+  if ($display_warnings eq 1) { print "Warniong: $message\n"; }
+  log_message_add ("Warning: $message");
 }
-print RESULTS "\nTested Directive ";
-for($j=16; $j < 40; $j++){
-    print RESULTS " ";
+
+# Function that returns an error message and exits with the specified error code
+sub error {
+  my ($message, $error_code) = @_;
+  if ($display_errors eq 1) { print STDERR "ERROR: $message\n"; }
+  log_message_add ("ERROR: $message");
+  exit ($error_code);
 }
-for($j=$minthreads; $j <= $maxthreads; $j++){
-    print RESULTS " t\tct\tot\toct";
+
+# Function which adds an new entry into the logfile together with a timestamp
+sub log_message_add
+{
+    (my $message) = @_;
+    ($sec,$min,$hour,$mday,$mon,$year,$wday,$ydat,$isdst) = localtime();
+    if(length($hour) == 1) { $hour="0$hour"; }
+    if(length($min) == 1)  { $min="0$min";   }
+    if(length($sec) == 1)  { $sec="0$sec";   }
+    $mon=$mon+1;
+    $year=$year+1900;
+    open (LOGFILE,">>$logfile") or die "ERROR: Could not create $logfile\n";
+    print LOGFILE "$mday/$mon/$year $hour.$min.$sec: $message\n";
 }
-print RESULTS "\n";
-
-# Keep track of information about the tests
-$totalnum = 0;
-$ctestnum = 0;
-$testsuccess = 0;
-$testfail = 0;
-$testnocompile = 0;
-
-# Now run all the tests and write the results of the tests in the resultsfile.
-# For each directive there is used a seperate line beginning with the name of 
-# the tested directive. It follows the result of the test, crosstest, orphaned
-# test and orphaned crosstest.
-TEST: while(<TEST>){
-# filter comment and blank lines
-	 if (/^\s*#/) {next TEST;}
-	 if (/^\s*$/) {next TEST;}
-	 $testname = $_;
-	 chomp($testname);
-	 $template = $dir."/".$testname.".".$extension;
-
-         $totalnum = $totalnum + 1;
-	 print RESULTS "$testname"." ";
-         for($j = length($testname); $j < 40; $j++){
-             print RESULTS ".";
-         }
-         print RESULTS " ";
-	 print "\nTesting for $testname\n";
-	 print GLOBALLOG "Testing for $testname\n";
-
-	 $cmd = "grep ompts:orphan ".$template." > /dev/null";
-	 $_ = system($cmd);
-	 $orphanedtest = 0;
-	 if ($_ == 0) { 
-	    print "+ Test is orphanable\n"; 
-	    if (!($noorphan)) { $orphanedtest = 1; }
-	    else 	      { $orphanedtest = 0; }
-	 }
-
-         # start compiling and running the test for the specified number of threads
-	 for($numthreads = $minthreads; $numthreads <= $maxthreads; $numthreads++){
-	    print GLOBALLOG "Testing with $numthreads threads:\n";
-	    for($i=0; $i<2; $i++){
-
-	       $success = "-";
-	       $crossresult = "-";
-
-               # Create templates:
-	       if( ($i == 1) && $orphanedtest ){
-		  $orphanflag=" -orphan";
-		  $orphanname="orphaned";
-	          print GLOBALLOG " (orphanmode) ";
-	       } else {
-		  $orphanflag="";
-		  $orphanname="";
-	          print GLOBALLOG " (normalmode) ";
-	       }	    
-
-	       if( ($i==0) || $orphanedtest ){
-		  if(!$nocompile){
-                     # prepare sourcecode:
-		     print "Creating source out of templates ....";
-		     $cmd="./ompts_parser.pl $template -test $orphanflag -lang=$language";
-		     system($cmd);
-		     print "....";
-		     $cmd="./ompts_parser.pl $template -crosstest $orphanflag -lang=$language";
-		     system($cmd);
-		     print " successful\n";
-                     # Compile:
-		     print "Compiling sources .......";
-		     $cmd="make ".$language.$orphanname."test_".$testname." >> compile.log";
-		     $compile1 = system($cmd);
-		     print ".......";
-		     $cmd="make ".$language.$orphanname."ctest_".$testname." >> compile.log";
-		     $compile2 = system($cmd);
-		     if (!$compile1 && !$compile2) {
-			print "......... successful\n";
-		     }
-		     else {
-			print "......... failed\n";
-			printf GLOBALLOG "Error: Compilation failed\n";
-                        $testnocompile = $testnocompile + 1;
-		     }
-		  }
-
-                  # Run the tests:
-		  if(!$norun){
-		     $exec_name = $language.$orphanname."test_".$testname;
-                     # First check, if executable exists
-		     if (-e "$exec_name") { 
-			if ($orphanname eq "orphaned") {
-			   print "Running orphaned test using $numthreads threads ... ";
-			}
-			else {
-			   print "Running test using $numthreads threads ............ ";
-			}
-
-			$cmd = "OMP_NUM_THREADS=$numthreads; export OMP_NUM_THREADS; ./$exec_name > $exec_name.out";
-			$exit_status = system($cmd);
-			$failed = $exit_status >> 8;
-			$success = 100 - $failed;
-
-			if ($failed > 0){
-# print $testname.$orphanname." failed $failed\% of the tests.!" ;
-			   print "failed $failed\% of the tests!" ;
-			   print GLOBALLOG "Error: $failed\% of the tests failed!\n";
-                           $testfail = $testfail + 1;
-			} else {
-# print $testname.$orphanname." succeeded!";
-			   print "succeeded";
-                           $testsuccess = $testsuccess + 1;
-			}
-
-			if($failed > 0){
-			   print "\n";
-			} else {
-# Run the crosstest if available
-			   $crossexec_name = $language.$orphanname."ctest_".$testname;
-			   if (-e "$crossexec_name") { 
-			      $cmd = "OMP_NUM_THREADS=$numthreads; export OMP_NUM_THREADS; ./$crossexec_name > $crossexec_name.out";
-			      $exit_status = system($cmd);
-			      if ($exit_status){
-                                 $ctestnum = $ctestnum + 1;
-				 $crossresult = $exit_status >> 8;
-				 print " and was verified with a certainty of $crossresult\%\n";
-				 printf GLOBALLOG "Succeeded  and was verified with a certainty of $crossresult\%\n";
-			      } else {
-				 $crossresult=0;
-				 print " but might just have been lucky (all crosstests failed)\n";
-				 printf GLOBALLOG "Succeeded but might just have been lucky (all crosstests failed)\n";
-			      }
-			   }
-			   else {
-			      $crossresult = 0;
-			   }
-			}
-		     }
-		     else {
-			$success = 0;
-		     }
-# clean up
-# $cmd = "rm $exec_name $crossexec_name";
-# system($cmd);
-		  }
-	       }
-	       print RESULTS "$success\t$crossresult\t";
-	    }
-	 }
-	 print RESULTS "\n";
-      } # end of outer loop
-    $testnum = $testfail + $testsuccess;
-    print "\nTested $totalnum directive(s) using $testnum tests. $testfail tests failed, and $testsuccess successful with $ctestnum cross checked\n";
-    print RESULTS "\nTested $totalnum directive(s) using $testnum tests. $testfail tests failed, and $testsuccess successful with $ctestnum cross checked\n";
-    if ($testnocompile > 0) {
-        print "$testnocompile test(s) failed to compile\n";
-        print RESULTS "$testnocompile test(s) failed to compile\n";
-    }
-    print "For more detailed information see files $results, ompts.log, and compile.log\n";
-    close(RESULTS);
-    close(TEST);
-    my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime time;
-    $year += 1900;
-    print GLOBALLOG "\nTest ended on $mday.$mon.$year at $hour:$min:$sec\n\n";
-    close(GLOBALLOG);

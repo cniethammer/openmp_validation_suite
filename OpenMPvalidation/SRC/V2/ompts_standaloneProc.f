@@ -19,7 +19,7 @@
       failed = 0
 
       !Open a new logfile or overwrite the existing one.
-      logfilename = "f<testfunctionname></testfunctionname>.log"
+      logfilename = "bin/fortran/<testfunctionname></testfunctionname>.log"
 !      WRITE (*,*) "Enter logFilename:" 
 !      READ  (*,*) logfilename
 

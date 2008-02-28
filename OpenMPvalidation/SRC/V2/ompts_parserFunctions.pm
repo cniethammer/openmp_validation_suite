@@ -85,21 +85,21 @@ sub delete_tags
 # orphan regions.
 sub create_orph_cfunctions
 {
-	my ($prefix,$code,@defs);
-	($prefix,$code) = @_;
+	my ($code,@defs);
+	($code) = @_;
 	@defs = get_tag_values('ompts:orphan',$code);
 	($functionname) = get_tag_values('ompts:testcode:functionname',$code);
 	my ( @result,$functionsrc, $i);
-	$functionsrc =  "\n/* Definitions of the orphan functions */\n";
+	$functionsrc =  "\n/* Automatically generated definitions of the orphan functions */\n";
+
 	$i = 1;
-	foreach $_(@defs)
-	{
-		$functionsrc .= "\nvoid orph$i\_$prefix\_$functionname( FILE * logFile ){";
+	foreach (@defs) {
+		$functionsrc .= "\nvoid orph$i\_$functionname (FILE * logFile) {";
 		$functionsrc .= $_;
 		$functionsrc .= "\n}\n";
 		$i++;
 	}
-	$functionsrc .= "/* End of definition */\n";
+	$functionsrc .= "/* End of automatically generated definitions */\n";
 	return $functionsrc;
 }
 
@@ -136,19 +136,15 @@ sub create_orph_fortranfunctions
 # replaces orphan regions by functioncalls in C/C++.
 sub orphan_regions2cfunctions
 {
-	my ( $prefix, @code, $i, $functionname);
-	($prefix, @code) = @_;
+	my ($code, $i, $functionname);
+	($code) = @_;
 	$i = 1;
 	($functionname) = get_tag_values('ompts:testcode:functionname',$code);
-	foreach $_(@code)
-	{
-		while( /\<ompts\:orphan\>(.*)\<\/ompts\:orphan\>/s)
-		{
-			s#\<ompts\:orphan\>(.*?)\<\/ompts\:orphan\>#orph$i\_$prefix\_$functionname(logFile);#s;
-			$i++;
-		}
-	}
-	return @code;
+        while( /\<ompts\:orphan\>(.*)\<\/ompts\:orphan\>/s) {
+            s#\<ompts\:orphan\>(.*?)\<\/ompts\:orphan\>#orph$i\_$functionname (logFile);#s;
+            $i++;
+        }
+	return $code;
 }
 
 # LIST orphan_regions2fortranfunctions( $prefix, @code )
@@ -176,8 +172,8 @@ sub orphan_regions2fortranfunctions
 # the $prefix as prefix for the functionname.
 sub orph_functions_declarations
 {
-	my ( $prefix, $code );
-	($prefix, $code) = @_;
+	my ($code);
+	($code) = @_;
 	my ( @defs, $result );
 	
 	# creating declarations for later used functions
@@ -186,9 +182,8 @@ sub orph_functions_declarations
 	my ($functionname,$i);
 	($functionname) = get_tag_values('ompts:testcode:functionname',$code);
 	$i = 1;
-	foreach $_(@defs)
-	{
-		$result .= "\nvoid orph$i\_$prefix\_$functionname( FILE * logFile );";
+	foreach (@defs) {
+		$result .= "\nvoid orph$i\_$functionname ( FILE * logFile );";
 		$i++;
 	}
 	$result .= "\n\n/* End of declaration */\n\n";

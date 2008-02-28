@@ -27,13 +27,8 @@
 # 2. General testsuite settings
 #########################################################
 
-# Set the number of minimal and maximal used threads. The 
-# testsuite will run the tests with each threadnumber 
-# inbetween these borders.
-# Because some tests need at least 2 threads you should 
-# not set one of these variables to 1
-MIN_THREADS = 2
-MAX_THREADS = 2
+# For general testsuite settings see the configuration file
+# ompts.conf
 
 #########################################################
 # 3. Compiler selection and Flags
@@ -157,53 +152,40 @@ MAX_THREADS = 2
 #FFLAGS = -mp 
 
 
-default: omp_testsuite.h
-	make test1
+omp_my_sleep: 
+	mkdir -p bin/c
+	cp omp_my_sleep.h bin/c/
+omp_testsuite: omp_testsuite.h
+	mkdir -p bin/c
+	cp omp_testsuite.h bin/c/
+omp_testsuite.h: ompts-c.conf c/*
+	./ompts_makeHeader.pl -f=ompts-c.conf -t=c
+.c.o: omp_testsuite omp_my_sleep
+	$(CC) $(CFLAGS) -c $<
 
-omp_testsuite.h:
-	./ompts_makeHeader.pl
-
-stest:
-	./runtest.pl -lang=c -d=c -minthreads=$(MIN_THREADS) -maxthreads=$(MAX_THREADS) customtest.txt
-
-fstest:
-	./runtest.pl -lang=fortran -d=fortran -minthreads=$(MIN_THREADS) -maxthreads=$(MAX_THREADS) customtest.txt
-
-ctest:
-	./runtest.pl -lang=c -d=c -minthreads=$(MIN_THREADS) -maxthreads=$(MAX_THREADS) testlist-c.txt
+ctest: omp_my_sleep omp_testsuite
+	./runtest.pl --lang=c testlist-c.txt
 
 ftest:
-	./runtest.pl -lang=fortran -d=fortran -minthreads=$(MIN_THREADS) -maxthreads=$(MAX_THREADS)                         testlist-f.txt
+	./runtest.pl --lang=fortran testlist-f.txt
 
 print_compile_options:
 	@echo "C compiler: $(CC)"
 	$(CC) --version
 	@echo "CFLAGS: $(CFLAGS)"
 	@echo ""
-	@echo ""
 	@echo "Fortran compiler: $(FC)"
 	$(FC) --version
 	@echo "FFLAGS: $(FFLAGS)"
 
-test1:
-	./ompts_parser.pl templates/omp_for_ordered.tpl -test
-	./ompts_parser.pl templates/omp_for_ordered.tpl -crosstest
-	icc -openmp -o test_omp_for_ordered test_omp_for_ordered.c
-	icc -openmp -o crosstest_omp_for_ordered crosstest_omp_for_ordered.c
-
-
-clean:
-	-find . -maxdepth 1 -name "[cf]test*" -perm +111 -exec rm {} \;
-	-find . -maxdepth 1 -name "[cf]crosstest*" -perm +111 -exec rm {} \;
-	-find . -maxdepth 1 -name "[cf]ctest*" -perm +111 -exec rm {} \;
-	-find . -maxdepth 1 -name "[cf]orphan*" -perm +111 -exec rm {} \;
-	-rm [cf]test*.[cf] [cf]crosstest*.[cf] [cf]ctest*.[cf] [cf]orphan*.[cf]
-
+cleansrcs:
+	find bin/ -iname *.[cf] -exec rm {} \;
+cleanbins:
+	find bin/ -perm +111 -exec rm {} \;
+cleanouts:
+	find bin/ -iname *.out -exec rm {} \;
 cleanlogs:
-	-rm *.log *.out
-
-cleanresults:
-	-rm [cf]results.txt
-
-cleanall: clean cleanlogs cleanresults
+	find bin/ -iname *.log -exec rm {} \;
+cleanall:
+	rm -rf bin/
 
