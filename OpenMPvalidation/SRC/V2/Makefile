@@ -42,6 +42,8 @@
 #FC     = gfortran
 #FFLAGS = -fopenmp -lm
 #FFLAGS = -fopenmp -lm -O3
+CC=icc
+CFLAGS=-openmp
 
 # Fujitsu Compilers:
 #CC = fcc
