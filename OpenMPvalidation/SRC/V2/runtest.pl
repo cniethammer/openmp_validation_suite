@@ -95,7 +95,7 @@ sub result_summary
     print <<EOF;
 Number of tested Open MP constructs: $num_constructs
 Number of used tests:                $num_tests
-Number of failed tests:              $num_fail_tests
+Number of failed tests:              $num_failed_tests
 + from this fail compilation:        $num_failed_compilation
 Number of successful tests:          $num_successful_tests
 + from this were verified:           $num_verified_tests
@@ -408,7 +408,7 @@ sub init_language_settings
         if ($name eq $language) {
             ($extension) = get_tag_values ("fileextension", $lang);
             ($dir)       = get_tag_values ("dir", $lang);
-            ($templateparsername) =get_tag_values ("templateparsername", $lang);
+            ($templateparsername) = get_tag_values ("templateparsername", $lang);
             last;
         }
     }
