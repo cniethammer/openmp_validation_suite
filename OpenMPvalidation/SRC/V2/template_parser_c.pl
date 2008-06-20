@@ -83,7 +83,7 @@ if ($orphan) {
 # Deleting the former declarations of the variables in the orphan regions:
     ($code) = delete_tags('ompts:orphan:vars',($code));
 # Put all together:
-    $code = $orphvarsdef . $orphfuncsdefs . $code . $orphfuncs;
+    $code = "#include \"omp_testsuite.h\"\n" . $orphvarsdef . $orphfuncsdefs . $code . $orphfuncs;
     $testprefix .= "orph_";
 }
 
