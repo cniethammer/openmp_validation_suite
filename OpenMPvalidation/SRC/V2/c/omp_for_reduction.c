@@ -4,6 +4,7 @@
 <ompts:directive>omp for reduction</ompts:directive>
 <ompts:testcode>
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 
 #include "omp_testsuite.h"
