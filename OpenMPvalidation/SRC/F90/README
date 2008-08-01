@@ -1,9 +1,0 @@
-Test Functions
-Lock Functions:
-	check_omp_lock, crosscheck_omp_lock;
-	check_omp_testlock, crosscheck_omp_testlock; 
-	check_omp_nest_lock, crosscheck_omp_nest_lock; 
-	check_omp_nest_testlock, crosscheck_omp_nest_testlock;
-	check_omp_locks (the driver function)
-
-	
