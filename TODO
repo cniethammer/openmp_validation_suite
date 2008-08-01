@@ -1,0 +1,34 @@
+By Liao, 8/1/2008
+
+
+* move source files down to trunk, conform the conventional layout of subversion trunk
+
+
+
+Just a summary for the bugzilla list
+
+http://spanner.hpctools.uh.edu/bugzilla/query.cgi
+
+ID  
+264    	NEW   	  	Several things are not clear from README
+279 	NEW 		Code conformance to Fortran 90 standard
+282 	NEW 		first round of response from Sun: problems with readme, d...
+291 	NEW 		omp_parallel_sections_lastprivate failed
+296 	NEW 		icc compilation aborted for ctest_omp_threadprivate_for
+376 	NEW 		omp_workshare.f: logic and race condition problem
+425 	REOP 		Feature Request: test omp_flush
+431 	NEW 		Feature request: schedule policy test for chunksize speci...
+451 	NEW 		Handle negative tests
+452 	NEW 		Try new test frameworks
+453 	NEW 		revising/completing the 3.0 tests for Fortran and C.
+454 	NEW 		add C++ tests
+455 	NEW 		clean up the sources
+456 	NEW 		Need a new template file suffix instead of using the conf...
+457 	NEW 		Need dedicated directories for generated .c and .f files ...
+458 	NEW 		consider to accommodate hand-coded tests
+459 	NEW 		Need some scripts to automatically generate permutations ...
+460 	NEW 		add tests for libraries
+461 	NEW 		test for environment variables
+462 	NEW 		Optional tests for undefined, implementation dependent be...
+463 	NEW 		Optional tests for certain limites
+464 	NEW 		More choices to run tests
