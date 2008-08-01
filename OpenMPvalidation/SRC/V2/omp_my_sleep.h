@@ -10,7 +10,7 @@
 #include <time.h>
 #include <errno.h>
 
-/*! Utility funtion to have a sleep funtion with better resolution and which only stoppes one thread. */
+/*! Utility function to have a sleep function with better resolution and which only stops one thread. */
 
 static void my_sleep(double sleeptime){
   struct timeval tv;

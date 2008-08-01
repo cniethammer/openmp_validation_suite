@@ -26,7 +26,7 @@ int main()
 	for ( i = 0; i < REPETITIONS; i++ ) {
 		fprintf (logFile, "\n\n%d. run of <testfunctionname></testfunctionname> out of %d\n\n",i+1,REPETITIONS);
 		if(<testfunctionname></testfunctionname>(logFile)){
-			fprintf(logFile,"Test succesfull.\n");
+			fprintf(logFile,"Test successful.\n");
 			success++;
 		}
 		else {
@@ -37,8 +37,8 @@ int main()
 	}
 
     if(failed==0){
-		fprintf(logFile,"\nDirectiv worked without errors.\n");
-		printf("Directiv worked without errors.\n");
+		fprintf(logFile,"\nDirective worked without errors.\n");
+		printf("Directive worked without errors.\n");
 		result=0;
 	}
 	else{

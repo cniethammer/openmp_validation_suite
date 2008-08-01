@@ -30,6 +30,7 @@ int <ompts:testcode:functionname>omp_task_private</ompts:testcode:functionname> 
 #pragma omp task <ompts:check>private(sum)</ompts:check>
                 {
                     int j;
+                    sum = 0; //Liao, 8/1/2008 otherwise unspecified values.
                     for (j = 0; j <= LOOPCOUNT; j++) {
 #pragma omp flush
                         sum += j;
@@ -37,6 +38,7 @@ int <ompts:testcode:functionname>omp_task_private</ompts:testcode:functionname> 
 
                     /* check if calculated sum was right */
                     if (sum != known_sum) {
+       	fprintf(logFile,"sum is %d while known_sum is %d.\n",sum, known_sum);               
 #pragma omp critical 
                         result++;
                     }

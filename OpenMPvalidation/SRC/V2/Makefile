@@ -1,6 +1,6 @@
 # General Makefile containing all the necessary compiler flags for the tests
 
-# modify CC and CFLAGS for OpenMP c compilers
+# modify CC and CFLAGS for OpenMP C compilers
 # modify FC and FFLAGS for OpenMP Fortran compilers
 
 
@@ -15,7 +15,7 @@
 
 
 #########################################################
-# 1. basic usage
+# 1. Basic usage
 #########################################################
 # 	make ctest		generate c test "ctest"
 # 	make ftest		generate fortran test "ftest"
@@ -36,14 +36,15 @@
 
 # GNU Compiler
 #
-#CC     = gcc
-#CFLAGS = -fopenmp -lm
+CC     = gcc
+CFLAGS = -fopenmp -lm
 #CFLAGS = -fopenmp -lm -O3
-#FC     = gfortran
-#FFLAGS = -fopenmp -lm
+FC     = gfortran
+FFLAGS = -fopenmp -lm
 #FFLAGS = -fopenmp -lm -O3
-CC=icc
-CFLAGS=-openmp
+
+#CC=icc
+#CFLAGS=-openmp
 
 # Fujitsu Compilers:
 #CC = fcc
