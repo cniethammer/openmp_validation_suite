@@ -23,11 +23,11 @@ int <ompts:testcode:functionname>omp_task_if</ompts:testcode:functionname>(FILE 
 #pragma omp single
     {
         <ompts:orphan>
-#pragma omp task <ompts:check>if (condition_false)</ompts:check>
+#pragma omp task <ompts:check>if (condition_false)</ompts:check> shared(count, result)
         {
             my_sleep (SLEEPTIME_LONG);
 #pragma omp flush (count)
-            result = (1 == count);
+            result = (0 == count);
         } /* end of omp task */
         </ompts:orphan>
 

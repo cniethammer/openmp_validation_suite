@@ -27,18 +27,17 @@ int <ompts:testcode:functionname>omp_task_private</ompts:testcode:functionname> 
             for (i = 0; i < NUM_TASKS; i++)
             {
                 <ompts:orphan>
-#pragma omp task <ompts:check>private(sum)</ompts:check>
+#pragma omp task <ompts:check>private(sum)</ompts:check> shared(result, known_sum)
                 {
                     int j;
-                    sum = 0; //Liao, 8/1/2008 otherwise unspecified values.
+		    //if sum is private, initialize to 0
+		    <ompts:check>sum = 0;</ompts:check>
                     for (j = 0; j <= LOOPCOUNT; j++) {
 #pragma omp flush
                         sum += j;
                     }
-
                     /* check if calculated sum was right */
                     if (sum != known_sum) {
-       	fprintf(logFile,"sum is %d while known_sum is %d.\n",sum, known_sum);               
 #pragma omp critical 
                         result++;
                     }
