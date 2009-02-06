@@ -29,7 +29,7 @@
         result = 0
         ii = 0
 
-!$omp parallel 
+!$omp parallel private(tid)
         tid = omp_get_thread_num()
 <ompts:orphan>
 !$omp do <ompts:check>schedule(dynamic,chunk_size)</ompts:check>
