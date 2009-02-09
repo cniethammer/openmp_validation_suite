@@ -11,6 +11,7 @@
         INTRINSIC sqrt
         INCLUDE "omp_testsuite.f"
         sum = 0.0
+        i = 0
         DO WHILE (i < LOOPCOUNT)
            sum = sum + sqrt(i)
            i = i + 1

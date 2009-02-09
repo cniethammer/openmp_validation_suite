@@ -84,7 +84,14 @@ foreach $testtype (@testtypes)
     ($code) = get_tag_values('ompts:testcode',$src);
 # Putting together the functions and the mainprogramm:
     $code .= $mainproc;
-
+    
+# get the parameters <ompts:orphan:params> by joon
+# thanks to Dr. Yin Ma in Absoft
+    ($parms) = get_tag_values('ompts:orphan:parms',$code);
+    ($parms) = leave_single_space($parms);
+# to remove parameters tag between 'ompts:orphan:parms' by joon
+    ($code) = replace_tags('ompts:orphan:parms','',$code);
+    
 # Make modifications for the orphaned testversion if necessary:
     if($orphan)
     {
@@ -104,6 +111,9 @@ foreach $testtype (@testtypes)
 # Replace orphan regions by functioncalls:
 	($code) = orphan_regions2fortranfunctions( "$testtype_", ($code) );
 	($code) = enlarge_tags('ompts:orphan:vars','','',($code));
+    ($code) = enlarge_tags('ompts:orphan:parms','','',($code));
+    #to find orphan call statemetn and add parameters
+    
 # Put all together:
 	$code = $code . $orphfuncs;
       }
@@ -124,9 +134,16 @@ foreach $testtype (@testtypes)
 	print "An error occured!";
       }
     }
+# remove parameters between <ompts:orphan:parms> tags, added by joon
+    ($code)= replace_tags('ompts:orphan:parms',$code);
+    
 # Remove the marks for the orpahn regions and its variables:
     ($code) = enlarge_tags('ompts:orphan','','',($code));
     ($code) = enlarge_tags('ompts:orphan:vars','','',($code));
+
+# remove parameters between for orphaned directive parametes, added by joon
+    ($code) = enlarge_tags('ompts:orphan:parms','','',($code));
+    
     if($testtype eq "test") {
 # Remove the marks for the testcode and remove the code for the crosstests: 
       ($code) = enlarge_tags('ompts:check','','',($code));

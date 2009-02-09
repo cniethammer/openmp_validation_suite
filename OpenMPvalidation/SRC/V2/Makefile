@@ -35,12 +35,11 @@
 #########################################################
 
 # GNU Compiler
-#
-CC     = gcc
-CFLAGS = -fopenmp -lm
+#CC     = gcc
+#CFLAGS = -fopenmp -lm
 #CFLAGS = -fopenmp -lm -O3
-FC     = gfortran
-FFLAGS = -fopenmp -lm
+#FC     = gfortran
+#FFLAGS = -fopenmp -lm
 #FFLAGS = -fopenmp -lm -O3
 
 #CC=icc
@@ -66,15 +65,15 @@ FFLAGS = -fopenmp -lm
 
 # Intel compilers:
 #CC = ecc
-#CC = icc
+CC = icc
 #CC = omcc
-#CFLAGS = -O3 -ip -openmp
+CFLAGS = -O3 -ip -openmp
 #CFLAGS = -Wall -O0 -openmp
 #CFLAGS =  -openmp -lm
 #CFLAGS =  -openmp -lm -DVERBOSE
 
-#FC = ifort
-#FFLAGS = -openmp -lm -fpp
+FC = ifort
+FFLAGS = -openmp -lm -fpp
 
 
 # Omni compilers:

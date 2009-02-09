@@ -108,9 +108,17 @@ sub create_orph_cfunctions
 # orphan regions.
 sub create_orph_fortranfunctions
 {
-	my ($prefix,$code,@defs);
-	($prefix,$code) = @_;
+	my ($prefix,$code,@defs,$orphan_parms);
+	($prefix,$code,$orphan_parms) = @_;
 	@defs = get_tag_values('ompts:orphan',$code);
+
+    #to remove space and put a single space
+    if($orphan_parms ne "")
+    {
+      $orphan_parms =~ s/[ \t]+//sg;
+      $orphan_parms =~ s/[ \t]+\n/\n/sg;
+    }
+    
 	($orphanvarsdefs) = get_tag_values('ompts:orphan:vars',$code);
 	foreach (@varsdef) {
 		if (not /[^ \n$]*/){ $orphanvarsdefs = join("\n",$orphanvarsdef,$_);}
@@ -121,7 +129,7 @@ sub create_orph_fortranfunctions
 	$i = 1;
 	foreach $_(@defs)
 	{
-		$functionsrc .= "\n      SUBROUTINE orph$i\_$prefix\_$functionname\n      ";
+		$functionsrc .= "\n      SUBROUTINE orph$i\_$prefix\_$functionname\($orphan_parms\)\n      ";
         $functionsrc .= "USE omp_lib\n       INCLUDE \"omp_testsuite.f\"\n";
 		$functionsrc .= $orphanvarsdefs."\n";
 		$functionsrc .= $_;
@@ -151,19 +159,19 @@ sub orphan_regions2cfunctions
 # replaces orphan regions by functioncalls in fortran
 sub orphan_regions2fortranfunctions
 {
-	my ( $prefix, @code, $i, $functionname);
-	($prefix, @code) = @_;
+	my ( $prefix, @code, $my_parms, $i, $functionname);
+	($prefix, ($code), $my_parms) = @_;
 	$i = 1;
 	($functionname) = get_tag_values('ompts:testcode:functionname',$code);
-	foreach $_(@code)
+	foreach $_(($code))
 	{
 		while( /\<ompts\:orphan\>(.*)\<\/ompts\:orphan\>/s)
 		{
-			s#\<ompts\:orphan\>(.*?)\<\/ompts\:orphan\>#      CALL orph$i\_$prefix\_$functionname;#s;
+			s#\<ompts\:orphan\>(.*?)\<\/ompts\:orphan\>#      CALL orph$i\_$prefix\_$functionname\($my_parms\);#s;
 			$i++;
 		}
 	}
-	return @code;
+	return ($code);
 }
 
 # SCALAR orph_functions_declarations( $prefix, $code )
@@ -172,8 +180,8 @@ sub orphan_regions2fortranfunctions
 # the $prefix as prefix for the functionname.
 sub orph_functions_declarations
 {
-	my ($code);
-	($code) = @_;
+	my ($prefix, $code);
+	($prefix, $code) = @_;
 	my ( @defs, $result );
 	
 	# creating declarations for later used functions
@@ -182,8 +190,8 @@ sub orph_functions_declarations
 	my ($functionname,$i);
 	($functionname) = get_tag_values('ompts:testcode:functionname',$code);
 	$i = 1;
-	foreach (@defs) {
-		$result .= "\nvoid orph$i\_$functionname ( FILE * logFile );";
+	foreach $_(@defs) {
+		$result .= "\nvoid orph$i\_$prefix\_$functionname ( FILE * logFile );";
 		$i++;
 	}
 	$result .= "\n\n/* End of declaration */\n\n";
@@ -254,6 +262,19 @@ sub extern_vars_def
 	}
 	$result .= "\n\n/* End of declaration. */\n\n";
 	return $result;
+}
+
+sub leave_single_space
+{
+  my($str);
+  ($str)=@_;
+  if($str ne "")
+  {
+    $str =~ s/^[ \t]+/ /;
+    $str =~ s/[ \t]+\n$/\n/;
+    $str =~ s/[ \t]+//g;
+  }
+  return $str;
 }
 
 return 1;

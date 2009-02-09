@@ -23,9 +23,12 @@
         INTEGER last_i
         INTEGER i_islarger
         COMMON /mycom/ last_i
+
+<ompts:orphan:parms> i </ompts:orphan:parms>
+
 <ompts:orphan:vars>
         INTEGER sum, i, my_islarger
-        COMMON /orphvars/ my_islarger, i, sum
+        COMMON /orphvars/ my_islarger, sum
 </ompts:orphan:vars>
 
         sum = 0

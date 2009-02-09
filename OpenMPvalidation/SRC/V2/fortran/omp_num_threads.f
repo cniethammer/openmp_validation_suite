@@ -21,8 +21,13 @@
 !$omp end master
 !$omp end parallel
 !         print *, "max threads:",max_threads
+
 !Yi Wen added omp_Set_dynamics here to make sure num_threads clause work
-        CALL OMP_SET_DYNAMIC(.TRUE.)
+!Thanks to Dr. Yin Ma in Absoft. should be not be called before the test loop
+!becuase it allows the dynamic adjustment of the number of threads at runtime
+!instead of using the max_threads set. 
+
+        !CALL OMP_SET_DYNAMIC(.TRUE.)
         DO threads = 1, max_threads
           nthreads = 0
            <ompts:orphan>

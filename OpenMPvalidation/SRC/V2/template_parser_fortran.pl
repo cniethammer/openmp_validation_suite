@@ -64,6 +64,11 @@ open (OUTFILE,">$outfile") or die "Could not create the output file for $directi
 # Putting together the functions and the mainprogramm:
 $code .= $mainproc;
 
+#thanks to Dr. Yin Ma in Absoft, get the parameters <ompts:orphan:params> by joon
+ ($parms) = get_tag_values('ompts:orphan:parms',($code));
+ ($parms) = leave_single_space($parms);
+ ($code) = replace_tags('ompts:orphan:parms','',$code);
+
 # Make modifications for the orphaned testversion if necessary:
 if ($orphan) {
 # Get the global variables:
@@ -73,10 +78,12 @@ if ($orphan) {
         if (not /^[ ]*$/gs) { $orphvarsdef = join("\n",$orphvarsdef,$_); } 
     }
 # Generate the orphan subroutines:
-        $orphfuncs = create_orph_fortranfunctions ("", $code);
+        $orphfuncs = create_orph_fortranfunctions ("", ($code),($parms));
 # Replace orphan regions by functioncalls:
-        ($code) = orphan_regions2fortranfunctions ("", ($code) );
+        ($code) = orphan_regions2fortranfunctions ("", ($code),($parms));
         ($code) = enlarge_tags ('ompts:orphan:vars','','',($code));
+# to find orphan call statement and add parameters, by joon
+        ($code) = enlarge_tags('ompts:orphan:parms','','',($code));
 # Put all together:
         $code = $code . $orphfuncs;
 }
@@ -84,6 +91,8 @@ if ($orphan) {
 # Remove remaining marks for the orpahn regions and its variables:
 ($code) = enlarge_tags('ompts:orphan','','',($code));
 ($code) = enlarge_tags('ompts:orphan:vars','','',($code));
+# remove parameters between for orphaned directive parametes, added byjoon
+($code) = enlarge_tags('ompts:orphan:parms','','',($code));
 
 if($test) {
 # Remove the marks for the testcode and remove the code for the crosstests: 
