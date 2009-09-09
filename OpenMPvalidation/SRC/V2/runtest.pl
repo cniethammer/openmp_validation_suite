@@ -8,7 +8,7 @@
 # Use make to compile the test
 
 ################################################################################
-# Global configuration options for the runtestscript itsel:
+# Global configuration options for the runtestscript itself:
 ################################################################################
 
 # name of the global configuration file for the testsuite:
@@ -23,6 +23,7 @@ $debug_mode     = 0;
 
 # Namespaces:
 use Getopt::Long;
+#use Unix::PID;
 use Data::Dumper;
 use ompts_parserFunctions;
 
@@ -74,6 +75,25 @@ Numthreads: $numthreads
 EOF
 }
 
+$num_construcs    = 0;
+$num_tests        = 0;
+$num_failed_tests = 0;
+$num_successful_tests   = 0;
+$num_verified_tests     = 0;
+$num_failed_compilation = 0;
+
+$num_normal_tests_failed = 0;
+$num_normal_tests_compile_error = 0;
+$num_normal_tests_timed_out = 0;
+$num_normal_tests_successful = 0;
+$num_normal_tests_verified = 0;
+
+$num_orphaned_tests_failed = 0;
+$num_orphaned_tests_compile_error = 0;
+$num_orphaned_tests_timed_out = 0;
+$num_orphaned_tests_successful = 0;
+$num_orphaned_tests_verified = 0;
+
 if ($opt_help)         { print_help_text ();   exit 0; }
 if ($opt_listlanguages){ print_avail_langs (); exit 0; }
 if ($opt_list)     { print_avail_tests ();   exit 0; }
@@ -93,12 +113,27 @@ sub result_summary
     my $num_directives = @test_results;
 
     print <<EOF;
-Number of tested Open MP constructs: $num_constructs
-Number of used tests:                $num_tests
-Number of failed tests:              $num_failed_tests
-+ from this fail compilation:        $num_failed_compilation
-Number of successful tests:          $num_successful_tests
-+ from this were verified:           $num_verified_tests
+
+Summary:
+S Number of tested Open MP constructs: $num_constructs
+S Number of used tests:                $num_tests
+S Number of failed tests:              $num_failed_tests
+S Number of successful tests:          $num_successful_tests
+S + from this were verified:           $num_verified_tests
+
+Normal tests:
+N Number of failed tests:              $num_normal_tests_failed
+N + from this fail compilation:        $num_normal_tests_compile_error
+N + from this timed out                $num_normal_tests_timed_out
+N Number of successful tests:          $num_normal_tests_successful
+N + from this were verified:           $num_normal_tests_verified
+
+Orphaned tests:
+O Number of failed tests:              $num_orphaned_tests_failed
+O + from this fail compilation:        $num_orphaned_tests_compile_error
+O + from this timed out                $num_orphaned_tests_timed_out
+O Number of successful tests:          $num_orphaned_tests_successful
+O + from this were verified:           $num_orphaned_tests_verified
 EOF
 
 }
@@ -138,9 +173,13 @@ sub timed_sys_command
 # check if command finished during the maximum execution time
     if ($@ eq "alarm\n") { 
 # test timed out
-	if ($debug_mode) { 
+#		my $pid = Unix::PID->new();
+#		$pid->get_pidof($command, 1);
+#		$pid->kill();
+        if ($debug_mode) { 
 	    log_message_add ("Command \"$command\" reached max execution time.\n"); 
-	}
+        }
+        return "TO";
     }
 # test finished
     return $exit_status;
@@ -167,7 +206,7 @@ sub run_test
 # Check if executables exist
     if (! -e $bin_name) {
         test_error ("Could not find executable \"$bin_name\".");
-        return ('-', '-');
+        return ('test' => '-', 'crosstest' => '-');
     }
 # run the test
     $cmd = "$env_set_threads_command ./$bin_name >$bin_name.out";
@@ -175,9 +214,9 @@ sub run_test
     $exit_status = timed_sys_command ($cmd); 
 ############################################################
 # Check if test finished within max execution time
-    if ($exit_status eq '-') {
+    if ($exit_status eq 'TO') {
         print ".... failed (timeout)\n";
-        return ('TO','-')
+        return ('test' => 'TO', 'crosstest' => '-')
     }
 ############################################################
 # check if all tests were successful
@@ -187,7 +226,7 @@ sub run_test
         print ".... success ...";
     } else {
         print ".... failed $failed\% of the tests\n";
-        return ($resulttest, '-');
+        return ('test' => $resulttest, 'crosstest' => '-');
     }
 ############################################################
 
@@ -196,7 +235,7 @@ sub run_test
     if (! -e $cbin_name) {
         test_error ("Could not find executable \"$cbin_name\".");
         print "... not verified (crosstest missing)\n";
-        return ($resulttest, '-');
+        return ('test' => $resulttest, 'crosstest' => '-');
     }
 # run crosstest
 # Test was successful, so it makes sense to run the crosstest
@@ -204,9 +243,9 @@ sub run_test
     $exit_status = timed_sys_command ($cmd);
 ############################################################
 # Check if crosstest finished within max execution time
-    if ($exit_status eq '-') {
+    if ($exit_status eq 'TO') {
         print "... not verified (timeout)\n";
-        return ($result, 'TO');
+        return ('test' => $result, 'crosstest' => 'TO');
     }
 ############################################################
 # test if crosstests failed as expected
@@ -322,32 +361,67 @@ sub add_result
 {
     my ($testname, $result) = @_;
     $resultline = "$testname\t";
+#	print Dumper(@{$result});
 
     $num_constructs++;
 
     open (RESULTS, ">>$opt_resultsfile") or error ("Could not open file '$opt_resultsfile' to write results.", 1);
 
-    if (${$result}[0][0] or ${$result}[0][2]) { $num_tests ++; }
-    if ($opt_compile and ${$result}[0][1] eq 0) { ${$result}[0][2]{test} ='ce'; ${$result}[0][2]{crosstest} ='-'; $num_failed_compilation++;}
+    if (${$result}[0][0]) {
+		$num_tests ++;}
+    
+	if ($opt_compile and ${$result}[0][1] eq 0) { 
+		${$result}[0][2]{test} ='ce'; 
+		${$result}[0][2]{crosstest} ='-';	
+		$num_normal_tests_compile_error++;
+	    $num_normal_tests_failed++;
+	}
+
     if ($opt_run and ${$result}[0][2]) {
-        if (${$result}[0][2]{test} eq 100) { 
-            $num_successful_tests++; 
-            if (${$result}[0][2]{crosstest} eq 100) { $num_verified_tests++; }
-        } 
+        if (${$result}[0][2]{test} == 100) { 
+            $num_normal_tests_successful++; 
+            if (${$result}[0][2]{crosstest} == 100){ 
+				$num_normal_tests_verified++;}
+		} elsif (${$result}[0][2]{test} eq 'TO'){
+			$num_normal_tests_timed_out++;
+			$num_normal_tests_failed++;
+        } elsif ((0 <= ${$result}[0][2]{test}) and (${$result}[0][2]{test} < 100)) {
+			$num_normal_tests_failed++;
+		}
     }
     $resultline .= "${$result}[0][2]{test}\t${$result}[0][2]{crosstest}\t";
 
     if (${$result}[1][0] or ${$result}[1][2]) { $num_tests ++; } 
     else { $resultline .= "-\t-\n"; }
-    if ($opt_compile and ${$result}[1][1] eq 0) { ${$result}[1][2]{test} ='ce'; ${$result}[1][2]{crosstest} ='-'; $num_failed_compilation++;}
+
+    if ($opt_compile and ${$result}[1][1] eq 0) { 
+		${$result}[1][2]{test} ='ce'; 
+		${$result}[1][2]{crosstest} ='-'; 
+		$num_orphaned_tests_compile_error++;
+		$num_orphaned_tests_failed++;
+		print "\nCOMPILE???\n\n";
+	}
+
     if ($opt_run and ${$result}[1][2]) {
-        if (${$result}[1][2]{test} eq 100) { 
-            $num_successful_tests++; 
-            if (${$result}[1][2]{crosstest} eq 100) { $num_verified_tests++; }
-        }
+        if (${$result}[1][2]{test} == 100) { 
+            $num_orphaned_tests_successful++; 
+            if (${$result}[1][2]{crosstest} == 100){ 
+				$num_orphaned_tests_verified++;}
+		} elsif (${$result}[1][2]{test} eq 'TO'){
+			$num_orphaned_tests_timed_out++;
+			$num_orphaned_tests_failed++;
+        } elsif ((0 <= ${$result}[1][2]{test}) and (${$result}[1][2]{test} < 100)) {
+			print "Hallo";
+			$num_orphaned_tests_failed++;
+		}
     }
     $resultline .= "${$result}[1][2]{test}\t${$result}[1][2]{crosstest}\n";
-    $num_failed_tests += $num_failed_compilation;
+
+    $num_failed_tests = $num_normal_tests_failed + $num_orphaned_tests_failed;
+	$num_failed_compilation = $num_normal_tests_compile_error + $num_orphaned_tests_compile_error;
+	$num_successful_tests = $num_normal_tests_successful + $num_orphaned_tests_successful;
+	$num_verified_tests = $num_normal_tests_verified + $num_orphaned_tests_verified;
+
     print RESULTS $resultline;
 }
 
