@@ -371,13 +371,13 @@ sub add_result
 		$num_tests ++;}
     
 	if ($opt_compile and ${$result}[0][1] eq 0) { 
-		${$result}[0][2]{test} ='ce'; 
-		${$result}[0][2]{crosstest} ='-';	
+		${$result}[0][2]{test}      = 'ce'; 
+		${$result}[0][2]{crosstest} = '-';	
 		$num_normal_tests_compile_error++;
 	    $num_normal_tests_failed++;
 	}
 
-    if ($opt_run and ${$result}[0][2]) {
+    if ($opt_run and ${$result}[0][2] and ${$result}[0][2]{test} ne 'ce') {
         if (${$result}[0][2]{test} == 100) { 
             $num_normal_tests_successful++; 
             if (${$result}[0][2]{crosstest} == 100){ 
@@ -385,24 +385,24 @@ sub add_result
 		} elsif (${$result}[0][2]{test} eq 'TO'){
 			$num_normal_tests_timed_out++;
 			$num_normal_tests_failed++;
-        } elsif ((0 <= ${$result}[0][2]{test}) and (${$result}[0][2]{test} < 100)) {
+		} elsif ((0 <= ${$result}[0][2]{test}) and (${$result}[0][2]{test} < 100)) {
 			$num_normal_tests_failed++;
 		}
     }
     $resultline .= "${$result}[0][2]{test}\t${$result}[0][2]{crosstest}\t";
 
-    if (${$result}[1][0] or ${$result}[1][2]) { $num_tests ++; } 
+    if (${$result}[1][0]) { 
+		$num_tests ++;} 
     else { $resultline .= "-\t-\n"; }
 
     if ($opt_compile and ${$result}[1][1] eq 0) { 
-		${$result}[1][2]{test} ='ce'; 
-		${$result}[1][2]{crosstest} ='-'; 
+		${$result}[1][2]{test}      = 'ce'; 
+		${$result}[1][2]{crosstest} = '-'; 
 		$num_orphaned_tests_compile_error++;
 		$num_orphaned_tests_failed++;
-		print "\nCOMPILE???\n\n";
 	}
 
-    if ($opt_run and ${$result}[1][2]) {
+    if ($opt_run and ${$result}[1][2] and ${$result}[1][2]{test} ne 'ce') {
         if (${$result}[1][2]{test} == 100) { 
             $num_orphaned_tests_successful++; 
             if (${$result}[1][2]{crosstest} == 100){ 
@@ -436,14 +436,16 @@ sub execute_single_test
 # tests in normal mode
     if ($opt_compile){ $result[0][0] = make_src ($opt_test, 0);
                        $result[0][1] = compile_src ($opt_test, 0);}
-    if ($opt_run)    { $result[0][2] = {run_test ($opt_test, 0)};}
+    if ($opt_run && $result[0][1] == 1) { 
+                       $result[0][2] = {run_test ($opt_test, 0)};}
 # tests in orphaned mode
     if ($opt_orphan && test_is_orphanable($opt_test)){
         log_message_add ("Testing for \"$opt_test\" in orphaned mode:");
         print "+ orphaned mode:\n";
         if ($opt_compile) { $result[1][0] = make_src ($opt_test, 1);
                             $result[1][1] = compile_src ($opt_test, 1);}
-        if ($opt_run)     { $result[1][2] = {run_test ($opt_test, 1)};}
+        if ($opt_run && $result[1][1] == 1) {
+                            $result[1][2] = {run_test ($opt_test, 1)};}
     }
     add_result($opt_test, \@result);
 }
