@@ -221,6 +221,7 @@ sub run_test
 ############################################################
 # check if all tests were successful
     $failed = $exit_status >> 8;
+    if ($failed < 0 or $failed > 100) { $failed = 100; }
     $resulttest = 100 - $failed;
     if ($resulttest eq 100) {
         print ".... success ...";
@@ -385,7 +386,7 @@ sub add_result
 		} elsif (${$result}[0][2]{test} eq 'TO'){
 			$num_normal_tests_timed_out++;
 			$num_normal_tests_failed++;
-		} elsif ((0 <= ${$result}[0][2]{test}) and (${$result}[0][2]{test} < 100)) {
+		} else {
 			$num_normal_tests_failed++;
 		}
     }
@@ -410,8 +411,7 @@ sub add_result
 		} elsif (${$result}[1][2]{test} eq 'TO'){
 			$num_orphaned_tests_timed_out++;
 			$num_orphaned_tests_failed++;
-        } elsif ((0 <= ${$result}[1][2]{test}) and (${$result}[1][2]{test} < 100)) {
-			print "Hallo";
+        } else {
 			$num_orphaned_tests_failed++;
 		}
     }
