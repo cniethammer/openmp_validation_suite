@@ -39,8 +39,10 @@
 #CFLAGS = -fopenmp -lm
 #CFLAGS = -fopenmp -lm -O3
 #FC     = gfortran
-#FFLAGS = -fopenmp -lm
+#FFLAGS = -fopenmp -lm -I/home/shaunak/V2/
 #FFLAGS = -fopenmp -lm -O3
+
+
 
 #CC=icc
 #CFLAGS=-openmp
@@ -65,15 +67,15 @@
 
 # Intel compilers:
 #CC = ecc
-CC = icc
+#CC = icc
 #CC = omcc
-CFLAGS = -O3 -ip -openmp
+#CFLAGS = -O3 -ip -openmp
 #CFLAGS = -Wall -O0 -openmp
 #CFLAGS =  -openmp -lm
 #CFLAGS =  -openmp -lm -DVERBOSE
 
-FC = ifort
-FFLAGS = -openmp -lm -fpp
+#FC = ifort
+#FFLAGS = -openmp -lm -fpp
 
 
 # Omni compilers:
@@ -147,11 +149,11 @@ FFLAGS = -openmp -lm -fpp
 
 
 #OpenUH Compiler
-#CC = uhcc
-#CFLAGS = -mp
+CC = uhcc
+CFLAGS = -gnu3 -mp
 
-#FC = uhf90
-#FFLAGS = -mp 
+FC = uhf90
+FFLAGS = -mp -I/home/shaunak/V2/
 
 
 omp_my_sleep: 
