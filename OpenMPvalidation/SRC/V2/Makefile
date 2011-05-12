@@ -42,8 +42,6 @@
 #FFLAGS = -fopenmp -lm
 #FFLAGS = -fopenmp -lm -O3
 
-#CC=icc
-#CFLAGS=-openmp
 
 # Fujitsu Compilers:
 #CC = fcc
@@ -57,23 +55,20 @@
 #CFLAGS = -mp
 #CFLAGS = -mp -DVERBOSE
 #CFLAGS = -fast -mp
-
 #FC = pgf90
 #FFLAGS = -fast -mp
 #FFLAGS = -mp -g
 
 
 # Intel compilers:
+#CC = icc
 #CC = ecc
-CC = icc
 #CC = omcc
-CFLAGS = -O3 -ip -openmp
+#CFLAGS = -O3 -ip -openmp
 #CFLAGS = -Wall -O0 -openmp
 #CFLAGS =  -openmp -lm
-#CFLAGS =  -openmp -lm -DVERBOSE
-
-FC = ifort
-FFLAGS = -openmp -lm -fpp
+#FC = ifort
+#FFLAGS = -openmp -lm -fpp
 
 
 # Omni compilers:
@@ -87,11 +82,11 @@ FFLAGS = -openmp -lm -fpp
 #FC =
 #FFLAGS =
 
+
 # NEC:
 #CC = c++ 
 #CC = sxc++ 
 #CFLAGS = -Popenmp
-
 #FC=sxf90
 #FFLAGS= -Popenmp
 
@@ -113,8 +108,6 @@ FFLAGS = -openmp -lm -fpp
 # IBM compilers:
 #CC = xlc_r
 #CFLAGS = -qsmp=omp -lm
-
-
 #FC=xlf90_r
 #FFLAGS=-qsmp=omp -qfixed=132 -qlanglvl=extended
 
@@ -122,7 +115,6 @@ FFLAGS = -openmp -lm -fpp
 # SUN compilers
 #CC = cc
 #CFLAGS = -fast -xopenmp -lm
-
 #FC =f90
 #FFLAGS = -xopenmp -fast -lm
 
@@ -133,7 +125,6 @@ FFLAGS = -openmp -lm -fpp
 #CFLAGS = -O0 -openmp -lm -I. -lomp -lpthread 
 #CFLAGS = -O0 -openmp -lm -I /home/matthew/opt/usr/include -lpthread
 #CFLAGS = -openmp -lm
-
 #FC = openf90
 #FFLAGS = -O0 -openmp -lm  -lomp -lpthread
 
@@ -141,7 +132,6 @@ FFLAGS = -openmp -lm -fpp
 #Pathscale Compiler
 #CC = pathcc
 #CFLAGS = -mp -Ofast -lm
-
 #FC=pathf90
 #FFLAGS= -mp -Ofast -lm
 
@@ -149,9 +139,9 @@ FFLAGS = -openmp -lm -fpp
 #OpenUH Compiler
 #CC = uhcc
 #CFLAGS = -mp
-
 #FC = uhf90
 #FFLAGS = -mp 
+
 
 
 omp_my_sleep: 
