@@ -7,9 +7,10 @@
 #include<stdlib.h>
 #include<unistd.h>
 
-
 #include "omp_testsuite.h"
 #include "omp_my_sleep.h"
+
+#define ALLOWABLE_PERCENT  2
 
 int <ompts:testcode:functionname>omp_get_wtime</ompts:testcode:functionname>(FILE * logFile)
 {
@@ -32,7 +33,8 @@ int <ompts:testcode:functionname>omp_get_wtime</ompts:testcode:functionname>(FIL
     </ompts:orphan>
 	measured_time = end-start;
     fprintf(logFile, "Work took %lf sec. time.\n", measured_time);
-    return ((measured_time > 0.99 * wait_time) && (measured_time < 1.01 * wait_time)) ;
+    return ((measured_time > (100 - ALLOWABLE_PERCENT) / 100.0 * wait_time) &&
+            (measured_time < (100 + ALLOWABLE_PERCENT) / 100.0 * wait_time)) ;
 }
 </ompts:testcode>
 </ompts:test>
