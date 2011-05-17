@@ -294,11 +294,8 @@ sub compile_src
 sub init_directory_structure
 {
     my ($language) = @_;
-    if (-e "bin" && -d "bin") { warning ("Old binary directory detected!");}
-    else { system ("mkdir bin"); }
-    if (-e "bin/$language" && -d "bin/$language") {
-        warning ("Old binary directory for language $language found.");}
-    else { system ("mkdir bin/$language"); }
+    if ( !( -e "bin" && -d "bin" )) { mkdir("bin", 0755); }
+    if ( !( -e "bin/$language" && -d "bin/$language" )) { mkdir("bin/$language", 0755); }
 }
 
 # Function that generates the sourcecode for the given test
