@@ -1,5 +1,5 @@
 <ompts:test>
-<ompts:testdescription>Test which checks the if clause of the omp task directive. The idear of the tests is to generate a tasks in a single region and pause it immediately. The parent thread now shall set a counter variable which the paused task shall evaluate when woke up.</ompts:testdescription>
+<ompts:testdescription>Test the if clause of the omp task directive. The idea of the test is to generate a task in a single region and pause it immediately. The parent thread now shall set a counter variable which the paused task shall evaluate when woken up.</ompts:testdescription>
 <ompts:ompversion>3.0</ompts:ompversion>
 <ompts:directive>omp task if</ompts:directive>
 <ompts:dependences>omp single,omp flush</ompts:dependences>
@@ -14,9 +14,10 @@ int <ompts:testcode:functionname>omp_task_if</ompts:testcode:functionname>(FILE 
     <ompts:orphan:vars>
     int condition_false;
     int count = 0;
-    int result;
+    int result = 0;    /* In case "omp task if" works, task will never be executed, therefore result would never be set */
     </ompts:orphan:vars>
 
+    /* This will always evaluate to FALSE */
     condition_false = (logFile == NULL);
 #pragma omp parallel 
 {
@@ -25,7 +26,8 @@ int <ompts:testcode:functionname>omp_task_if</ompts:testcode:functionname>(FILE 
         <ompts:orphan>
 #pragma omp task <ompts:check>if (condition_false)</ompts:check> shared(count, result)
         {
-            my_sleep (SLEEPTIME_LONG);
+            /* Additionally use condition_false (being 0) to avoid compiler warnings (condition_false set, but not used) */
+            my_sleep (SLEEPTIME_LONG + condition_false);
 #pragma omp flush (count)
             result = (0 == count);
         } /* end of omp task */

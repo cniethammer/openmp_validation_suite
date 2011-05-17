@@ -1,5 +1,5 @@
 <ompts:test>
-<ompts:testdescription>Test which checks the omp task directive. The idea of the tests is to generate a set of tasks in a single region. We let pause the tasks generated so that other threads get sheduled to the newly opened tasks.</ompts:testdescription>
+<ompts:testdescription>Test the omp task directive. The idea of the tests is to generate a set of tasks in a single region. We pause the tasks generated so that other threads get scheduled to the newly opened tasks.</ompts:testdescription>
 <ompts:ompversion>3.0</ompts:ompversion>
 <ompts:directive>omp task</ompts:directive>
 <ompts:dependences>omp single</ompts:dependences>
@@ -41,12 +41,12 @@ int <ompts:testcode:functionname>omp_task</ompts:testcode:functionname>(FILE * l
     } /* end of single */
 } /*end of parallel */
 
-/* Now we ckeck if more than one thread executed the tasks. */
+/* Now we check if more than one thread executed the tasks. */
     for (i = 0; i < NUM_TASKS; i++) {
         if (tids[0] != tids[i])
             return 1;
     }
     return 0;
-} /* end of check_paralel_for_private */
+} /* end of omp_task */
 </ompts:testcode>
 </ompts:test>
