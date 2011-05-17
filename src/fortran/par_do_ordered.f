@@ -39,18 +39,18 @@
 !$omp parallel do schedule(static, 1) ordered
         DO i=1, 99
                 <ompts:orphan>
-		<ompts:check>
+                <ompts:check>
 !$omp ordered
-		</ompts:check>
+                </ompts:check>
         IF( i_islarger2(i) .EQ. 1 .AND. is_larger .EQ. 1 ) THEN  
           is_larger = 1
         ELSE
           is_larger = 0
         END IF
         sum = sum + i
-		<ompts:check>
+                <ompts:check>
 !$omp end ordered
-		</ompts:check>
+                </ompts:check>
                 </ompts:orphan>
         END DO
 !$omp end parallel do
