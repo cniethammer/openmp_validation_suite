@@ -1,5 +1,5 @@
 <ompts:test>
-<ompts:testdescription>Test which checks the untied clause of the omp task directive. The idear of the tests is to generate a set of tasks in a single region. We create more tasks then threads exist, so at least one thread should handle more than one thread. Then we send the half of the threads into a bussy loop. We let finish the other threads. Now we should get rescheduled some untied tasks to the idle threads.</ompts:testdescription>
+<ompts:testdescription>Test which checks the untied clause of the omp task directive. The idear of the tests is to generate a set of tasks in a single region. We create more tasks than threads exist, so at least one thread should handle more than one thread. Then we send the half of the threads into a bussy loop. We let finish the other threads. Now we should get rescheduled some untied tasks to the idle threads.</ompts:testdescription>
 <ompts:ompversion>3.0</ompts:ompversion>
 <ompts:directive>omp task untied</ompts:directive>
 <ompts:dependences>omp single, omp flush</ompts:dependences>

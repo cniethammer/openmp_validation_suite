@@ -10,8 +10,10 @@
 #include <time.h>
 #include <errno.h>
 
-/*! Utility function to have a sleep function with better resolution and which only stops one thread. */
-
+/*! Sleep function with better resolution than sleep and stopping only one thread. 
+ *
+ * @param[in]   sleeptime   sleep time in seconds
+ */
 static void my_sleep(double sleeptime){
   struct timeval tv;
   struct timezone tzp;
