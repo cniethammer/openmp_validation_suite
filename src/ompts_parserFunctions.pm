@@ -86,7 +86,7 @@ sub delete_tags
 sub create_orph_cfunctions
 {
 	my ($code,@defs);
-	($code) = @_;
+	($prefix, $code) = @_;
 	@defs = get_tag_values('ompts:orphan',$code);
 	($functionname) = get_tag_values('ompts:testcode:functionname',$code);
 	my ( @result,$functionsrc, $i);
@@ -94,7 +94,7 @@ sub create_orph_cfunctions
 
 	$i = 1;
 	foreach (@defs) {
-		$functionsrc .= "\nvoid orph$i\_$functionname (FILE * logFile) {";
+		$functionsrc .= "\nvoid orph$i\_$prefix\_$functionname (FILE * logFile) {";
 		$functionsrc .= $_;
 		$functionsrc .= "\n}\n";
 		$i++;
@@ -144,15 +144,18 @@ sub create_orph_fortranfunctions
 # replaces orphan regions by functioncalls in C/C++.
 sub orphan_regions2cfunctions
 {
-	my ($code, $i, $functionname);
-	($code) = @_;
+	my (@code, $i, $functionname);
+	($prefix, ($code)) = @_;
 	$i = 1;
 	($functionname) = get_tag_values('ompts:testcode:functionname',$code);
+	foreach $_(($code))
+	{
         while( /\<ompts\:orphan\>(.*)\<\/ompts\:orphan\>/s) {
-            s#\<ompts\:orphan\>(.*?)\<\/ompts\:orphan\>#orph$i\_$functionname (logFile);#s;
+            s#\<ompts\:orphan\>(.*?)\<\/ompts\:orphan\>#orph$i\_$prefix\_$functionname (logFile);#s;
             $i++;
         }
-	return $code;
+	}
+	return ($code);
 }
 
 # LIST orphan_regions2fortranfunctions( $prefix, @code )

@@ -75,15 +75,15 @@ if ($orphan) {
         $orphvarsdef = join("\n",$orphvarsdef,$_); 
     }
 # Generate predeclarations for orpahn functions:
-    $orphfuncsdefs = orph_functions_declarations($code);
+    $orphfuncsdecl = orph_functions_declarations("TT", $code);
 # Generate the orphan functions:
-    $orphfuncs = create_orph_cfunctions($code);
+    $orphfuncs = create_orph_cfunctions("TT", $code);
 # Repla:e orphan regions by functioncalls:
-    $code = orphan_regions2cfunctions($code);
+    $code = orphan_regions2cfunctions("TT", $code);
 # Deleting the former declarations of the variables in the orphan regions:
     ($code) = delete_tags('ompts:orphan:vars',($code));
 # Put all together:
-    $code = "#include \"omp_testsuite.h\"\n" . $orphvarsdef . $orphfuncsdefs . $code . $orphfuncs;
+    $code = "#include \"omp_testsuite.h\"\n" . $orphvarsdef . $orphfuncsdecl . $code . $orphfuncs;
     $testprefix .= "orph_";
 }
 
