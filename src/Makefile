@@ -147,18 +147,21 @@
 omp_my_sleep: 
 	mkdir -p bin/c
 	cp omp_my_sleep.h bin/c/
-omp_testsuite: omp_testsuite.h
+omp_testsuite_c: omp_testsuite.h
 	mkdir -p bin/c
 	cp omp_testsuite.h bin/c/
+omp_testsuite_f: omp_testsuite.f
+	mkdir -p bin/fortran
+	cp omp_testsuite.f bin/fortran/
 omp_testsuite.h: ompts-c.conf c/*
 	./ompts_makeHeader.pl -f=ompts-c.conf -t=c
-.c.o: omp_testsuite omp_my_sleep
+.c.o: omp_testsuite_c omp_my_sleep
 	$(CC) $(CFLAGS) -c $<
 
-ctest: omp_my_sleep omp_testsuite
+ctest: omp_my_sleep omp_testsuite_c
 	./runtest.pl --lang=c testlist-c.txt
 
-ftest:
+ftest: omp_testsuite_f
 	./runtest.pl --lang=fortran testlist-f.txt
 
 print_compile_options:
