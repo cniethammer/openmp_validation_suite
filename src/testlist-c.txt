@@ -23,6 +23,7 @@ omp_master
 omp_nested
 omp_nest_lock
 omp_parallel_copyin
+omp_parallel_for
 omp_parallel_for_firstprivate
 omp_parallel_for_lastprivate
 omp_parallel_for_ordered
