@@ -35,8 +35,9 @@
 #########################################################
 
 # GNU Compiler
+#LDFLAGS= -lm
 #CC     = gcc
-#CFLAGS = -fopenmp -lm
+#CFLAGS = -fopenmp 
 #CFLAGS = -fopenmp -lm -O3
 #FC     = gfortran
 #FFLAGS = -fopenmp -lm
@@ -156,7 +157,7 @@ omp_testsuite_f: omp_testsuite.f
 omp_testsuite.h: ompts-c.conf c/*
 	./ompts_makeHeader.pl -f=ompts-c.conf -t=c
 .c.o: omp_testsuite_c omp_my_sleep
-	$(CC) $(CFLAGS) -c $<
+	$(CC) $(CFLAGS) -c $< $(LDFLAGS)
 
 ctest: omp_my_sleep omp_testsuite_c
 	./runtest.pl --lang=c testlist-c.txt
