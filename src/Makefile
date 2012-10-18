@@ -156,8 +156,9 @@ omp_testsuite_f: omp_testsuite.f
 	cp omp_testsuite.f bin/fortran/
 omp_testsuite.h: ompts-c.conf c/*
 	./ompts_makeHeader.pl -f=ompts-c.conf -t=c
-.c.o: omp_testsuite_c omp_my_sleep
-	$(CC) $(CFLAGS) -c $< $(LDFLAGS)
+
+% : %.c omp_testsuite_c omp_my_sleep
+	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
 ctest: omp_my_sleep omp_testsuite_c
 	./runtest.pl --lang=c testlist-c.txt
