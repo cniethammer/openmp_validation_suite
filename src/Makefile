@@ -160,6 +160,8 @@ omp_testsuite.h: ompts-c.conf c/*
 % : %.c omp_testsuite_c omp_my_sleep
 	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
+.PHONY: ctest ftest
+
 ctest: omp_my_sleep omp_testsuite_c
 	./runtest.pl --lang=c testlist-c.txt
 
