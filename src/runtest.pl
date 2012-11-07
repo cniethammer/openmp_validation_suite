@@ -23,9 +23,10 @@ $debug_mode     = 0;
 
 # Namespaces:
 use Getopt::Long;
-#use Unix::PID;
+use Unix::PID;
 use Data::Dumper;
 use ompts_parserFunctions;
+use Sys::Hostname;
 
 # Extracting given options
 GetOptions("help",
@@ -172,10 +173,11 @@ sub timed_sys_command
     };
 # check if command finished during the maximum execution time
     if ($@ eq "alarm\n") { 
+    #print ("!!!!!!!!!!!!!!!!!!!got alarm!!!!!!!!!!!!\n");
 # test timed out
-#		my $pid = Unix::PID->new();
-#		$pid->get_pidof($command, 1);
-#		$pid->kill();
+		my $pid = Unix::PID->new();
+		$pid->get_pidof($command, 1);
+		$pid->kill();
         if ($debug_mode) { 
 	    log_message_add ("Command \"$command\" reached max execution time.\n"); 
         }
@@ -269,14 +271,14 @@ sub compile_src
 # Make orphaned tests
         $exec_name     = "bin/$opt_lang/orph_test_$testname";
         $crossexe_name = "bin/$opt_lang/orph_ctest_$testname";
-        $resulttest  = system ("make $exec_name > $exec_name\_compile.log" );
-        $resultctest = system ("make $crossexe_name > $crossexe_name\_compile.log" );
+        $resulttest  = system ("make $exec_name > $exec_name\_compile.log 2>&1" );
+        $resultctest = system ("make $crossexe_name > $crossexe_name\_compile.log 2>&1" );
     } else {
 # Make test
         $exec_name     = "bin/$opt_lang/test_$testname";
         $crossexe_name = "bin/$opt_lang/ctest_$testname";
-        $resulttest  = system ("make $exec_name > $exec_name\_compile.log" );
-        $resultctest = system ("make $crossexe_name > $crossexe_name\_compile.log" );
+        $resulttest  = system ("make $exec_name > $exec_name\_compile.log 2>&1" );
+        $resultctest = system ("make $crossexe_name > $crossexe_name\_compile.log 2>&1" );
     }
     if ($resulttest) { test_error ("Compilation of the test failed."); }
     if ($resultctest){ test_error ("Compilation of the crosstest failed."); }
@@ -349,8 +351,24 @@ sub test_is_orphanable
 
 sub write_result_file_head
 {
+    my $host = hostname;
+    my ($sec, $min, $hr, $day, $mon, $year) = localtime;
+
+    use Capture::Tiny 'tee';
+    my $output_compiler_options = tee { system( "make print_compile_options" ) };
+    system( "gcc compile_info.c -o compiler_info" );
+    my $output_compiler_info = tee { system( "./compiler_info" ) };
     $resultline = "$testname\t";
+
     open (RESULTS, ">$opt_resultsfile") or error ("Could not open file '$opt_resultsfile' to write results.", 1);
+    print RESULTS "#Hostname:$host\n";
+    print RESULTS "#Date:". sprintf("%02d/%02d/%04d %02d:%02d:%02d\n",$day, $mon + 1, 1900 + $year, $hr, $min, $sec);    
+    print RESULTS "#Language:$opt_lang\n";
+    print RESULTS "#Compiler:$output_compiler_info\n";
+    if($output_compiler_options =~ m/CFLAGS(.*)\n/) {
+    print RESULTS "#CFLAGS$1\n";
+    }
+
     print RESULTS "#Tested Directive\tt\tct\tot\toct\n";
 }
 
@@ -425,8 +443,10 @@ sub add_result
 # Function which executes a single test
 sub execute_single_test
 {
+   
     my @result;
     init_language_settings ($opt_lang);
+    
     init_directory_structure ($opt_lang);
     log_message_add ("Testing for \"$opt_test\":");
     print "Testing for \"$opt_test\":\n";
