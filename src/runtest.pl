@@ -173,11 +173,19 @@ sub timed_sys_command
     };
 # check if command finished during the maximum execution time
     if ($@ eq "alarm\n") { 
-    #print ("!!!!!!!!!!!!!!!!!!!got alarm!!!!!!!!!!!!\n");
+    
 # test timed out
-		my $pid = Unix::PID->new();
-		$pid->get_pidof($command, 1);
-		$pid->kill();
+		#my $pid = Unix::PID->new();
+		
+		#$pid->get_pidof($command, 1);
+		#print ("!!!!!!!!!!!!!!!!!!!$command ->$pid-> got alarm!!!!!!!!!!!!\n");	
+		#$pid->kill();
+		
+		my $command_to_search=$command;
+		if($command_to_search =~ m/>(.*)\.out/) {
+		system("kill -9 `ps aux | grep '$1' | awk '{ print \$2 }'`");
+    		}
+		
         if ($debug_mode) { 
 	    log_message_add ("Command \"$command\" reached max execution time.\n"); 
         }
