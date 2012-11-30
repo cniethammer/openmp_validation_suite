@@ -144,6 +144,12 @@
 #FFLAGS = -mp 
 
 
+# OmpSs compiler
+# http://pm.bsc.es/ompss
+# Only fortran support at the moment
+#CC=sscc
+#CFLAGS=-lm
+
 
 omp_my_sleep: 
 	mkdir -p bin/c
