@@ -23,7 +23,7 @@ $debug_mode     = 0;
 
 # Namespaces:
 use Getopt::Long;
-use Unix::PID;
+#use Unix::PID;
 use Data::Dumper;
 use ompts_parserFunctions;
 use Sys::Hostname;
@@ -362,10 +362,11 @@ sub write_result_file_head
     my $host = hostname;
     my ($sec, $min, $hr, $day, $mon, $year) = localtime;
 
-    use Capture::Tiny 'tee';
-    my $output_compiler_options = tee { system( "make print_compile_options" ) };
+    system( "make print_compile_options>temp.log" );
+    my $output_compiler_options = getFileContent("temp.log");
     system( "gcc compile_info.c -o compiler_info" );
-    my $output_compiler_info = tee { system( "./compiler_info" ) };
+    system( "./compiler_info>temp.log" );
+    my $output_compiler_info = getFileContent("temp.log");
     $resultline = "$testname\t";
 
     open (RESULTS, ">$opt_resultsfile") or error ("Could not open file '$opt_resultsfile' to write results.", 1);
@@ -607,4 +608,15 @@ sub log_message_add
     $year=$year+1900;
     open (LOGFILE,">>$logfile") or die "ERROR: Could not create $logfile\n";
     print LOGFILE "$mday/$mon/$year $hour.$min.$sec: $message\n";
+}
+
+sub getFileContent
+{
+my $file_name=shift;
+local *FILE;
+open  FILE, "<$file_name";
+my $file_contents = do { local $/; <FILE> };
+close (FILE);
+return $file_contents;
+
 }
