@@ -5,7 +5,7 @@
 <ompts:dependences>omp single, omp flush</ompts:dependences>
 <ompts:testcode>
 #include <stdio.h>
-#include <math.h>
+#include <stdlib.h>
 #include "omp_testsuite.h"
 #include "omp_my_sleep.h"
 
@@ -14,66 +14,95 @@ int <ompts:testcode:functionname>omp_task_untied</ompts:testcode:functionname>(F
     <ompts:orphan:vars>
     int result = 0;
     int started = 0;
-    int state = 1;
+    int state_init = 1;
+    int state_run = 1;
     int num_tasks = 0;
     int num_threads;
     int max_num_tasks;
+    int *start_tids; /* array holding for each thread the id of the first executing thread */
     </ompts:orphan:vars>
 
 
     #pragma omp parallel 
     {
-        #pragma omp single
+        #pragma omp single nowait
         {
             num_threads = omp_get_num_threads();
             max_num_tasks = num_threads * MAX_TASKS_PER_THREAD;
+            start_tids = (int *) malloc(max_num_tasks * sizeof(int));
+            for (i = 0; i < max_num_tasks; i++) {
+                start_tids[i] = -1; /* mark as not assigned */
+            }
 
             for (i = 0; i < max_num_tasks; i++) {
                 <ompts:orphan>
-                #pragma omp task <ompts:check>untied</ompts:check>
+#               pragma omp task <ompts:check>untied</ompts:check> private(i)
                 {
-                    int start_tid;
-                    int current_tid;
 
-                    start_tid = omp_get_thread_num();
-                    #pragma omp critical
-                    { num_tasks++; }
+                    if (start_tids[i] == -1) { /* initial thread assignement */
+                        start_tids[i] = omp_get_thread_num();
+#                       pragma omp atomic
+                        num_tasks++;
 
-                    while (num_tasks < max_num_tasks) {
+                    } 
+                    else {
+                        fprintf(logFile, "Ecountered reassignment of task with task restart.\n");
+#                       pragma omp atomic
+                        result++;
+                    }
+
+                    /* Wait untill all tasks are generated or timeout for initialization is reached.
+                     * The timeout is needed, as the runtime may only allow a limited number of 
+                     * tasks to be submitted to the execution queue - which is smaller than the number 
+                     * of tasks we want to generate. */
+                    while (num_tasks < max_num_tasks && state_init) {
                         my_sleep (SLEEPTIME);
-                        #pragma omp flush (num_tasks)
+#                       pragma omp flush (num_tasks)
+#                       pragma omp flush (state_init)
                     }
 
 
-                    if ((start_tid % 2) == 0) {
+                    /* Suspend every second task */
+                    if ((i % 2) == 0) {
                         do {
+                            int current_tid;
                             my_sleep (SLEEPTIME);
                             current_tid = omp_get_thread_num ();
-                            if (current_tid != start_tid) {
-                                #pragma omp critical
-                                { result++; }
+                            if (current_tid != start_tids[i]) {
+                                fprintf(logFile, "Ecountered reassignment of task during task execution.\n");
+#                               pragma omp atomic
+                                result++;
                                 break;
                             }
-                            #pragma omp flush (state)
-                        } while (state);
+#                           pragma omp flush (state_run)
+                        } while (state_run);
                     } 
                 } /* end of omp task */
                 </ompts:orphan>
             } /* end of for */
 
             /* wait until all tasks have been created and were sheduled at least
-             * a first time */
-            while (num_tasks < max_num_tasks) {
+             * a first time  or timeout is reached */
+            while (num_tasks < max_num_tasks && state_init) {
                 my_sleep (SLEEPTIME);
-                #pragma omp flush (num_tasks)
+#               pragma omp flush (num_tasks)
+#               pragma omp flush (state_init)
             }
-            /* wait a little moment more until we stop the test */
-            my_sleep(SLEEPTIME_LONG);
-            state = 0;
         } /* end of single */
+
+        my_sleep(SLEEPTIME_LONG/2);
+        fprintf(logFile, "Timeout init\n");
+        state_init = 0;
+#       pragma omp flush (state_init)
+        /* wait a little moment more until we stop the test */
+        my_sleep(SLEEPTIME_LONG/2);
+        fprintf(logFile, "Timeout execution\n");
+        state_run = 0;
+#       pragma omp flush (state_run)
     } /* end of parallel */
 
-    return result;
+    fprintf(logFile, "Detected %d reassginments of tasks.\n", result);
+    return (result > 0);
 } 
 </ompts:testcode>
 </ompts:test>
