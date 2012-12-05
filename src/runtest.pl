@@ -364,8 +364,8 @@ sub write_result_file_head
 
     system( "make print_compile_options>temp.log" );
     my $output_compiler_options = getFileContent("temp.log");
-    system( "gcc compile_info.c -o compiler_info" );
-    system( "./compiler_info>temp.log" );
+    system( "make compile_info" );
+    system( "./compile_info>temp.log" );
     my $output_compiler_info = getFileContent("temp.log");
     $resultline = "$testname\t";
 
