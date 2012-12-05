@@ -25,7 +25,7 @@ int get_compiler_info(char *info_str) {
 	int revision = ((int) __INTEL_COMPILER % 100) / 10;
 	int patch = (int) __INTEL_COMPILER % 10;
 	sprintf(info_str, "Intel %d.%d.%d", version, revision, patch);
-    return; /* Fix problem with Intel compiler as he also sets GNU variables */
+    return 0; /* Fix problem with Intel compiler as he also sets GNU variables */
 
 	/* PGI compiler */
 #elif defined(__PGI)
