@@ -36,11 +36,15 @@ int <ompts:testcode:functionname>omp_task_untied</ompts:testcode:functionname>(F
 
             for (i = 0; i < max_num_tasks; i++) {
                 <ompts:orphan>
-#               pragma omp task <ompts:check>untied</ompts:check> private(i)
+#               pragma omp task <ompts:check>untied</ompts:check>
                 {
+                    int task_id;
+#pragma om atomic
+                    task_id = num_tasks;
+                    fprintf(logFile, "Generated task %d. Initial thread is %d\n", task_id, omp_get_thread_num());
 
-                    if (start_tids[i] == -1) { /* initial thread assignement */
-                        start_tids[i] = omp_get_thread_num();
+                    if (start_tids[task_id] == -1) { /* initial thread assignement */
+                        start_tids[task_id] = omp_get_thread_num();
 #                       pragma omp atomic
                         num_tasks++;
 
@@ -63,12 +67,12 @@ int <ompts:testcode:functionname>omp_task_untied</ompts:testcode:functionname>(F
 
 
                     /* Suspend every second task */
-                    if ((i % 2) == 0) {
+                    if ((task_id % 2) == 0) {
                         do {
                             int current_tid;
                             my_sleep (SLEEPTIME);
                             current_tid = omp_get_thread_num ();
-                            if (current_tid != start_tids[i]) {
+                            if (current_tid != start_tids[task_id]) {
                                 fprintf(logFile, "Ecountered reassignment of task during task execution.\n");
 #                               pragma omp atomic
                                 result++;
