@@ -1,0 +1,16 @@
+OpenMP Validation Suite Authors
+===============================
+
+The following cumulative list contains the names and Subversion IDs of
+all individuals who have committed code to the OpenMP Validation Suite
+repository.
+
+Username    Name                        Affiliation(s)
+----------- --------------------------- -------------------------
+hpcraink    Reiner Keller               HLRS
+rusmatt     Matthias Mueller            TUD
+monir       Md. Moniruzzman             HLRS
+hpcchris    Christoph Niethammer        HLRS
+liao        Chunhua Liao                UH
+lhuang      Lei Huang                   UH
+zhenyingliu Ms. Zhenying Liu            UH
