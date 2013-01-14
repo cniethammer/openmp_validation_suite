@@ -72,7 +72,7 @@ create a  test list of a spacefic language (c,fortran) according to version spec
 Options:
   --help            displays this help message
   --lang=s          select language
-  --spec=s          selec version spacification
+  --spec=s          selec version specification
 EOF
 }
 
