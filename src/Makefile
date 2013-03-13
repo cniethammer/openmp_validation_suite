@@ -156,8 +156,8 @@
 # OmpSs compiler
 # http://pm.bsc.es/ompss
 # Only fortran support at the moment
-#CC=sscc
-#CFLAGS=-lm
+#CC     = mcc
+#CFLAGS = -lm
 
 
 omp_my_sleep: 
