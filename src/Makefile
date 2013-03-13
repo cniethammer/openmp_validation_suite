@@ -37,6 +37,11 @@
 #########################################################
 # 3. Compiler selection and Flags
 #########################################################
+#Cray compiler
+#CC     = cc
+#CFLAGS = -lm
+#FC     = ftn
+#FFLAGS = -lm
 
 # GNU Compiler
 #LDFLAGS= -lm
