@@ -46,7 +46,7 @@
 # GNU Compiler
 #LDFLAGS= -lm
 #CC     = gcc
-#CFLAGS = -fopenmp 
+#CFLAGS = -fopenmp
 #CFLAGS = -fopenmp -lm -O3
 #FC     = gfortran
 #FFLAGS = -fopenmp -lm
