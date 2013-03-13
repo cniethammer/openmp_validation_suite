@@ -1,4 +1,8 @@
+#
+# Copyright (c) 2013      Christoph Niethammer <niethammer@hlrs.de>
+#
 # General Makefile containing all the necessary compiler flags for the tests
+#
 
 # modify CC and CFLAGS for OpenMP C compilers
 # modify FC and FFLAGS for OpenMP Fortran compilers
@@ -176,11 +180,9 @@ ftest: omp_testsuite_f
 
 print_compile_options:
 	@echo "C compiler: $(CC)"
-	$(CC) --version
 	@echo "CFLAGS: $(CFLAGS)"
 	@echo ""
 	@echo "Fortran compiler: $(FC)"
-	$(FC) --version
 	@echo "FFLAGS: $(FFLAGS)"
 
 cleansrcs:
