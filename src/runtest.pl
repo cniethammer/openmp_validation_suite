@@ -23,7 +23,7 @@ $debug_mode     = 0;
 
 # Namespaces:
 use Getopt::Long;
-#use Unix::PID;
+#shuse Unix::PID;
 use Data::Dumper;
 use ompts_parserFunctions;
 use Sys::Hostname;
@@ -57,10 +57,10 @@ close (CONFIG);
 $env_set_threads_command =~ s/\%n/$numthreads/g;
 @languages = get_tag_values ("language", $config);
 
-if (!defined($opt_compile)) {$opt_compile = 1;}
+if (!defined($opt_resultsfile)) {($opt_resultsfile) = get_tag_values("resultsfile", $config);}
+if (!defined($opt_compile)) {$opt_compile = 1;}else {%previous_compile_result=get_previous_result($opt_resultsfile);  }
 if (!defined($opt_run))     {$opt_run = 1;}
 if (!defined($opt_orphan)) {$opt_orphan = 1;}
-if (!defined($opt_resultsfile)) {($opt_resultsfile) = get_tag_values("resultsfile", $config);}
 if ( defined($opt_numthreads) && ($opt_numthreads > 0)) {$numthreads = $opt_numthreads;}
 if ($debug_mode) {
 print <<EOF;
@@ -386,7 +386,7 @@ sub add_result
 {
     my ($testname, $result) = @_;
     $resultline = "$testname\t";
-#	print Dumper(@{$result});
+	#print Dumper(@{$result});
 
     $num_constructs++;
 
@@ -400,6 +400,13 @@ sub add_result
 		${$result}[0][2]{crosstest} = '-';	
 		$num_normal_tests_compile_error++;
 	    $num_normal_tests_failed++;
+	}elsif( ${$result}[0][1] eq 0){	
+                 
+		 ${$result}[0][2]{test}      = 'ce';
+                 ${$result}[0][2]{crosstest} = '-';
+                 $num_normal_tests_compile_error++;
+                 $num_normal_tests_failed++;
+
 	}
 
     if ($opt_run and ${$result}[0][2] and ${$result}[0][2]{test} ne 'ce') {
@@ -414,17 +421,24 @@ sub add_result
 			$num_normal_tests_failed++;
 		}
     }
-    $resultline .= "${$result}[0][2]{test}\t${$result}[0][2]{crosstest}\t";
-
+  # if (defined(${$result}[0][2]{test})){$resultline .= "${$result}[0][2]{test}\t";}else {$resultline .= "-\t";} 
+  # if (defined(${$result}[0][2]{crosstest})){$resultline .= "${$result}[0][2]{crosstest}\t";}else {$resultline .= "-\t";}
+   $resultline .= "${$result}[0][2]{test}\t${$result}[0][2]{crosstest}\t";
+    
     if (${$result}[1][0]) { 
 		$num_tests ++;} 
-    else { $resultline .= "-\t-\n"; }
+    #else { $resultline .= "-\t-\n"; }
 
     if ($opt_compile and ${$result}[1][1] eq 0) { 
 		${$result}[1][2]{test}      = 'ce'; 
 		${$result}[1][2]{crosstest} = '-'; 
 		$num_orphaned_tests_compile_error++;
 		$num_orphaned_tests_failed++;
+	}elsif ( ${$result}[1][1] eq 0)
+	{        ${$result}[1][2]{test}      = 'ce';
+                 ${$result}[1][2]{crosstest} = '-'; 
+                 $num_orphaned_tests_compile_error++;
+                 $num_orphaned_tests_failed++;
 	}
 
     if ($opt_run and ${$result}[1][2] and ${$result}[1][2]{test} ne 'ce') {
@@ -439,6 +453,9 @@ sub add_result
 			$num_orphaned_tests_failed++;
 		}
     }
+  # if (defined(${$result}[1][2]{test})){$resultline .= "${$result}[1][2]{test}\t";}else {$resultline .= "-\t";}                     
+  # if (defined(${$result}[1][2]{crosstest})){$resultline .= "${$result}[1][2]{crosstest}\n";}else {$resultline .= "-\n";}
+
     $resultline .= "${$result}[1][2]{test}\t${$result}[1][2]{crosstest}\n";
 
     $num_failed_tests = $num_normal_tests_failed + $num_orphaned_tests_failed;
@@ -462,6 +479,10 @@ sub execute_single_test
 # tests in normal mode
     if ($opt_compile){ $result[0][0] = make_src ($opt_test, 0);
                        $result[0][1] = compile_src ($opt_test, 0);}
+		else{
+                     $result[0][1]=0;
+                     if ($previous_compile_result{$opt_test}{0} ne 'ce'){ $result[0][0]=1;$result[0][1]=1; } 
+		     }
     if ($opt_run && $result[0][1] == 1) { 
                        $result[0][2] = {run_test ($opt_test, 0)};}
 # tests in orphaned mode
@@ -469,7 +490,11 @@ sub execute_single_test
         log_message_add ("Testing for \"$opt_test\" in orphaned mode:");
         print "+ orphaned mode:\n";
         if ($opt_compile) { $result[1][0] = make_src ($opt_test, 1);
-                            $result[1][1] = compile_src ($opt_test, 1);}
+                            $result[1][1] = compile_src ($opt_test, 1);
+                          }
+		  	  else{ $result[1][1]=0;
+                      		if ($previous_compile_result{$opt_test}{2} ne 'ce'){ $result[1][0]=1;$result[1][1]=1; } 
+                     	      }
         if ($opt_run && $result[1][1] == 1) {
                             $result[1][2] = {run_test ($opt_test, 1)};}
     }
@@ -620,3 +645,35 @@ close (FILE);
 return $file_contents;
 
 }
+
+sub get_previous_result
+{
+my $file=shift;
+open(INFO, $file) or die("Could not open $file file as a previous result of copilation!.\n");
+
+my $start_taking_line=0; 
+my %return_hash;
+foreach $line (<INFO>)  {   
+
+if ($start_taking_line)
+{
+ #print $line."\n";
+ $line=~ s/\n//g;
+my @split_result=split(/\t/,$line);
+ 
+$return_hash{$split_result[0]}{0}= $split_result[1];
+$return_hash{$split_result[0]}{1}= $split_result[2];
+$return_hash{$split_result[0]}{2}= $split_result[3];
+$return_hash{$split_result[0]}{3}= $split_result[4];
+
+}    
+
+if($line =~ /^\#Tested Directive/){$start_taking_line=1;}
+
+
+}
+close(INFO);
+
+return %return_hash;
+}
+ 
