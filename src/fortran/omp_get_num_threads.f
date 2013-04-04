@@ -19,13 +19,22 @@
 !$omp critical
         nthreads = nthreads + 1
 !$omp end critical
+
+
 !$omp single
-		<ompts:orphan>
+<ompts:orphan>
+
 		<ompts:check>
         nthreads_lib=omp_get_num_threads()
 		</ompts:check>
-		</ompts:orphan>
+               <ompts:crosscheck>
+        nthreads_lib=-1
+                </ompts:crosscheck>
+
+                </ompts:orphan>
+
 !$omp end single
+
 !$omp end parallel
         IF (nthreads .EQ. nthreads_lib) THEN
           <testfunctionname></testfunctionname> = 1

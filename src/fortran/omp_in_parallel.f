@@ -27,6 +27,10 @@
 		<ompts:check>
         parallel=omp_in_parallel();
 		</ompts:check>
+              <ompts:crosscheck>
+        parallel=.FALSE.
+                </ompts:crosscheck>
+
 		</ompts:orphan>
 !$omp end single
 !$omp end parallel

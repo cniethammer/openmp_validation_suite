@@ -3,7 +3,7 @@
 <ompts:ompversion>2.0</ompts:ompversion>
 <ompts:directive>omp_get_wtime</ompts:directive>
 <ompts:testcode>
-      INTEGER FUNCTION <ompts:testcode:functionname>omp_wtime</ompts:testcode:functionname>(fileunit)
+      INTEGER FUNCTION <ompts:testcode:functionname>omp_wtime</ompts:testcode:functionname>()
         USE omp_lib
         IMPLICIT NONE
         <ompts:orphan:vars>
