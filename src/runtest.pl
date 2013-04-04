@@ -149,6 +149,8 @@ TEST: while (<TESTS>) {
         if (/^\s*#/) {next TEST;}
         if (/^\s*$/) {next TEST;}
         $opt_test = $_;
+		$opt_test =~ s/^\s+//;
+		$opt_test =~ s/\s+$//;
         chomp ($opt_test);
         execute_single_test ();
     }
