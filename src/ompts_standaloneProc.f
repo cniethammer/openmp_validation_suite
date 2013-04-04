@@ -42,7 +42,7 @@
       WRITE (1,*)
       
       DO j = 1, N
-        temp =  <testfunctionname></testfunctionname>(logfilename)
+        temp =  <testfunctionname></testfunctionname>()
         IF (temp .EQ. 1) THEN
           WRITE (1,*)  j, ". test successfull."
           success = success + 1
