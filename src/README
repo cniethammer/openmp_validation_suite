@@ -70,6 +70,7 @@ d fortran	directory containing the templates for the Fortran tests
   ompts_parser.pl	script for generating the source code out of the templates
   ompts_standaloneProc.c	framework for the c tests
   ompts_standaloneProc.f	framework for the Fortran tests
+  generate_testlist.pl  script for generating test list of a spacific language and OpenMP version. For more info , please run ./generate_testlist.pl --help 
   README		the README file you've already found ;-)
   LICENSE               contains license information
   runtest.pl		the frame program of the test suite
