@@ -58,7 +58,10 @@ $env_set_threads_command =~ s/\%n/$numthreads/g;
 @languages = get_tag_values ("language", $config);
 
 if (!defined($opt_resultsfile)) {($opt_resultsfile) = get_tag_values("resultsfile", $config);}
-if (!defined($opt_compile)) {$opt_compile = 1;}else {%previous_compile_result=get_previous_result($opt_resultsfile);  }
+if (!defined($opt_compile)) {$opt_compile = 1;}else {%previous_compile_result=get_previous_result($opt_resultsfile);   
+						     open (RESULTS, ">>$opt_resultsfile") or error ("Could not open file '$opt_resultsfile' to write results.", 1); 
+						     print RESULTS $previous_compile_result{header};
+							}
 if (!defined($opt_run))     {$opt_run = 1;}
 if (!defined($opt_orphan)) {$opt_orphan = 1;}
 if ( defined($opt_numthreads) && ($opt_numthreads > 0)) {$numthreads = $opt_numthreads;}
@@ -652,28 +655,31 @@ sub get_previous_result
 {
 my $file=shift;
 open(INFO, $file) or die("Could not open $file file as a previous result of copilation!.\n");
-
+my $header;
 my $start_taking_line=0; 
 my %return_hash;
+
 foreach $line (<INFO>)  {   
 
-if ($start_taking_line)
-{
- #print $line."\n";
- $line=~ s/\n//g;
-my @split_result=split(/\t/,$line);
+	if ($start_taking_line)
+	{	
+ 	#print $line."\n";
+ 	$line=~ s/\n//g;
+	my @split_result=split(/\t/,$line);
  
-$return_hash{$split_result[0]}{0}= $split_result[1];
-$return_hash{$split_result[0]}{1}= $split_result[2];
-$return_hash{$split_result[0]}{2}= $split_result[3];
-$return_hash{$split_result[0]}{3}= $split_result[4];
+	$return_hash{$split_result[0]}{0}= $split_result[1];
+	$return_hash{$split_result[0]}{1}= $split_result[2];
+	$return_hash{$split_result[0]}{2}= $split_result[3];
+	$return_hash{$split_result[0]}{3}= $split_result[4];
 
-}    
+	}    
 
-if($line =~ /^\#Tested Directive/){$start_taking_line=1;}
+if($line =~ /^\#Tested Directive/){$start_taking_line=1;}else {$header=$header.$line;}
 
 
 }
+
+$return_hash{header}= $header;
 close(INFO);
 
 return %return_hash;
