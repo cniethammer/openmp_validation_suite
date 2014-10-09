@@ -15,9 +15,6 @@ int <ompts:testcode:functionname>has_openmp</ompts:testcode:functionname>(FILE *
 #endif
     </ompts:check>
     <ompts:crosscheck>
-#if 0
-	rvalue = 1;
-#endif
     </ompts:crosscheck>
 	return (rvalue);
 }
