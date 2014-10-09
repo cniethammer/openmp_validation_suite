@@ -1,6 +1,6 @@
 <ompts:test>
 <ompts:testdescription>Test which checks the OpenMp support.</ompts:testdescription>
-<ompts:ompversion>2.0</ompts:ompversion>
+<ompts:ompversion>1.0</ompts:ompversion>
 <ompts:directive>_OPENMP</ompts:directive>
 <ompts:testcode>
 #include <stdio.h>
