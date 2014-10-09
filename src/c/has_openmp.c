@@ -11,7 +11,32 @@ int <ompts:testcode:functionname>has_openmp</ompts:testcode:functionname>(FILE *
     int rvalue = 0;
     <ompts:check>
 #ifdef _OPENMP
-	rvalue = 1;
+    fprintf(logFile, "OpenMP version %d\n", _OPENMP);
+    switch(_OPENMP) {
+        /* C, C++, Fortran specs */
+        case 201307: /* 4.0 */
+        case 201107: /* 3.1 */
+        case 200805: /* 3.0 */
+        case 200505: /* 2.5 */
+	        rvalue = 1;
+            break;
+        /* C, C++ only specs */
+        case 200203: /* 2.0 */
+        case 199810: /* 1.0 */
+	        rvalue = 1;
+            break;
+        /* Fortran only specs */
+        case 199710: /* 2.0 */
+        case 199911: /* 1.1 */
+        case 200011: /* 1.0 */
+	        rvalue = 1;
+            break;
+        default:
+	        rvalue = 0;
+            fprintf(logFile, "ERROR: Unknown OpenMP version.\n");
+            break;
+    }
+
 #endif
     </ompts:check>
     <ompts:crosscheck>
