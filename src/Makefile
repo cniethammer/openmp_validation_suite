@@ -52,6 +52,11 @@
 #FFLAGS = -fopenmp -lm
 #FFLAGS = -fopenmp -lm -O3
 
+#LLWM
+#CC = clang
+#CFLAGS=-openmp
+#LDFLAGS=-lm
+
 
 # Fujitsu Compilers:
 #CC = fcc
@@ -158,6 +163,8 @@
 # Only fortran support at the moment
 #CC     = mcc
 #CFLAGS = -lm
+#FC     = mfc
+#FFLAGS = --ompss
 
 
 omp_my_sleep: 
@@ -181,7 +188,7 @@ ctest: omp_my_sleep omp_testsuite_c
 	./runtest.pl --lang=c testlist-c.txt
 
 ftest: omp_testsuite_f
-	./runtest.pl --lang=fortran testlist-f.txt
+	./runtest.pl --norun --lang=fortran testlist-f.txt
 
 print_compile_options:
 	@echo "C compiler: $(CC)"
