@@ -21,28 +21,28 @@ int <ompts:testcode:functionname>omp_parallel_firstprivate</ompts:testcode:funct
     sum1=7;
     num_threads = 0;
 
-
-#pragma omp parallel <ompts:check>firstprivate(sum1)</ompts:check><ompts:crosscheck>private(sum1)</ompts:crosscheck>
+<ompts:orphan>
+#pragma omp parallel <ompts:check>firstprivate(sum1)</ompts:check> <ompts:crosscheck>private(sum1)</ompts:crosscheck>
     {
 
-	/*printf("sum1=%d\n",sum1);*/
-	<ompts:orphan>
+	printf("sum1=%d\n",sum1);
 	int i;
 #pragma omp for 
 	    for (i = 1; i < 1000; i++)
 	    {
 		sum1 = sum1 + i;
 	    } /*end of for*/
+        printf("after loop sum1=%d for thread %d\n",sum1, omp_get_thread_num());
 #pragma omp critical
 	{
 	    sum = sum + sum1;
             num_threads++;
 	} /*end of critical*/
-	</ompts:orphan>
     } /* end of parallel*/    
+</ompts:orphan>    
     known_sum = (999 * 1000) / 2 + 7 * num_threads;
     return (known_sum == sum);
-
 }
+
 </ompts:testcode>
 </ompts:test>
