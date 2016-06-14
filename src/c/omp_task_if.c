@@ -13,9 +13,12 @@
 int <ompts:testcode:functionname>omp_task_if</ompts:testcode:functionname>(FILE * logFile){
     <ompts:orphan:vars>
     int condition_false;
-    int count = 0;
-    int result = 0;    /* In case "omp task if" works, task will never be executed, therefore result would never be set */
+    int count;
+    int result;    /* In case "omp task if" works, task will never be executed, therefore result would never be set */
     </ompts:orphan:vars>
+
+    count = 0;
+    result = 0;
 
     /* This will always evaluate to FALSE */
     condition_false = (logFile == NULL);
@@ -29,11 +32,14 @@ int <ompts:testcode:functionname>omp_task_if</ompts:testcode:functionname>(FILE 
             /* Additionally use condition_false (being 0) to avoid compiler warnings (condition_false set, but not used) */
             my_sleep (SLEEPTIME_LONG + condition_false);
 #pragma omp flush (count)
+            printf("Inside the task directive count=%d", count);
             result = (0 == count);
+            printf("result=%d", result);
         } /* end of omp task */
         </ompts:orphan>
 
         count = 1;
+        printf("After thetask directive count=%d", count);
 #pragma omp flush (count)
 
     } /* end of single */
