@@ -42,6 +42,7 @@ int <ompts:testcode:functionname>omp_task_untied</ompts:testcode:functionname>(F
 #pragma om atomic
                     task_id = num_tasks;
                     fprintf(logFile, "Generated task %d. Initial thread is %d\n", task_id, omp_get_thread_num());
+		    fflush(logFile);
 
                     if (start_tids[task_id] == -1) { /* initial thread assignement */
                         start_tids[task_id] = omp_get_thread_num();
@@ -51,6 +52,7 @@ int <ompts:testcode:functionname>omp_task_untied</ompts:testcode:functionname>(F
                     } 
                     else {
                         fprintf(logFile, "Ecountered reassignment of task with task restart.\n");
+			fflush(logFile);
 #                       pragma omp atomic
                         result++;
                     }
@@ -74,6 +76,7 @@ int <ompts:testcode:functionname>omp_task_untied</ompts:testcode:functionname>(F
                             current_tid = omp_get_thread_num ();
                             if (current_tid != start_tids[task_id]) {
                                 fprintf(logFile, "Ecountered reassignment of task during task execution.\n");
+				fflush(logFile);
 #                               pragma omp atomic
                                 result++;
                                 break;
