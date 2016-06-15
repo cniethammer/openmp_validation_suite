@@ -47,5 +47,6 @@ int main()
 		result = (int) (((double) failed / (double) REPETITIONS ) * 100 );
 	}
 	printf ("Result: %i\n", result);
+	fclose(logFile);
 	return result;
 }
