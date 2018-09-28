@@ -14,6 +14,10 @@
 #       Template not found      -1
 #
 
+use Cwd qw( abs_path );
+use File::Basename qw( dirname );
+use lib dirname(abs_path($0));
+
 # Using Getopt::long to extract the programm options
 use Getopt::Long;
 # Using functions: Set of subroutines to modify the testcode
