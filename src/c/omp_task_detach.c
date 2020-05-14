@@ -15,6 +15,9 @@ int result2 = 0;
 </ompts:orphan:vars>
 
 int <ompts:testcode:functionname>omp_task_detach</ompts:testcode:functionname>(FILE * logFile){
+result1 = 0;
+result2 = 0;
+
 #pragma omp parallel
 {
 #pragma omp master
@@ -42,21 +45,24 @@ int <ompts:testcode:functionname>omp_task_detach</ompts:testcode:functionname>(F
             #pragma omp atomic
             result2++;
         }
+#pragma omp task depend(out:result2) shared(result2) <ompts:crosscheck>depend(in:dummy)</ompts:crosscheck>
+        {
+            result2 *= 2;
+        }
 #pragma omp task shared(result2) <ompts:crosscheck>depend(out:dummy)</ompts:crosscheck>
         {
+            my_sleep (SLEEPTIME);
             #pragma omp atomic
             result2++;
             <ompts:check>omp_fulfill_event(event);</ompts:check>
         }
-#pragma omp task depend(out:result2) shared(result2) <ompts:crosscheck>depend(in:dummy)</ompts:crosscheck>
-        {
-            result2 /= 2;
-        }
 #pragma omp taskwait
     }
 }
+    printf("result1: %d\n", result1);
+    printf("result2: %d\n", result2);
 
-    return (result1 == 0) && (result2 == 1);
+    return (result1 == 1) && (result2 == 4);
 }
 </ompts:testcode>
 </ompts:test>
