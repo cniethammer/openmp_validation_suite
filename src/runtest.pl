@@ -27,7 +27,6 @@ use File::Basename qw( dirname );
 use lib dirname(abs_path($0));
 
 use Getopt::Long;
-#shuse Unix::PID;
 use Data::Dumper;
 use ompts_parserFunctions;
 use Sys::Hostname;
@@ -182,13 +181,6 @@ sub timed_sys_command
     };
 # check if command finished during the maximum execution time
     if ($@ eq "alarm\n") { 
-    
-# test timed out
-		#my $pid = Unix::PID->new();
-		
-		#$pid->get_pidof($command, 1);
-		#print ("!!!!!!!!!!!!!!!!!!!$command ->$pid-> got alarm!!!!!!!!!!!!\n");	
-		#$pid->kill();
 		
 		my $command_to_search=$command;
 		if($command_to_search =~ m/>(.*)\.out/) {
@@ -430,13 +422,10 @@ sub add_result
 			$num_normal_tests_failed++;
 		}
     }
-  # if (defined(${$result}[0][2]{test})){$resultline .= "${$result}[0][2]{test}\t";}else {$resultline .= "-\t";} 
-  # if (defined(${$result}[0][2]{crosstest})){$resultline .= "${$result}[0][2]{crosstest}\t";}else {$resultline .= "-\t";}
    $resultline .= "${$result}[0][2]{test}\t${$result}[0][2]{crosstest}\t";
     
     if (${$result}[1][0]) { 
 		$num_tests ++;} 
-    #else { $resultline .= "-\t-\n"; }
 
     if ($opt_compile and ${$result}[1][1] eq 0) { 
 		${$result}[1][2]{test}      = 'ce'; 
@@ -462,8 +451,6 @@ sub add_result
 			$num_orphaned_tests_failed++;
 		}
     }
-  # if (defined(${$result}[1][2]{test})){$resultline .= "${$result}[1][2]{test}\t";}else {$resultline .= "-\t";}                     
-  # if (defined(${$result}[1][2]{crosstest})){$resultline .= "${$result}[1][2]{crosstest}\n";}else {$resultline .= "-\n";}
 
     $resultline .= "${$result}[1][2]{test}\t${$result}[1][2]{crosstest}\n";
 
@@ -667,7 +654,6 @@ foreach $line (<INFO>)  {
 
 	if ($start_taking_line)
 	{	
- 	#print $line."\n";
  	$line=~ s/\n//g;
 	my @split_result=split(/\t/,$line);
  
