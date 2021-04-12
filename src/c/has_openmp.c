@@ -14,6 +14,9 @@ int <ompts:testcode:functionname>has_openmp</ompts:testcode:functionname>(FILE *
     fprintf(logFile, "OpenMP version %d\n", _OPENMP);
     switch(_OPENMP) {
         /* C, C++, Fortran specs */
+        case 202011: /* 5.1 */
+        case 201811: /* 5.0 */
+        case 201511: /* 4.5 */
         case 201307: /* 4.0 */
         case 201107: /* 3.1 */
         case 200805: /* 3.0 */
